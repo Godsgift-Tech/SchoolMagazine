@@ -30,12 +30,15 @@ namespace SchoolMagazine.Domain.Entities
         [Required]
         public double Rating { get; set; }
         public ICollection<SchoolEvent> Events { get; set; }
-        public ICollection<SchoolAdvert> Adverts { get; set;
+        public ICollection<SchoolAdvert> Adverts
+        {
+            get; set;
 
 
 
 
-        
-       
+
+
+        }
     }
 }
