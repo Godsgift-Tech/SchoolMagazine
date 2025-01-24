@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using SchoolMagazine.Application;
+using SchoolMagazine.Application.AppUsers;
+using SchoolMagazine.Domain.Entities;
 using SchoolMagazine.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,12 +13,15 @@ builder.Services.AddSwaggerGen();
 
 // Configure EF Core with SQL Server and connection string from appsettings.json
 builder.Services.AddDbContext<MagazineContext>(x => x.UseSqlServer(
-    builder.Configuration.GetConnectionString("DefaultConnection"),
-    sqlOption => sqlOption.EnableRetryOnFailure(50)
+    builder.Configuration.GetConnectionString("DefaultConnection")
+    
 ));
 
+// Add services
+
+
 // Configure Identity
-builder.Services.AddIdentity<AppUser, Role>(options =>
+builder.Services.AddIdentity<User, Role>(options =>
 {
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireDigit = false;
@@ -31,11 +35,22 @@ builder.Services.AddIdentity<AppUser, Role>(options =>
 var app = builder.Build();
 
 // Seed roles
+
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    await SeedData.SeedRolesAsync(roleManager);
+    var services = scope.ServiceProvider;
+    var roleManager = services.GetRequiredService<RoleManager<Role>>();
+    var userManager = services.GetRequiredService<UserManager<User>>();
+
+    // Call the SeededRole to seed roles and users
+    await SeededRole.SeedRolesAndUsers(roleManager, userManager);
 }
+
+
+
+
+
+
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())

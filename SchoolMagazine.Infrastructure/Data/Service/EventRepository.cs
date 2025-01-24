@@ -1,11 +1,6 @@
-﻿using SchoolMagazine.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using SchoolMagazine.Domain.Entities;
 using SchoolMagazine.Domain.Interface;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolMagazine.Infrastructure.Data.Service
 {

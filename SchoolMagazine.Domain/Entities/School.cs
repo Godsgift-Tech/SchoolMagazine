@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -14,6 +15,12 @@ namespace SchoolMagazine.Domain.Entities
 
         [Required]
         public string Name { get; set; }
+
+        public Guid UserId { get; set; } // Foreign key to User (admin)
+
+        // Navigation Properties
+        [Required]
+        public User User { get; set; }
         [Required]
         public string Location { get; set; }
         [Required]
@@ -23,5 +30,12 @@ namespace SchoolMagazine.Domain.Entities
         [Required]
         public double Rating { get; set; }
         public ICollection<SchoolEvent> Events { get; set; }
+        public ICollection<SchoolAdvert> Adverts { get; set;
+
+
+
+
+        
+       
     }
 }
