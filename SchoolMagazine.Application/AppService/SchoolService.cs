@@ -23,14 +23,14 @@ namespace SchoolMagazine.Application.AppService
         {
             var school = new School
             {
-                Adverts = schoolDto.Adverts,
-                Events = schoolDto.Events,
-                FeesRange = schoolDto.FeesRange,
-                //Id = schoolDto.Id,
-                Location = schoolDto.Location,
-                Name = schoolDto.Name,
-                Rating = schoolDto.Rating,
-                WebsiteUrl = schoolDto.WebsiteUrl,
+               // Adverts = schoolDto.Adverts,
+               // Events = schoolDto.Events,
+               // FeesRange = schoolDto.FeesRange,
+               // //Id = schoolDto.Id,
+               // Location = schoolDto.Location,
+               // Name = schoolDto.Name,
+                //Rating = schoolDto.Rating,
+                //WebsiteUrl = schoolDto.WebsiteUrl,
 
             };
             await _sr.AddSchoolAsync(school);

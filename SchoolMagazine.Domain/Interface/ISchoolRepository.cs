@@ -10,6 +10,7 @@ namespace SchoolMagazine.Domain.Interface
     public interface ISchoolRepository
     {
         Task<IEnumerable<School>> GetAllSchoolAsync();
+      //  Task<IEnumerable<School>> SchoolQuery(SchoolSearchQuery);
         Task<School> GetSchoolByIdAsync(Guid id);
         Task AddSchoolAsync(School school);
 

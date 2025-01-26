@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using SchoolMagazine.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SchoolMagazine.Domain.Entities
+namespace SchoolMagazine.Application.DTOs
 {
-    public class SchoolAdvert
+    public class SchoolAdvertDto
     {
-        [Key]
+        
         public Guid Id { get; set; }
         [Required]
         public string Title { get; set; }
@@ -24,4 +20,9 @@ namespace SchoolMagazine.Domain.Entities
         public Guid SchoolId { get; set; }
         public School SchoolName { get; set; }
     }
+
+
+
+
+
 }

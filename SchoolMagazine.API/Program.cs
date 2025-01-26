@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SchoolMagazine.Application.AppUsers;
+using SchoolMagazine.Application.Mappings;
 using SchoolMagazine.Domain.Entities;
 using SchoolMagazine.Infrastructure.Data;
 
@@ -10,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+// Register AutoMapper
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // Configure EF Core with SQL Server and connection string from appsettings.json
 builder.Services.AddDbContext<MagazineContext>(x => x.UseSqlServer(

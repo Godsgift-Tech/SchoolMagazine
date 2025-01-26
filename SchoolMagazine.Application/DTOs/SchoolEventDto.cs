@@ -17,10 +17,12 @@ namespace SchoolMagazine.Application.DTOs
         [Required]
         public string Description { get; set; }
         public Guid SchoolId { get; set; }
-        public School School { get; set; }
+        public School SchoolName { get; set; }
 
         public DateTime EventDate { get; set; }
 
         public string MediaUrl { get; set; } // Images/Videos
     }
+
+   
 }

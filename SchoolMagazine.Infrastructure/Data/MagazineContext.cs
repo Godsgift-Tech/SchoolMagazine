@@ -68,13 +68,13 @@ namespace SchoolMagazine.Infrastructure.Data
 
             builder.Entity<School>()
     .HasMany(sch => sch.Adverts) // A School can have many Advertisements
-    .WithOne(ad => ad.School) // Each Advertisement belongs to one School
+    .WithOne(ad => ad.SchoolName) // Each Advertisement belongs to one School
     .HasForeignKey(ad => ad.SchoolId) // Foreign key in the Advertisement table
     .OnDelete(DeleteBehavior.Cascade); // Delete Advertisements if the School is deleted
 
             builder.Entity<School>()
     .HasMany(sch => sch.Events) // A School can have many Events
-    .WithOne(evnt => evnt.School) // Each Event belongs to one School
+    .WithOne(evnt => evnt.SchoolName) // Each Event belongs to one School
     .HasForeignKey(evnt => evnt.SchoolId) // Foreign key in the Event table
     .OnDelete(DeleteBehavior.Cascade); // Delete Events if the School is deleted
 

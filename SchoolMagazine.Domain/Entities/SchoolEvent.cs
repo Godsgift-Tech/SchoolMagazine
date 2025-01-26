@@ -15,8 +15,8 @@ namespace SchoolMagazine.Domain.Entities
         public string Title { get; set; }
         [Required]
         public string Description { get; set; }
-        public Guid SchoolId { get; set; }
-        public School School { get; set; }
+        public Guid SchoolId { get; set; }     // School Id
+        public School SchoolName { get; set; }   // Name of School
 
         public DateTime EventDate { get; set; }
 

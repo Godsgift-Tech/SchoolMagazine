@@ -14,16 +14,32 @@ namespace SchoolMagazine.Application.DTOs
         public Guid Id { get; set; }
 
         [Required]
-        public string? Name { get; set; }
+        public string AdminName { get; set; }
+
+        public Guid UserId { get; set; } // Foreign key to User (admin)
+
+        // Navigation Properties
         [Required]
-        public string? Location { get; set; }
+        public User User { get; set; }
+
         [Required]
-        public string? WebsiteUrl { get; set; }
+        public string Location { get; set; } //address
+
+      
+        [Required]
+        public string PhoneNumber { get; set; } // phone number
+        [Required]
+        public string WebsiteUrl { get; set; }
         [Required]
         public decimal FeesRange { get; set; }
         [Required]
         public double Rating { get; set; }
-        public ICollection<SchoolEvent> Events { get; set; } = new List<SchoolEvent>();
-        public ICollection<SchoolAdvert> Adverts { get; set; } = new List<SchoolAdvert>();
+        public ICollection<SchoolEventDto> Events { get; set; }
+        public ICollection<SchoolAdvertDto> Adverts { get; set; }
     }
+
+
+
+
+
 }

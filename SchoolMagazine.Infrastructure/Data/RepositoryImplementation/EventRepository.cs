@@ -11,23 +11,23 @@ namespace SchoolMagazine.Infrastructure.Data.Service
         {
             _db = db;
         }
-        public async Task<IEnumerable<SchoolEvent>> AddEventsAsync(SchoolEvent schoolEvent)
+
+        public async Task AddEventsAsync(SchoolEvent schoolEvent)
         {
-            _db.Events.Add(schoolEvent);
-            await _db.SaveChangesAsync();
-            return _db.Events;
+         _db.Events.Add(schoolEvent);
+            await _db.SaveChangesAsync();  //saves event to database
         }
 
         public async Task<IEnumerable<SchoolEvent>> GetAllEventsAsync()
         {
           return await _db.Events.ToListAsync();
-
         }
 
-        public async Task<IEnumerable<SchoolEvent>> GetEventsByIdAsync(Guid id)
+        public async Task<SchoolEvent> GetEventsBySchool(School school)
         {
-            return (IEnumerable<SchoolEvent>)await _db.Events.FindAsync(id);
-
+            return await _db.Events.FindAsync(school);
         }
     }
+
+
 }
