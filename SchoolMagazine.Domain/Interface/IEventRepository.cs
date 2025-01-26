@@ -9,10 +9,10 @@ namespace SchoolMagazine.Domain.Interface
 {
     public interface IEventRepository
     {
-Task<IEnumerable<SchoolEvent>> GetAllEventsAsync();
-Task<IEnumerable<SchoolEvent>> GetEventsByIdAsync(Guid id);
-Task<IEnumerable<SchoolEvent>> AddEventsAsync(SchoolEvent schoolEvent);
-        
-        
+        Task<IEnumerable<SchoolEvent>> GetAllEventsAsync();
+        Task<SchoolEvent> GetEventsBySchool(School school);
+        Task AddEventsAsync(SchoolEvent schoolEvent);
+
+
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using SchoolMagazine.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchoolMagazine.Domain.Entities
+namespace SchoolMagazine.Application.DTOs
 {
-    public class School
+    public class SchoolDto
     {
         [Key]
         public Guid Id { get; set; }
@@ -21,19 +21,25 @@ namespace SchoolMagazine.Domain.Entities
         // Navigation Properties
         [Required]
         public User User { get; set; }
+
         [Required]
         public string Location { get; set; } //address
 
+      
         [Required]
-        public string EmailAddress { get; set; } // email address [Required]
+        public string PhoneNumber { get; set; } // phone number
         [Required]
-        
         public string WebsiteUrl { get; set; }
         [Required]
         public decimal FeesRange { get; set; }
         [Required]
         public double Rating { get; set; }
-        public ICollection<SchoolEvent> Events { get; set; }
-        public ICollection<SchoolAdvert> Adverts { get; set; }
+        public ICollection<SchoolEventDto> Events { get; set; }
+        public ICollection<SchoolAdvertDto> Adverts { get; set; }
     }
+
+
+
+
+
 }
