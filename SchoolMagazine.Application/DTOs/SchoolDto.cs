@@ -19,8 +19,8 @@ namespace SchoolMagazine.Application.DTOs
         public Guid UserId { get; set; } // Foreign key to User (admin)
 
         // Navigation Properties
-        [Required]
-        public User User { get; set; }
+       // [Required]
+       // public User User { get; set; }
 
         [Required]
         public string Location { get; set; } //address

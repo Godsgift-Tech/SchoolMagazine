@@ -1,9 +1,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SchoolMagazine.Application.AppInterface;
+using SchoolMagazine.Application.AppService;
 using SchoolMagazine.Application.AppUsers;
 using SchoolMagazine.Application.Mappings;
 using SchoolMagazine.Domain.Entities;
+using SchoolMagazine.Domain.Interface;
 using SchoolMagazine.Infrastructure.Data;
+using SchoolMagazine.Infrastructure.Data.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +15,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<ISchoolService, SchoolService>();
+builder.Services.AddScoped<ISchoolRepository, SchoolRepository>();
 // Register AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
@@ -46,7 +53,7 @@ using (var scope = app.Services.CreateScope())
     var userManager = services.GetRequiredService<UserManager<User>>();
 
     // Call the SeededRole to seed roles and users
-    await SeededRole.SeedRolesAndUsers(roleManager, userManager);
+  //  await SeededRole.SeedRolesAndUsers(roleManager, userManager);
 }
 
 

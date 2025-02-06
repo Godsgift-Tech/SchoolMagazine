@@ -19,6 +19,26 @@ namespace SchoolMagazine.Infrastructure.Data.Service
 
         }
 
+        public async Task UpdateSchoolByIdAsync(School school)
+        {
+            var schoolId = await _db.Schools.FindAsync(school.Id);
+            if (schoolId == null) throw new Exception("School was not found");
+
+            _db.Schools.Update(school);
+            await _db.SaveChangesAsync();
+
+        }
+
+        public async Task DeleteSchoolByIdAsync(School searchedSchool)
+        {
+           var  schoolId = await _db.Schools.FindAsync(searchedSchool.Id);
+            if (schoolId == null) throw new Exception("School was not found");
+
+            _db.Schools.Remove(searchedSchool);
+            await _db.SaveChangesAsync();
+
+        }
+
         public async Task<IEnumerable<School>> GetAllSchoolAsync()
         {
             return await _db.Schools.ToListAsync();
@@ -28,5 +48,7 @@ namespace SchoolMagazine.Infrastructure.Data.Service
         {
             return await _db.Schools.FindAsync(id);
         }
+
+      
     }
 }

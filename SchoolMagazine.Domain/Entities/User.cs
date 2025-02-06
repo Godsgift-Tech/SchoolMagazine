@@ -17,6 +17,6 @@ namespace SchoolMagazine.Domain.Entities
         public bool IsActive { get; set; } = true;
 
         // Navigation Property
-        public ICollection<School> Schools { get; set; }
+      //  public ICollection<School> Schools { get; set; }
     }
 }

@@ -60,11 +60,11 @@ namespace SchoolMagazine.Infrastructure.Data
             });
             // Customize Identity tables if necessary
             // Example: A User can be associated with multiple schools
-            builder.Entity<User>()
-                .HasMany(user => user.Schools) // Define the navigation property
-                .WithOne(school => school.User) // Define the inverse navigation property
-                .HasForeignKey(school => school.UserId) // Specify the foreign key
-                .OnDelete(DeleteBehavior.Cascade); // Define the delete behavior
+         //->   builder.Entity<User>()
+            //    .HasMany(user => user.Schools) // Define the navigation property
+               // .WithOne(school => school.User) // Define the inverse navigation property
+                //.HasForeignKey(school => school.UserId) // Specify the foreign key
+                //.OnDelete(DeleteBehavior.Cascade); // Define the delete behavior
 
             builder.Entity<School>()
     .HasMany(sch => sch.Adverts) // A School can have many Advertisements
