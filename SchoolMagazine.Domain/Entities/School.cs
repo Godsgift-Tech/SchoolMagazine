@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace SchoolMagazine.Domain.Entities
@@ -11,12 +12,12 @@ namespace SchoolMagazine.Domain.Entities
     public class School
     {
         [Key]
-        public Guid Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString(); 
 
         [Required]
-        public string AdminName { get; set; }
-
-        public Guid UserId { get; set; } // Foreign key to User (admin)
+        public string SchoolName { get; set; }
+        
+        public string UserId { get; set; } = Guid.NewGuid().ToString();
 
         // Navigation Properties
         
@@ -26,6 +27,9 @@ namespace SchoolMagazine.Domain.Entities
 
         [Required]
         public string EmailAddress { get; set; } // email address [Required]
+
+        [Required]
+        public string PhoneNumber { get; set; } // phone number
         [Required]
         
         public string WebsiteUrl { get; set; }
@@ -33,7 +37,11 @@ namespace SchoolMagazine.Domain.Entities
         public decimal FeesRange { get; set; }
         [Required]
         public double Rating { get; set; }
-        public ICollection<SchoolEvent> Events { get; set; }
-        public ICollection<SchoolAdvert> Adverts { get; set; }
+
+        [JsonIgnore]
+         public ICollection<SchoolEvent>? Events { get; set; }
+       [JsonIgnore]
+
+       public ICollection<SchoolAdvert>? Adverts { get; set; }
     }
 }

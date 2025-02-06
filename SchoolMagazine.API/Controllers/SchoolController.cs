@@ -15,7 +15,7 @@ namespace SchoolMagazine.API.Controllers
         {
             _ser = ser;
         }
-        [HttpPost("Add a new School")]
+        [HttpPost("Add-School")]
         public async Task <IActionResult> AddSchoolAsync(SchoolDto school)
         {
             var addSchool = await _ser.AddSchoolAsync(school);  

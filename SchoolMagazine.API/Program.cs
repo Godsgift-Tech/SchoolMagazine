@@ -46,15 +46,15 @@ var app = builder.Build();
 
 // Seed roles
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var roleManager = services.GetRequiredService<RoleManager<Role>>();
-    var userManager = services.GetRequiredService<UserManager<User>>();
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
+//    var roleManager = services.GetRequiredService<RoleManager<Role>>();
+//    var userManager = services.GetRequiredService<UserManager<User>>();
 
-    // Call the SeededRole to seed roles and users
-  //  await SeededRole.SeedRolesAndUsers(roleManager, userManager);
-}
+//    // Call the SeededRole to seed roles and users
+//   await SeededRole.SeedRolesAndUsers(roleManager, userManager);
+//}
 
 
 
