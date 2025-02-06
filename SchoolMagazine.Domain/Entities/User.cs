@@ -11,12 +11,11 @@ namespace SchoolMagazine.Domain.Entities
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Role { get; set; } // School, Visitor, Admin
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-        public bool IsActive { get; set; } = true;
+       
+       // public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+       // public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+       // public bool IsActive { get; set; } = true;
 
-        // Navigation Property
-        public ICollection<School> Schools { get; set; }
+       
     }
 }

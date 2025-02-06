@@ -5,8 +5,10 @@ namespace SchoolMagazine.Domain.Interface
     public interface IAdvertRepository
     {
         Task<IEnumerable<SchoolAdvert>> GetAllAdvertsAsync();
-        Task<SchoolAdvert> GetAdvertBySchool(School school);
+        Task<School> GetAdvertBySchool( Guid id, SchoolAdvert schooladvert);
         Task AddSchoolAdvertAsync(SchoolAdvert schooladvert);
+        Task UpdateSchoolAdvertAsync(Guid id, SchoolAdvert schooladvert);
+        Task DeleteSchoolAdvertAsync(Guid id, SchoolAdvert schooladvert);
 
 
     }

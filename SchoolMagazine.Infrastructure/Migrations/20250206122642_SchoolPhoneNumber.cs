@@ -5,18 +5,13 @@
 namespace SchoolMagazine.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdatedDatabeMapped : Migration
+    public partial class SchoolPhoneNumber : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "Name",
-                table: "Schools",
-                newName: "EmailAddress");
-
             migrationBuilder.AddColumn<string>(
-                name: "AdminName",
+                name: "PhoneNumber",
                 table: "Schools",
                 type: "nvarchar(max)",
                 nullable: false,
@@ -27,13 +22,8 @@ namespace SchoolMagazine.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "AdminName",
+                name: "PhoneNumber",
                 table: "Schools");
-
-            migrationBuilder.RenameColumn(
-                name: "EmailAddress",
-                table: "Schools",
-                newName: "Name");
         }
     }
 }

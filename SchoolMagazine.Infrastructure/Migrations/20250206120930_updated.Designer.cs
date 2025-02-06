@@ -12,8 +12,8 @@ using SchoolMagazine.Infrastructure.Data;
 namespace SchoolMagazine.Infrastructure.Migrations
 {
     [DbContext(typeof(MagazineContext))]
-    [Migration("20250124172950_SchMagazn")]
-    partial class SchMagazn
+    [Migration("20250206120930_updated")]
+    partial class updated
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -138,10 +138,6 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -162,9 +158,12 @@ namespace SchoolMagazine.Infrastructure.Migrations
 
             modelBuilder.Entity("SchoolMagazine.Domain.Entities.School", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("EmailAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("FeesRange")
                         .HasColumnType("decimal(18,2)");
@@ -173,23 +172,22 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<double>("Rating")
                         .HasColumnType("float");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("SchoolName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WebsiteUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Schools");
                 });
@@ -210,6 +208,9 @@ namespace SchoolMagazine.Infrastructure.Migrations
                     b.Property<Guid>("SchoolId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("SchoolNameId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -219,7 +220,7 @@ namespace SchoolMagazine.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SchoolId");
+                    b.HasIndex("SchoolNameId");
 
                     b.ToTable("Adverts");
                 });
@@ -243,13 +244,16 @@ namespace SchoolMagazine.Infrastructure.Migrations
                     b.Property<Guid>("SchoolId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("SchoolNameId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SchoolId");
+                    b.HasIndex("SchoolNameId");
 
                     b.ToTable("Events");
                 });
@@ -267,11 +271,6 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -283,11 +282,6 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -317,21 +311,11 @@ namespace SchoolMagazine.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
@@ -409,37 +393,22 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SchoolMagazine.Domain.Entities.School", b =>
-                {
-                    b.HasOne("SchoolMagazine.Domain.Entities.User", "User")
-                        .WithMany("Schools")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("SchoolMagazine.Domain.Entities.SchoolAdvert", b =>
                 {
-                    b.HasOne("SchoolMagazine.Domain.Entities.School", "School")
+                    b.HasOne("SchoolMagazine.Domain.Entities.School", "SchoolName")
                         .WithMany("Adverts")
-                        .HasForeignKey("SchoolId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SchoolNameId");
 
-                    b.Navigation("School");
+                    b.Navigation("SchoolName");
                 });
 
             modelBuilder.Entity("SchoolMagazine.Domain.Entities.SchoolEvent", b =>
                 {
-                    b.HasOne("SchoolMagazine.Domain.Entities.School", "School")
+                    b.HasOne("SchoolMagazine.Domain.Entities.School", "SchoolName")
                         .WithMany("Events")
-                        .HasForeignKey("SchoolId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SchoolNameId");
 
-                    b.Navigation("School");
+                    b.Navigation("SchoolName");
                 });
 
             modelBuilder.Entity("SchoolMagazine.Domain.Entities.School", b =>
@@ -447,11 +416,6 @@ namespace SchoolMagazine.Infrastructure.Migrations
                     b.Navigation("Adverts");
 
                     b.Navigation("Events");
-                });
-
-            modelBuilder.Entity("SchoolMagazine.Domain.Entities.User", b =>
-                {
-                    b.Navigation("Schools");
                 });
 #pragma warning restore 612, 618
         }
