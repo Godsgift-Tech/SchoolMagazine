@@ -12,8 +12,8 @@ using SchoolMagazine.Infrastructure.Data;
 namespace SchoolMagazine.Infrastructure.Migrations
 {
     [DbContext(typeof(MagazineContext))]
-    [Migration("20250206120427_DataMagazo")]
-    partial class DataMagazo
+    [Migration("20250303162359_AllEntities")]
+    partial class AllEntities
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -154,28 +154,13 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("52ecd840-7b0b-4b1e-887e-95d8e63cc1cc"),
-                            ConcurrencyStamp = "445bbdb7-9f42-4150-92d0-e6470089549e",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = new Guid("f4a9b4d4-6138-45e0-ba58-b1121ce64825"),
-                            ConcurrencyStamp = "f45722cc-6da6-4aae-ad1e-533e041e915a",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        });
                 });
 
             modelBuilder.Entity("SchoolMagazine.Domain.Entities.School", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("EmailAddress")
                         .IsRequired()
@@ -188,6 +173,10 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double>("Rating")
                         .HasColumnType("float");
 
@@ -195,9 +184,8 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("WebsiteUrl")
                         .IsRequired()
@@ -224,9 +212,6 @@ namespace SchoolMagazine.Infrastructure.Migrations
                     b.Property<Guid>("SchoolId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("SchoolNameId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -236,7 +221,7 @@ namespace SchoolMagazine.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SchoolNameId");
+                    b.HasIndex("SchoolId");
 
                     b.ToTable("Adverts");
                 });
@@ -260,21 +245,18 @@ namespace SchoolMagazine.Infrastructure.Migrations
                     b.Property<Guid>("SchoolId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("SchoolNameId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SchoolNameId");
+                    b.HasIndex("SchoolId");
 
                     b.ToTable("Events");
                 });
 
-            modelBuilder.Entity("SchoolMagazine.Domain.Entities.User", b =>
+            modelBuilder.Entity("SchoolMagazine.Infrastructure.Auth.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -296,13 +278,11 @@ namespace SchoolMagazine.Infrastructure.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -339,10 +319,6 @@ namespace SchoolMagazine.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasFilter("[Email] IS NOT NULL");
-
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -351,31 +327,7 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.HasIndex("UserName")
-                        .IsUnique()
-                        .HasFilter("[UserName] IS NOT NULL");
-
-                    b.ToTable("Users", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("632100bf-80bf-4603-9997-d6a013964c4a"),
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "c7b9d162-449c-4b3e-a04b-550978fc2a2f",
-                            Email = "godsgiftoghenechohwo@gmail.com",
-                            EmailConfirmed = true,
-                            FirstName = "Admin",
-                            LastName = "Luxe",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "GODSGIFTOGHENECHOHWO@GMAIL.COM",
-                            NormalizedUserName = "GODSGIFTOGHENECHOHWO@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEDT4OtHIH0QS8N36nuqTodeSm1FtJagi24/a7e6swexklwMID2GgJWZfYkX0q0ejXg==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "542a74bc-f054-4846-97a7-61c2f0e9f22c",
-                            TwoFactorEnabled = false,
-                            UserName = "godsgiftoghenechohwo@gmail.com"
-                        });
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -389,7 +341,7 @@ namespace SchoolMagazine.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("SchoolMagazine.Domain.Entities.User", null)
+                    b.HasOne("SchoolMagazine.Infrastructure.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -398,7 +350,7 @@ namespace SchoolMagazine.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("SchoolMagazine.Domain.Entities.User", null)
+                    b.HasOne("SchoolMagazine.Infrastructure.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -413,7 +365,7 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SchoolMagazine.Domain.Entities.User", null)
+                    b.HasOne("SchoolMagazine.Infrastructure.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -422,7 +374,7 @@ namespace SchoolMagazine.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("SchoolMagazine.Domain.Entities.User", null)
+                    b.HasOne("SchoolMagazine.Infrastructure.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -433,7 +385,9 @@ namespace SchoolMagazine.Infrastructure.Migrations
                 {
                     b.HasOne("SchoolMagazine.Domain.Entities.School", "SchoolName")
                         .WithMany("Adverts")
-                        .HasForeignKey("SchoolNameId");
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("SchoolName");
                 });
@@ -442,7 +396,9 @@ namespace SchoolMagazine.Infrastructure.Migrations
                 {
                     b.HasOne("SchoolMagazine.Domain.Entities.School", "SchoolName")
                         .WithMany("Events")
-                        .HasForeignKey("SchoolNameId");
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("SchoolName");
                 });

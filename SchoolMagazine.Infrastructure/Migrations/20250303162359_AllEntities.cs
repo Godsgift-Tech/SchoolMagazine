@@ -3,12 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace SchoolMagazine.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class DataMagazo : Migration
+    public partial class AllEntities : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,30 +26,12 @@ namespace SchoolMagazine.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Schools",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    SchoolName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EmailAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    WebsiteUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FeesRange = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Rating = table.Column<double>(type: "float", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Schools", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Users",
+                name: "AspNetUsers",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -69,7 +49,26 @@ namespace SchoolMagazine.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Schools",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SchoolName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EmailAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    WebsiteUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FeesRange = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Rating = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Schools", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -94,50 +93,6 @@ namespace SchoolMagazine.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Adverts",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SchoolId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SchoolNameId = table.Column<string>(type: "nvarchar(450)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Adverts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Adverts_Schools_SchoolNameId",
-                        column: x => x.SchoolNameId,
-                        principalTable: "Schools",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Events",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SchoolId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SchoolNameId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    EventDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    MediaUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Events", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Events_Schools_SchoolNameId",
-                        column: x => x.SchoolNameId,
-                        principalTable: "Schools",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
@@ -151,9 +106,9 @@ namespace SchoolMagazine.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUserClaims_Users_UserId",
+                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -171,9 +126,9 @@ namespace SchoolMagazine.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
                     table.ForeignKey(
-                        name: "FK_AspNetUserLogins_Users_UserId",
+                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -195,9 +150,9 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AspNetUserRoles_Users_UserId",
+                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -215,31 +170,61 @@ namespace SchoolMagazine.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
                     table.ForeignKey(
-                        name: "FK_AspNetUserTokens_Users_UserId",
+                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[,]
+            migrationBuilder.CreateTable(
+                name: "Adverts",
+                columns: table => new
                 {
-                    { new Guid("52ecd840-7b0b-4b1e-887e-95d8e63cc1cc"), "445bbdb7-9f42-4150-92d0-e6470089549e", "Admin", "ADMIN" },
-                    { new Guid("f4a9b4d4-6138-45e0-ba58-b1121ce64825"), "f45722cc-6da6-4aae-ad1e-533e041e915a", "User", "USER" }
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SchoolId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Adverts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Adverts_Schools_SchoolId",
+                        column: x => x.SchoolId,
+                        principalTable: "Schools",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "Users",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { new Guid("632100bf-80bf-4603-9997-d6a013964c4a"), 0, "c7b9d162-449c-4b3e-a04b-550978fc2a2f", "godsgiftoghenechohwo@gmail.com", true, "Admin", "Luxe", false, null, "GODSGIFTOGHENECHOHWO@GMAIL.COM", "GODSGIFTOGHENECHOHWO@GMAIL.COM", "AQAAAAIAAYagAAAAEDT4OtHIH0QS8N36nuqTodeSm1FtJagi24/a7e6swexklwMID2GgJWZfYkX0q0ejXg==", null, false, "542a74bc-f054-4846-97a7-61c2f0e9f22c", false, "godsgiftoghenechohwo@gmail.com" });
+            migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SchoolId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EventDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MediaUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Events_Schools_SchoolId",
+                        column: x => x.SchoolId,
+                        principalTable: "Schools",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Adverts_SchoolNameId",
+                name: "IX_Adverts_SchoolId",
                 table: "Adverts",
-                column: "SchoolNameId");
+                column: "SchoolId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -269,35 +254,21 @@ namespace SchoolMagazine.Infrastructure.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Events_SchoolNameId",
-                table: "Events",
-                column: "SchoolNameId");
-
-            migrationBuilder.CreateIndex(
                 name: "EmailIndex",
-                table: "Users",
+                table: "AspNetUsers",
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_Email",
-                table: "Users",
-                column: "Email",
-                unique: true,
-                filter: "[Email] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_UserName",
-                table: "Users",
-                column: "UserName",
-                unique: true,
-                filter: "[UserName] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
-                table: "Users",
+                table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_SchoolId",
+                table: "Events",
+                column: "SchoolId");
         }
 
         /// <inheritdoc />
@@ -328,7 +299,7 @@ namespace SchoolMagazine.Infrastructure.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Schools");

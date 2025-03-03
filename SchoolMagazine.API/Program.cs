@@ -6,6 +6,7 @@ using SchoolMagazine.Application.AppUsers;
 using SchoolMagazine.Application.Mappings;
 using SchoolMagazine.Domain.Entities;
 using SchoolMagazine.Domain.Interface;
+using SchoolMagazine.Infrastructure.Auth;
 using SchoolMagazine.Infrastructure.Data;
 using SchoolMagazine.Infrastructure.Data.Service;
 

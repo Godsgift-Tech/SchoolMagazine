@@ -155,8 +155,9 @@ namespace SchoolMagazine.Infrastructure.Migrations
 
             modelBuilder.Entity("SchoolMagazine.Domain.Entities.School", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("EmailAddress")
                         .IsRequired()
@@ -180,9 +181,8 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("WebsiteUrl")
                         .IsRequired()
@@ -209,9 +209,6 @@ namespace SchoolMagazine.Infrastructure.Migrations
                     b.Property<Guid>("SchoolId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("SchoolNameId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -221,7 +218,7 @@ namespace SchoolMagazine.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SchoolNameId");
+                    b.HasIndex("SchoolId");
 
                     b.ToTable("Adverts");
                 });
@@ -245,21 +242,18 @@ namespace SchoolMagazine.Infrastructure.Migrations
                     b.Property<Guid>("SchoolId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("SchoolNameId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SchoolNameId");
+                    b.HasIndex("SchoolId");
 
                     b.ToTable("Events");
                 });
 
-            modelBuilder.Entity("SchoolMagazine.Domain.Entities.User", b =>
+            modelBuilder.Entity("SchoolMagazine.Infrastructure.Auth.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -281,13 +275,11 @@ namespace SchoolMagazine.Infrastructure.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -324,10 +316,6 @@ namespace SchoolMagazine.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasFilter("[Email] IS NOT NULL");
-
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -336,11 +324,7 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.HasIndex("UserName")
-                        .IsUnique()
-                        .HasFilter("[UserName] IS NOT NULL");
-
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -354,7 +338,7 @@ namespace SchoolMagazine.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("SchoolMagazine.Domain.Entities.User", null)
+                    b.HasOne("SchoolMagazine.Infrastructure.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -363,7 +347,7 @@ namespace SchoolMagazine.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("SchoolMagazine.Domain.Entities.User", null)
+                    b.HasOne("SchoolMagazine.Infrastructure.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -378,7 +362,7 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SchoolMagazine.Domain.Entities.User", null)
+                    b.HasOne("SchoolMagazine.Infrastructure.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -387,7 +371,7 @@ namespace SchoolMagazine.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("SchoolMagazine.Domain.Entities.User", null)
+                    b.HasOne("SchoolMagazine.Infrastructure.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -398,7 +382,9 @@ namespace SchoolMagazine.Infrastructure.Migrations
                 {
                     b.HasOne("SchoolMagazine.Domain.Entities.School", "SchoolName")
                         .WithMany("Adverts")
-                        .HasForeignKey("SchoolNameId");
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("SchoolName");
                 });
@@ -407,7 +393,9 @@ namespace SchoolMagazine.Infrastructure.Migrations
                 {
                     b.HasOne("SchoolMagazine.Domain.Entities.School", "SchoolName")
                         .WithMany("Events")
-                        .HasForeignKey("SchoolNameId");
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("SchoolName");
                 });
