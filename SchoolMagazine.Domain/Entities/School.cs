@@ -12,12 +12,12 @@ namespace SchoolMagazine.Domain.Entities
     public class School
     {
         [Key]
-        public string Id { get; set; } = Guid.NewGuid().ToString(); 
+        public Guid Id { get; set; } 
 
         [Required]
         public string SchoolName { get; set; }
         
-        public string UserId { get; set; } = Guid.NewGuid().ToString();
+        public Guid UserId { get; set; } 
 
         // Navigation Properties
         
