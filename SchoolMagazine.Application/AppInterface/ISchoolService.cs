@@ -21,7 +21,7 @@ namespace SchoolMagazine.Application.AppInterface
         //  Task<ServiceResponse<SchoolDto>> RateSchoolByIdAsync(Guid schoolId, double rating);
         Task<ServiceResponse<SchoolDto>> AddSchoolAsync(SchoolDto schoolDto);
         Task<ServiceResponse<SchoolDto>> UpdateSchoolByIdAsync(Guid id, SchoolDto schoolDto);
-        Task<ServiceResponse<bool>> DeleteSchoolByIdAsync(Guid id, SchoolDto schoolDto);
+        Task<ServiceResponse<bool>> DeleteSchoolByIdAsync(Guid id);
 
         // Task <ServiceResponse<IEnumerable<SchoolDto>>>SchoolQueryAsync(SchoolSearchQuery schoolSearchQuery);
 

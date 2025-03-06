@@ -72,18 +72,60 @@ namespace SchoolMagazine.Application.AppService
 
         public async Task<ServiceResponse<SchoolDto>> AddSchoolAsync(SchoolDto schoolDto)
         {
+            try
+            {
+                var school = _mapper.Map<School>(schoolDto);
 
-            var school = _mapper.Map<School>(schoolDto);
+                // Attempt to save the entity
+                await _sr.AddSchoolAsync(school);
 
+                // Map back to DTO
+                var createdSchool = _mapper.Map<SchoolDto>(school);
 
-            await _sr.AddSchoolAsync(school);
+                return new ServiceResponse<SchoolDto>(createdSchool, success: true, message: "School was created successfully!");
+            }
+            //catch (DbUpdateException dbEx)
+            //{
+            //    // Log the entire error stack for debugging
+            //    Console.WriteLine($"DbUpdateException: {dbEx}");
 
+            //    if (dbEx.InnerException != null)
+            //    {
+            //        Console.WriteLine($"Inner Exception: {dbEx.InnerException}");
 
-            // Map the saved entity back to ProductDto
-            var createdSchool = _mapper.Map<SchoolDto>(school);
+            //        // Try casting the inner exception to SqlException
+            //        var sqlEx = dbEx.InnerException as SqlException;
+            //        if (sqlEx != null)
+            //        {
+            //            Console.WriteLine($"SQL Error Code: {sqlEx.Number}");
 
-            return new ServiceResponse<SchoolDto>(createdSchool, success: true, message: "School was created successfully!.");
+            //            switch (sqlEx.Number)
+            //            {
+            //                case 2627: // Primary key violation
+            //                    return new ServiceResponse<SchoolDto>(null, success: false, message: "A school with this ID already exists.");
+
+            //                case 2601: // Unique constraint violation
+            //                    return new ServiceResponse<SchoolDto>(null, success: false, message: "A school with this name already exists.");
+
+            //                default:
+            //                    return new ServiceResponse<SchoolDto>(null, success: false, message: $"Database error (Code {sqlEx.Number}): {sqlEx.Message}");
+            //            }
+            //        }
+            //    }
+
+            //    return new ServiceResponse<SchoolDto>(null, success: false, message: $"Database error: {dbEx.Message}");
+
+            //}
+            catch (Exception ex)
+            {
+                // Log full details of the error
+                Console.WriteLine($"Exception: {ex}");
+                return new ServiceResponse<SchoolDto>(null, success: false, message: "A school with this ID already exists or This school name already exist ");
+
+            }
         }
+
+
 
 
 
@@ -112,7 +154,7 @@ namespace SchoolMagazine.Application.AppService
 
             return new ServiceResponse<SchoolDto>(updatedSchool, success: true, message: "School was updated successfully!.");
         }
-        public async Task<ServiceResponse<bool>> DeleteSchoolByIdAsync(Guid id, SchoolDto schoolDto)
+        public async Task<ServiceResponse<bool>> DeleteSchoolByIdAsync(Guid id)
         {
             var searchedSchool = await _sr.GetSchoolByIdAsync(id);
 
@@ -122,8 +164,14 @@ namespace SchoolMagazine.Application.AppService
 
             }
 
+            // var school = _mapper.Map<School>(searchedSchool);
+            //Task<ServiceResponse<bool>> DeleteProductByIdAsync(string id);
+
+
+
             await _sr.DeleteSchoolByIdAsync(searchedSchool);
 
+            // var delSchool = _mapper.Map<SchoolDto>(searchedSchool);
 
             return new ServiceResponse<bool>(true, success: true, message: "School was removed successfully.");
         }
@@ -135,3 +183,5 @@ namespace SchoolMagazine.Application.AppService
     }
 
 }
+
+
