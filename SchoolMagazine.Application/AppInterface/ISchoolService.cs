@@ -1,13 +1,6 @@
 ﻿using SchoolMagazine.Application.AppService.Paged;
-using SchoolMagazine.Application.AppService.Service_Response_Model;
 using SchoolMagazine.Application.DTOs;
-using SchoolMagazine.Application.Queries;
-using SchoolMagazine.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SchoolMagazine.Domain.Service_Response;
 
 namespace SchoolMagazine.Application.AppInterface
 {
@@ -18,8 +11,14 @@ namespace SchoolMagazine.Application.AppInterface
 
 
         Task<ServiceResponse<SchoolDto>> GetSchoolByIdAsync(Guid id);
+        Task<ServiceResponse<SchoolDto>> GetSchoolByNameAsync(string schoolName);
+
+        Task<ServiceResponse<List<SchoolDto>>> GetSchoolsByLocationAsync(string location);
+        Task<ServiceResponse<List<SchoolDto>>> GetSchoolsByFeesRangeAsync(decimal feesRange);
+        Task<ServiceResponse<List<SchoolDto>>> GetSchoolsByRatingAsync(double rating);
         //  Task<ServiceResponse<SchoolDto>> RateSchoolByIdAsync(Guid schoolId, double rating);
         Task<ServiceResponse<SchoolDto>> AddSchoolAsync(SchoolDto schoolDto);
+       // Task<ServiceResponse<SchoolDto>> UpdateSchoolByIdAsync(Guid id, SchoolDto schoolDto);
         Task<ServiceResponse<SchoolDto>> UpdateSchoolByIdAsync(Guid id, SchoolDto schoolDto);
         Task<ServiceResponse<bool>> DeleteSchoolByIdAsync(Guid id);
 
