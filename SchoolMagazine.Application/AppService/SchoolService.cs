@@ -115,71 +115,30 @@ namespace SchoolMagazine.Application.AppService
         }
 
 
-        //public async Task<ServiceResponse<SchoolDto>> AddSchoolAsync(SchoolDto schoolDto)
-        //{
-
-        //        var school = _mapper.Map<School>(schoolDto);
-
-        //        //  Attempt to save the entity
-        //        await _sr.AddSchoolAsync(school);
-
-        //        //   Map back to DTO
-        //        var createdSchool = _mapper.Map<SchoolDto>(school);
-
-        //        return new ServiceResponse<SchoolDto>(createdSchool, success: true, message: "School was created successfully!");
-
-        //}
 
 
         public async Task<ServiceResponse<SchoolDto>> AddSchoolAsync(SchoolDto schoolDto)
-{
-    // Check for duplicate before mapping
-    var existingSchool = await _sr.GetSchoolByNameAsync(schoolDto.SchoolName);
-    if (existingSchool != null)
-        return new ServiceResponse<SchoolDto>(null!, false, "School name already exists.");
+        {
+            // Check for duplicate before mapping
+            var existingSchool = await _sr.GetSchoolByNameAsync(schoolDto.SchoolName);
+            if (existingSchool != null)
+                return new ServiceResponse<SchoolDto>(null!, false, "School name already exists.");
 
-    var school = _mapper.Map<School>(schoolDto);
+            var school = _mapper.Map<School>(schoolDto);
 
-    // Attempt to save the entity
-    var response = await _sr.AddSchoolAsync(school);
-    if (!response.success)
-        return new ServiceResponse<SchoolDto>(null!, false, response.message);
+            // Attempt to save the entity
+            var response = await _sr.AddSchoolAsync(school);
+            if (!response.success)
+                return new ServiceResponse<SchoolDto>(null!, false, response.message);
 
-    // Map back to DTO
-    var createdSchool = _mapper.Map<SchoolDto>(response.Data);
+            // Map back to DTO
+            var createdSchool = _mapper.Map<SchoolDto>(response.Data);
 
-    return new ServiceResponse<SchoolDto>(createdSchool, true, "School was created successfully!");
-}
-
-
+            return new ServiceResponse<SchoolDto>(createdSchool, true, "School was created successfully!");
+        }
 
 
 
-        //public async Task<ServiceResponse<SchoolDto>> UpdateSchoolByIdAsync(Guid id, SchoolDto schoolDto)
-        //{
-        //    //  throw new NotImplementedException();
-        //    var searchedSchool = await _sr.GetSchoolByIdAsync(id);
-
-        //    if (searchedSchool == null)
-        //    {
-        //        return new ServiceResponse<SchoolDto>(null!, success: false, message: "School is not included in the list.");
-
-        //    }
-
-
-        //    // Map SchooltDto to School entity
-        //    var school = _mapper.Map<School>(schoolDto);
-
-
-        //    await _sr.UpdateSchoolByIdAsync(school);
-
-
-        //    // Map the saved entity back to ProductDto
-        //    var updatedSchool = _mapper.Map<SchoolDto>(school);
-
-
-        //    return new ServiceResponse<SchoolDto>(updatedSchool, success: true, message: "School was updated successfully!.");
-        //}
 
 
         public async Task<ServiceResponse<SchoolDto>> UpdateSchoolByIdAsync(Guid id, SchoolDto schoolDto)

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace SchoolMagazine.Application.DTOs
@@ -17,7 +18,10 @@ namespace SchoolMagazine.Application.DTOs
         [Required]
         public string Description { get; set; }
         public Guid SchoolId { get; set; }
-        public School SchoolName { get; set; }
+        // public virtual School School { get; set; }
+      //  [JsonIgnore]
+
+        public virtual School School { get; set; }
 
         public DateTime EventDate { get; set; }
 
