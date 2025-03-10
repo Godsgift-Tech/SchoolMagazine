@@ -1,16 +1,10 @@
 ﻿using AutoMapper;
 using SchoolMagazine.Application.AppInterface;
 using SchoolMagazine.Application.AppService.Paged;
-using SchoolMagazine.Application.AppService.Service_Response_Model;
 using SchoolMagazine.Application.DTOs;
-using SchoolMagazine.Application.Queries;
 using SchoolMagazine.Domain.Entities;
 using SchoolMagazine.Domain.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SchoolMagazine.Domain.Service_Response;
 
 namespace SchoolMagazine.Application.AppService
 {
@@ -70,59 +64,77 @@ namespace SchoolMagazine.Application.AppService
         }
 
 
+
+        public async Task<ServiceResponse<SchoolDto>> GetSchoolByNameAsync(string schoolName)
+        {
+            // Retrieve the school from the repository
+            var school = await _sr.GetSchoolByNameAsync(schoolName);
+
+            // Check if the school exists
+            if (school == null)
+                return new ServiceResponse<SchoolDto>(null!, false, "School not found.");
+
+            // Map the entity to DTO
+            var schoolDto = _mapper.Map<SchoolDto>(school);
+
+            return new ServiceResponse<SchoolDto>(schoolDto, true, "School retrieved successfully.");
+        }
+
+        public async Task<ServiceResponse<List<SchoolDto>>> GetSchoolsByLocationAsync(string location)
+        {
+            var schools = await _sr.GetSchoolsByLocationAsync(location);
+
+            if (schools == null || !schools.Any())
+                return new ServiceResponse<List<SchoolDto>>(null!, false, "No schools found in this location.");
+
+            var schoolDtos = _mapper.Map<List<SchoolDto>>(schools);
+            return new ServiceResponse<List<SchoolDto>>(schoolDtos, true, "Schools retrieved successfully.");
+        }
+
+        public async Task<ServiceResponse<List<SchoolDto>>> GetSchoolsByFeesRangeAsync(decimal feesRange)
+        {
+            var schools = await _sr.GetSchoolsByFeesRangeAsync(feesRange);
+
+            if (schools == null || !schools.Any())
+                return new ServiceResponse<List<SchoolDto>>(null!, false, "No schools found within this fees range.");
+
+            var schoolDtos = _mapper.Map<List<SchoolDto>>(schools);
+            return new ServiceResponse<List<SchoolDto>>(schoolDtos, true, "Schools retrieved successfully.");
+        }
+
+
+        public async Task<ServiceResponse<List<SchoolDto>>> GetSchoolsByRatingAsync(double rating)
+        {
+            var schools = await _sr.GetSchoolsByRatingAsync(rating);
+
+            if (schools == null || !schools.Any())
+                return new ServiceResponse<List<SchoolDto>>(null!, false, "No schools found with this rating.");
+
+            var schoolDtos = _mapper.Map<List<SchoolDto>>(schools);
+            return new ServiceResponse<List<SchoolDto>>(schoolDtos, true, "Schools retrieved successfully.");
+        }
+
+
+
+
         public async Task<ServiceResponse<SchoolDto>> AddSchoolAsync(SchoolDto schoolDto)
         {
-            try
-            {
-                var school = _mapper.Map<School>(schoolDto);
+            // Check for duplicate before mapping
+            var existingSchool = await _sr.GetSchoolByNameAsync(schoolDto.SchoolName);
+            if (existingSchool != null)
+                return new ServiceResponse<SchoolDto>(null!, false, "School name already exists.");
 
-                // Attempt to save the entity
-                await _sr.AddSchoolAsync(school);
+            var school = _mapper.Map<School>(schoolDto);
 
-                // Map back to DTO
-                var createdSchool = _mapper.Map<SchoolDto>(school);
+            // Attempt to save the entity
+            var response = await _sr.AddSchoolAsync(school);
+            if (!response.success)
+                return new ServiceResponse<SchoolDto>(null!, false, response.message);
 
-                return new ServiceResponse<SchoolDto>(createdSchool, success: true, message: "School was created successfully!");
-            }
-            //catch (DbUpdateException dbEx)
-            //{
-            //    // Log the entire error stack for debugging
-            //    Console.WriteLine($"DbUpdateException: {dbEx}");
+            // Map back to DTO
+            var createdSchool = _mapper.Map<SchoolDto>(response.Data);
 
-            //    if (dbEx.InnerException != null)
-            //    {
-            //        Console.WriteLine($"Inner Exception: {dbEx.InnerException}");
-
-            //        // Try casting the inner exception to SqlException
-            //        var sqlEx = dbEx.InnerException as SqlException;
-            //        if (sqlEx != null)
-            //        {
-            //            Console.WriteLine($"SQL Error Code: {sqlEx.Number}");
-
-            //            switch (sqlEx.Number)
-            //            {
-            //                case 2627: // Primary key violation
-            //                    return new ServiceResponse<SchoolDto>(null, success: false, message: "A school with this ID already exists.");
-
-            //                case 2601: // Unique constraint violation
-            //                    return new ServiceResponse<SchoolDto>(null, success: false, message: "A school with this name already exists.");
-
-            //                default:
-            //                    return new ServiceResponse<SchoolDto>(null, success: false, message: $"Database error (Code {sqlEx.Number}): {sqlEx.Message}");
-            //            }
-            //        }
-            //    }
-
-            //    return new ServiceResponse<SchoolDto>(null, success: false, message: $"Database error: {dbEx.Message}");
-
-            //}
-            catch (Exception ex)
-            {
-                // Log full details of the error
-                Console.WriteLine($"Exception: {ex}");
-                return new ServiceResponse<SchoolDto>(null, success: false, message: "A school with this ID already exists or This school name already exist ");
-
-            }
+            return new ServiceResponse<SchoolDto>(createdSchool, true, "School was created successfully!");
         }
 
 
@@ -131,29 +143,31 @@ namespace SchoolMagazine.Application.AppService
 
         public async Task<ServiceResponse<SchoolDto>> UpdateSchoolByIdAsync(Guid id, SchoolDto schoolDto)
         {
-            //  throw new NotImplementedException();
-            var searchedSchool = await _sr.GetSchoolByIdAsync(id);
+            var existingSchool = await _sr.GetSchoolByIdAsync(id);
+            if (existingSchool == null)
+                return new ServiceResponse<SchoolDto>(null!, false, "School not found.");
 
-            if (searchedSchool == null)
+            // Update school properties
+            existingSchool.SchoolName = schoolDto.SchoolName;
+            existingSchool.Location = schoolDto.Location;
+            existingSchool.EmailAddress = schoolDto.EmailAddress;
+            existingSchool.PhoneNumber = schoolDto.PhoneNumber;
+            existingSchool.WebsiteUrl = schoolDto.WebsiteUrl;
+            existingSchool.FeesRange = schoolDto.FeesRange;
+            existingSchool.Rating = schoolDto.Rating;
+
+            // Get the string result from repository
+            var updateResult = await _sr.UpdateSchoolAsync(existingSchool);
+
+            if (updateResult == "School updated successfully.")
             {
-                return new ServiceResponse<SchoolDto>(null!, success: false, message: "School is not included in the list.");
-
+                var updatedSchoolDto = _mapper.Map<SchoolDto>(existingSchool);
+                return new ServiceResponse<SchoolDto>(updatedSchoolDto, true, updateResult);
             }
 
-
-            // Map SchooltDto to School entity
-            var school = _mapper.Map<School>(schoolDto);
-
-
-            await _sr.UpdateSchoolByIdAsync(school);
-
-
-            // Map the saved entity back to ProductDto
-            var updatedSchool = _mapper.Map<SchoolDto>(school);
-
-
-            return new ServiceResponse<SchoolDto>(updatedSchool, success: true, message: "School was updated successfully!.");
+            return new ServiceResponse<SchoolDto>(null!, false, updateResult);
         }
+
         public async Task<ServiceResponse<bool>> DeleteSchoolByIdAsync(Guid id)
         {
             var searchedSchool = await _sr.GetSchoolByIdAsync(id);

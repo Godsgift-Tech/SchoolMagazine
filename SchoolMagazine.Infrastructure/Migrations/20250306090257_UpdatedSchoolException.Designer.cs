@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolMagazine.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using SchoolMagazine.Infrastructure.Data;
 namespace SchoolMagazine.Infrastructure.Migrations
 {
     [DbContext(typeof(MagazineContext))]
-    partial class MagazineContextModelSnapshot : ModelSnapshot
+    [Migration("20250306090257_UpdatedSchoolException")]
+    partial class UpdatedSchoolException
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -383,24 +386,24 @@ namespace SchoolMagazine.Infrastructure.Migrations
 
             modelBuilder.Entity("SchoolMagazine.Domain.Entities.SchoolAdvert", b =>
                 {
-                    b.HasOne("SchoolMagazine.Domain.Entities.School", "School")
+                    b.HasOne("SchoolMagazine.Domain.Entities.School", "SchoolName")
                         .WithMany("Adverts")
                         .HasForeignKey("SchoolId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("School");
+                    b.Navigation("SchoolName");
                 });
 
             modelBuilder.Entity("SchoolMagazine.Domain.Entities.SchoolEvent", b =>
                 {
-                    b.HasOne("SchoolMagazine.Domain.Entities.School", "School")
+                    b.HasOne("SchoolMagazine.Domain.Entities.School", "SchoolName")
                         .WithMany("Events")
                         .HasForeignKey("SchoolId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("School");
+                    b.Navigation("SchoolName");
                 });
 
             modelBuilder.Entity("SchoolMagazine.Domain.Entities.School", b =>

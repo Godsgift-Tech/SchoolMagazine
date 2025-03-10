@@ -1,17 +1,24 @@
 ﻿using SchoolMagazine.Application.DTOs;
+using SchoolMagazine.Domain.Entities;
+using SchoolMagazine.Domain.Service_Response;
 
 namespace SchoolMagazine.Application.AppInterface
 {
     public interface IEventService
     {
         Task<IEnumerable<SchoolEventDto>> GetAllEventsAsync();
-        Task<SchoolDto> GetEventsBySchool(Guid id, SchoolEventDto schoolEventDto);
-        Task AddSchoolEventsAsync(SchoolEventDto schoolEventDto);
-        Task UpdateSchoolEventAsync(Guid id, SchoolEventDto schoolEventDto);
-        Task DeleteSchoolEventAsync(Guid id, SchoolEventDto schoolEventDto);
+        Task<IEnumerable<SchoolEventDto>> GetEventsBySchoolAsync(string schoolName);
+        Task<EventServiceResponse<SchoolEventDto>> AddSchoolEventsAsync(SchoolEventDto eventDetails);
+        Task<EventServiceResponse<IEnumerable<SchoolEventDto>>> GetEventsBySchool(Guid schoolId);
+
+        Task<EventServiceResponse<SchoolEventDto>> UpdateSchoolEventAsync(Guid id, SchoolEventDto schoolEvent);
+        Task DeleteSchoolEventAsync(Guid eventId);
+
+
 
     }
 
 
 
-}
+       
+    }

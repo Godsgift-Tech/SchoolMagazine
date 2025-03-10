@@ -39,6 +39,7 @@ namespace SchoolMagazine.Domain.Entities
         public double Rating { get; set; }
 
         [JsonIgnore]
+
          public ICollection<SchoolEvent>? Events { get; set; }
        [JsonIgnore]
 

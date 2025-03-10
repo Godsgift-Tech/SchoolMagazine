@@ -17,6 +17,8 @@ namespace SchoolMagazine.Application.DTOs
         public DateTime StartDate { get; set; }
         [Required]
         public DateTime EndDate { get; set; }
+        [Required]
+
         public Guid SchoolId { get; set; }
         public School SchoolName { get; set; }
     }

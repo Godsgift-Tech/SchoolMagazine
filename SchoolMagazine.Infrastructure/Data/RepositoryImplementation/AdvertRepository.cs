@@ -24,7 +24,7 @@ namespace SchoolMagazine.Infrastructure.Data.Service
             //if(schooladvert==null) throw new Exception("No Advert was found for:" + (nameof(schooladvert)));
            // return await _db.Adverts.FindAsync(id);
             //
-            if (schooladvert.SchoolName == null) throw new Exception("There was no advert posted for this school");
+            if (schooladvert.School == null) throw new Exception("There was no advert posted for this school");
 
           
 
