@@ -5,6 +5,7 @@ using SchoolMagazine.Domain.Service_Response;
 //using System.Data.Entity;
 
 
+
 namespace SchoolMagazine.Infrastructure.Data.Service
 {
     public class EventRepository : IEventRepository
@@ -22,6 +23,12 @@ namespace SchoolMagazine.Infrastructure.Data.Service
 
         }
 
+        public async Task<SchoolEvent?> GetEventByTitleAndDescription(string title, string description, Guid schoolId)
+        {
+            return await _db.Events
+                .FirstOrDefaultAsync(e => e.Title == title && e.Description == description && e.SchoolId == schoolId);
+        }
+
         public async Task<SchoolEvent?> GetEventByIdAsync(Guid id)
         {
             if (id == Guid.Empty)
@@ -29,39 +36,38 @@ namespace SchoolMagazine.Infrastructure.Data.Service
                 throw new ArgumentException("Invalid event ID.");
             }
             return await _db.Events
-                .Include(e => e.School) // Ensure related data is loaded
+                .Include(e => e.School) // Ensure related for navigation
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
-        //public async Task<SchoolEvent?> GetEventByIdAsync(Guid id)
-        //{
-        //    return await _context.SchoolEvents.FirstOrDefaultAsync(e => e.Id == id);
-        //}
+
+        public async Task<IEnumerable<SchoolEvent>> GetEventsBySchoolAsync(string schoolName)
+        {
+            return await _db.Events
+                .Include(e => e.School)  // Include School entity
+                .Where(e => e.School.SchoolName == schoolName) // Filter by SchoolName
+                .ToListAsync();
+        }
+       
 
 
-        public async Task<IEnumerable<SchoolEvent>> GetEventsBySchool(string schoolName)
+
+        public async Task<IEnumerable<SchoolEvent>> GetEventsByName(string eventlName)
         {
 
 
-            // var events = await _db.Events
-            //.Where(e => e.School.SchoolName == schoolName)
-            //.Select(e => new SchoolEvent
-            //{
-            //    Id = e.Id,
-            //    Title = e.Title,
-            //    Description = e.Description,
-            //    EventDate = e.EventDate,
-            //    MediaUrl = e.MediaUrl,
-            //    SchoolId = e.SchoolId,
-            //    School = e.School  // Extra data from School
-            //})
-            // .ToListAsync();
-            // return events;
             return await _db.Events
            
-        .Include(e => e.School)  // Ensure School is a navigation property
-         .Where(e => e.School.SchoolName==schoolName)  // Ensure SchoolName exists
+        .Include(e => e.Title)  // Ensure School is a navigation property
+         .Where(e => e.Title== eventlName)  // Ensure SchoolName exists
          .AsNoTracking()  // Optional for performance
          .ToListAsync();
+        }
+        public async Task<IEnumerable<SchoolEvent>> GetEventsBySchoolId(Guid schoolId)
+        {
+            return await _db.Events
+               .Include(e => e.School) // ✅ Load related school data
+                .Where(e => e.SchoolId == schoolId) // 🔍 Filter events by school ID
+                .ToListAsync();
         }
 
 
@@ -107,7 +113,7 @@ namespace SchoolMagazine.Infrastructure.Data.Service
                 existingEvent.Title = eventDetails.Title;
                 existingEvent.Description = eventDetails.Description;
                 existingEvent.EventDate = eventDetails.EventDate;
-                existingEvent.School = eventDetails.School;
+                existingEvent.SchoolId = eventDetails.SchoolId;
                 existingEvent.MediaUrl = eventDetails.MediaUrl;
 
                 _db.Events.Update(existingEvent);

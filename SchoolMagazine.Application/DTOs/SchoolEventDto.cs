@@ -17,11 +17,13 @@ namespace SchoolMagazine.Application.DTOs
         public string Title { get; set; }
         [Required]
         public string Description { get; set; }
+        [Required]
+
         public Guid SchoolId { get; set; }
         // public virtual School School { get; set; }
       //  [JsonIgnore]
 
-        public virtual School School { get; set; }
+      //  public virtual School School { get; set; }
 
         public DateTime EventDate { get; set; }
 

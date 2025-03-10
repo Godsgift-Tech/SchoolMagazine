@@ -16,29 +16,46 @@ namespace SchoolMagazine.API.Controllers
             _eventService = eventService;
         }
 
-        [HttpGet]
+        [HttpGet("GetAllEvents")]
+
         public async Task<IActionResult> GetAllEvents()
         {
             var events = await _eventService.GetAllEventsAsync();
             return Ok(events);
         }
 
-        [HttpGet("school/{schoolName}")]
+        [HttpGet("GetEventsBySchool/{schoolName}")]
         public async Task<IActionResult> GetEventsBySchool(string schoolName)
         {
-            var events = await _eventService.GetEventsBySchool(schoolName);
+            var events = await _eventService.GetEventsBySchoolAsync(schoolName);
             return Ok(events);
         }
+        [HttpGet("by-school/{schoolId}")]
+        public async Task<IActionResult> GetEventsBySchool(Guid schoolId)
+        {
+            var events = await _eventService.GetEventsBySchool(schoolId);
+            return Ok(events);
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> AddEvent([FromBody] SchoolEventDto eventDto)
         {
-            var response = await _eventService.AddSchoolEventsAsync(eventDto);
-            if (!response.Success)
-                return BadRequest(response.Message);
+            if (eventDto == null)
+            {
+                return BadRequest("Event details are required.");
+            }
 
-            return CreatedAtAction(nameof(GetEventsBySchool), new { schoolName = eventDto.School }, response.Data);
+            var response = await _eventService.AddSchoolEventsAsync(eventDto);
+
+            if (!response.Success)
+            {
+                return BadRequest(response.Message);
+            }
+
+            return Ok(response);
         }
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateEvent(Guid id, [FromBody] SchoolEventDto eventDto)

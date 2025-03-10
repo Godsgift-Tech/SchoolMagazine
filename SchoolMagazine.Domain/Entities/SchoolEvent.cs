@@ -15,8 +15,11 @@ namespace SchoolMagazine.Domain.Entities
         public string Title { get; set; }
         [Required]
         public string Description { get; set; }
+        [Required]
+
         public Guid SchoolId { get; set; }     // School Id
-        public  virtual School School { get; set; }   // Navigation Property(virtual makes Ef recognize as Navigation)
+        public School School { get; set; }   // Navigation Property(virtual makes Ef recognize as Navigation)
+        [Required]
 
         public DateTime EventDate { get; set; }
 

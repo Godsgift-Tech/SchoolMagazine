@@ -10,13 +10,15 @@ namespace SchoolMagazine.Application.AppService
 {
     public class EventService : IEventService
     {
+        private readonly ISchoolRepository _schoolRepository;
         private readonly IEventRepository _eventRepository;
         private readonly IMapper _mapper;
 
-        public EventService(IEventRepository eventRepository, IMapper mapper)
+        public EventService(IEventRepository eventRepository, IMapper mapper, ISchoolRepository schoolRepository)
         {
             _eventRepository = eventRepository;
             _mapper = mapper;
+            _schoolRepository = schoolRepository;
         }
 
         // Get all events
@@ -27,52 +29,83 @@ namespace SchoolMagazine.Application.AppService
         }
 
         // Get events by school name
-        public async Task<IEnumerable<SchoolEventDto>> GetEventsBySchool(string schoolName)
+        public async Task<IEnumerable<SchoolEventDto>> GetEventsBySchoolAsync(string schoolName)
         {
-            var events = await _eventRepository.GetEventsBySchool(schoolName);
+            var events = await _eventRepository.GetEventsBySchoolAsync(schoolName);
             return _mapper.Map<IEnumerable<SchoolEventDto>>(events);
         }
 
+        public async Task<EventServiceResponse<IEnumerable<SchoolEventDto>>> GetEventsBySchool(Guid schoolId)
+        {
+            var response = new EventServiceResponse<IEnumerable<SchoolEventDto>>();
+            try
+            {
+                var searchedEvents = await _eventRepository.GetEventsBySchoolId(schoolId); // ✅ Get events by SchoolId
+
+                if (searchedEvents == null || !searchedEvents.Any())
+                {
+                    response.Success = false;
+                    response.Message = "No events found for this school.";
+                    return response;
+                }
+
+                response.Data = _mapper.Map<IEnumerable<SchoolEventDto>>(searchedEvents); // ✅ Correct mapping
+                response.Success = true;
+                response.Message = "Events retrieved successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error retrieving events: {ex.Message}";
+            }
+
+            return response;
+        }
+
         // Add a new event
-        public async Task<EventServiceResponse<SchoolEventDto>> AddSchoolEventsAsync(SchoolEventDto eventDetails)
+        public async Task<EventServiceResponse<SchoolEventDto>> AddSchoolEventsAsync(SchoolEventDto eventDto)
         {
             var response = new EventServiceResponse<SchoolEventDto>();
 
             try
             {
-                // Check if the school exists
-                bool schoolExists = await _eventRepository.SchoolExistsAsync(eventDetails.SchoolId);
-                if (!schoolExists)
+                // 🔍 Step 1: Check if the School Exists
+                var schoolExists = await _schoolRepository.GetSchoolByIdAsync(eventDto.SchoolId);
+                if (schoolExists == null)
                 {
                     response.Success = false;
-                    response.Message = "School does not exist.";
+                    response.Message = "School not found.";
                     return response;
                 }
 
-                // Optional: Prevent duplicate event titles for the same school
-                var existingEvent = await _eventRepository.GetEventByTitleAsync(eventDetails.Title, eventDetails.SchoolId);
+                // 🔍 Step 2: Check if Event Already Exists
+                var existingEvent = await _eventRepository.GetEventByTitleAndDescription(eventDto.Title, eventDto.Description, eventDto.SchoolId);
                 if (existingEvent != null)
                 {
                     response.Success = false;
-                    response.Message = "An event with this title already exists for the school.";
+                    response.Message = "An event with the same title and description already exists for this school.";
                     return response;
                 }
 
-                // Convert DTO to entity and save
-                var eventEntity = _mapper.Map<SchoolEvent>(eventDetails);
-                await _eventRepository.AddSchoolEventsAsync(eventEntity);
+                // ✅ Step 3: Convert DTO to Entity
+                var newEvent = _mapper.Map<SchoolEvent>(eventDto);
+                newEvent.Id = Guid.NewGuid(); // Assign a new ID
 
-                response.Data = _mapper.Map<SchoolEventDto>(eventEntity);
-                response.Message = "Event added successfully.";
+                // ✅ Step 4: Save the Event
+                await _eventRepository.AddSchoolEventsAsync(newEvent);
+
+                response.Data = _mapper.Map<SchoolEventDto>(newEvent);
+                response.Message = "Event created successfully.";
             }
             catch (Exception ex)
             {
                 response.Success = false;
-                response.Message = $"Error adding event: {ex.Message}";
+                response.Message = $"Error creating event: {ex.Message}";
             }
 
             return response;
         }
+
 
 
         // Update an existing event

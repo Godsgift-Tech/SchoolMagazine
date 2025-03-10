@@ -7,15 +7,11 @@ namespace SchoolMagazine.Application.AppInterface
     public interface IEventService
     {
         Task<IEnumerable<SchoolEventDto>> GetAllEventsAsync();
-        Task<IEnumerable<SchoolEventDto>> GetEventsBySchool(string schoolName);
-
+        Task<IEnumerable<SchoolEventDto>> GetEventsBySchoolAsync(string schoolName);
         Task<EventServiceResponse<SchoolEventDto>> AddSchoolEventsAsync(SchoolEventDto eventDetails);
+        Task<EventServiceResponse<IEnumerable<SchoolEventDto>>> GetEventsBySchool(Guid schoolId);
 
-        //Task UpdateSchoolEventAsync(SchoolEventDto eventDetails);
-       // Task UpdateSchoolEventAsync(Guid id, SchoolEventDto schoolEvent);
         Task<EventServiceResponse<SchoolEventDto>> UpdateSchoolEventAsync(Guid id, SchoolEventDto schoolEvent);
-
-
         Task DeleteSchoolEventAsync(Guid eventId);
 
 

@@ -12,13 +12,18 @@ namespace SchoolMagazine.Domain.Interface
     {
         Task<IEnumerable<SchoolEvent>> GetAllEventsAsync();
       
-        Task<IEnumerable<SchoolEvent>> GetEventsBySchool(string schoolName);
+        Task<IEnumerable<SchoolEvent>> GetEventsByName(string eventName);
+        Task<IEnumerable<SchoolEvent>> GetEventsBySchoolAsync(string schoolName);
+
+        Task<SchoolEvent?> GetEventByTitleAndDescription(string title, string description, Guid schoolId);
 
         Task<EventServiceResponse<SchoolEvent>> AddSchoolEventsAsync(SchoolEvent eventDetails);
         Task<bool> SchoolExistsAsync(Guid schoolId);
         Task<SchoolEvent?> GetEventByIdAsync(Guid id);
 
         Task<SchoolEvent?> GetEventByTitleAsync(string title, Guid schoolId);
+        Task<IEnumerable<SchoolEvent>> GetEventsBySchoolId(Guid schoolId);
+
 
         Task UpdateSchoolEventAsync(SchoolEvent eventDetails);
         Task DeleteSchoolEventAsync(Guid eventId);

@@ -21,6 +21,8 @@ namespace SchoolMagazine.Domain.Entities
         public DateTime StartDate { get; set; }
         [Required]
         public DateTime EndDate { get; set; }
+        [Required]
+
         public Guid SchoolId { get; set; }
         public virtual School School { get; set; }   // Navigation Property(virtual makes Ef recognize as Navigation)
 
