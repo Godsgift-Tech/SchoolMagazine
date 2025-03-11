@@ -20,10 +20,7 @@ namespace SchoolMagazine.Application.DTOs
         [Required]
 
         public Guid SchoolId { get; set; }
-        // public virtual School School { get; set; }
-      //  [JsonIgnore]
-
-      //  public virtual School School { get; set; }
+       
 
         public DateTime EventDate { get; set; }
 

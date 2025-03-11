@@ -24,7 +24,10 @@ namespace SchoolMagazine.Domain.Entities
         [Required]
 
         public Guid SchoolId { get; set; }
-        public virtual School School { get; set; }   // Navigation Property(virtual makes Ef recognize as Navigation)
+        public  School School { get; set; }   // Navigation Property(virtual makes Ef recognize as Navigation)
 
+        public bool IsPaid { get; set; }=false;
+        public string? PaymentReference { get; set; }  // Ensure this exists and is nullable
+        public DateTime? PaymentDate { get; set; }
     }
 }

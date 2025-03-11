@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolMagazine.Domain.Entities;
 using SchoolMagazine.Domain.Interface;
-using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
-
+using SchoolMagazine.Domain.Service_Response;
+//using System.Data.Entity;
 namespace SchoolMagazine.Infrastructure.Data.Service
 {
     public class AdvertRepository : IAdvertRepository
@@ -13,80 +13,79 @@ namespace SchoolMagazine.Infrastructure.Data.Service
             _db = db;
         }
 
-        public async Task AddSchoolAdvertAsync(SchoolAdvert schooladvert)
-        {
-            _db.Adverts.Add(schooladvert);
-            await _db.SaveChangesAsync();  //saves advert to database
-        }
-
-        public async Task<School> GetAdvertBySchool(Guid id, SchoolAdvert schooladvert)
-        {
-            //if(schooladvert==null) throw new Exception("No Advert was found for:" + (nameof(schooladvert)));
-           // return await _db.Adverts.FindAsync(id);
-            //
-            if (schooladvert.School == null) throw new Exception("There was no advert posted for this school");
-
-          
-
-            return await _db.Schools.FindAsync(schooladvert);
-
-        }
-
-        public async Task UpdateSchoolAdvertAsync(Guid id, SchoolAdvert schooladvert)
-        {
-          
-            
-            var advert = await _db.Adverts.FindAsync(id);
-
-            if (advert == null) throw new Exception("Advert not found");
-
-        
-
-            //advert.EndDate = schooladvert.EndDate;
-            //advert.StartDate = schooladvert.StartDate;
-            //advert.SchoolId = schooladvert.SchoolId;
-            //advert.SchoolName = schooladvert.SchoolName;
-            //advert.Content = schooladvert.Content;  
-            //advert.Title = schooladvert.Title;
-             if (schooladvert == null)
-            {
-                throw new Exception("Advert not found");
-            }
-
-
-            _db.Adverts.Update(advert);
-            await _db.SaveChangesAsync();
-
-
-
-        }
-        public async Task DeleteSchoolAdvertAsync(Guid id, SchoolAdvert schooladvert)
-        {
-
-
-            var advert = await _db.Adverts.FindAsync(id);
-
-            if (advert == null) throw new Exception("Advert not found");
-
-
-            if (schooladvert == null)
-            {
-                throw new Exception("Advert not found");
-            }
-
-
-            _db.Adverts.Remove(advert);
-            await _db.SaveChangesAsync();
-
-
-
-        }
-
         public async Task<IEnumerable<SchoolAdvert>> GetAllAdvertsAsync()
         {
-          return await (_db.Adverts.ToListAsync());
+            return await _db.Adverts.ToListAsync();
         }
-    }
 
+        public async Task<IEnumerable<SchoolAdvert>> GetAdvertBySchoolAsync(string schoolName)
+        {
+            //  return await _db.Adverts.Where(a => a.SchoolName == schoolName).ToListAsync();
+
+
+            return await _db.Adverts
+               .Include(e => e.School)  // Include School entity
+               .Where(e => e.School.SchoolName == schoolName) // Filter by SchoolName
+               .ToListAsync();
+        }
+        public async Task<IEnumerable<SchoolAdvert>> GetAllPaidAdvertsAsync()
+        {
+            return await _db.Adverts
+                .Where(ad => ad.IsPaid) // Filter only paid adverts
+                .ToListAsync();
+        }
+
+        public async Task<AdvertServiceResponse<SchoolAdvert>> AddSchoolAdvertAsync(SchoolAdvert advertDetails)
+        {
+            _db.Adverts.Add(advertDetails);
+            await _db.SaveChangesAsync();
+            return new AdvertServiceResponse<SchoolAdvert>
+            {
+                Data = advertDetails,
+                Message = "Advert added successfully",
+                Success = true
+            };
+        }
+
+        public async Task<bool> SchoolExistsAsync(Guid schoolId)
+        {
+            return await _db.Schools.AnyAsync(s => s.Id == schoolId);
+        }
+
+        public async Task<SchoolAdvert?> GetAdvertByIdAsync(Guid id)
+        {
+            return await _db.Adverts.FindAsync(id);
+        }
+
+        public async Task<SchoolAdvert?> GetAdvertByTitleAsync(string title, Guid schoolId)
+        {
+            return await _db.Adverts
+                .FirstOrDefaultAsync(e => e.Title == title && e.SchoolId == schoolId);
+        }
+
+        public async Task<IEnumerable<SchoolAdvert>> GetAdvertBySchoolId(Guid schoolId)
+        {
+            return await _db.Adverts
+               .Include(e => e.School) // ✅ Load related school data
+                .Where(e => e.SchoolId == schoolId) // 🔍 Filter events by school ID
+                .ToListAsync();
+        }
+        public async Task UpdateSchoolAdvertAsync(SchoolAdvert advertDetails)
+        {
+            _db.Adverts.Update(advertDetails);
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task DeleteSchoolAdvertAsync(Guid advertId)
+        {
+            var advert = await _db.Adverts.FindAsync(advertId);
+            if (advert != null)
+            {
+                _db.Adverts.Remove(advert);
+                await _db.SaveChangesAsync();
+            }
+        }
+
+    }
 
 }

@@ -20,7 +20,10 @@ namespace SchoolMagazine.Application.DTOs
         [Required]
 
         public Guid SchoolId { get; set; }
-        public School SchoolName { get; set; }
+        public bool IsPaid { get; set; }  // dont think it is neccessary
+        public string? PaymentReference { get; set; }  // Ensure this exists and is nullable
+        public DateTime? PaymentDate { get; set; }
+
     }
 
 
