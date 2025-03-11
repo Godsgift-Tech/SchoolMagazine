@@ -21,9 +21,9 @@ builder.Services.AddScoped<ISchoolService, SchoolService>();
 builder.Services.AddScoped<ISchoolRepository, SchoolRepository>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IEventRepository, EventRepository>();
-//builder.Services.AddScoped<IAdvertRepository, AdvertRepository>();
-//builder.Services.AddScoped<IAdvertService, AdvertService>();
-//builder.Services.AddScoped<PaymentService>();
+builder.Services.AddScoped<IAdvertRepository, AdvertRepository>();
+builder.Services.AddScoped<IAdvertService, AdvertService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 // Register AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));

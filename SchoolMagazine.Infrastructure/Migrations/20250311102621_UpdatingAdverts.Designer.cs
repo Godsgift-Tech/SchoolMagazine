@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolMagazine.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using SchoolMagazine.Infrastructure.Data;
 namespace SchoolMagazine.Infrastructure.Migrations
 {
     [DbContext(typeof(MagazineContext))]
-    partial class MagazineContextModelSnapshot : ModelSnapshot
+    [Migration("20250311102621_UpdatingAdverts")]
+    partial class UpdatingAdverts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -211,12 +214,6 @@ namespace SchoolMagazine.Infrastructure.Migrations
 
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
-
-                    b.Property<DateTime?>("PaymentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PaymentReference")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("SchoolId")
                         .HasColumnType("uniqueidentifier");
