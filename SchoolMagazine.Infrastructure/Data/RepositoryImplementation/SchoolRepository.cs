@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolMagazine.Domain.Entities;
 using SchoolMagazine.Domain.Interface;
+using SchoolMagazine.Domain.Paging;
 using SchoolMagazine.Domain.Service_Response;
+//using System.Data.Entity;
+
 //using System.Data.Entity;  =>   This using gives me Server error 500
 
 namespace SchoolMagazine.Infrastructure.Data.Service
@@ -14,12 +17,6 @@ namespace SchoolMagazine.Infrastructure.Data.Service
             _db = db;
         }
 
-        //public async Task AddSchoolAsync(School school)
-        //{
-        //    _db.Schools.Add(school);
-        //    await _db.SaveChangesAsync();
-
-        //}
 
         public async Task<ServiceResponse<School>> AddSchoolAsync(School school)
         {
@@ -39,15 +36,7 @@ namespace SchoolMagazine.Infrastructure.Data.Service
             return new ServiceResponse<School>(null!, success: true, message: "School was registered successfully!!");
 
         }
-        //public async Task UpdateSchoolByIdAsync(School school)
-        //{
-        //    var schoolId = await _db.Schools.FindAsync(school.Id);
-        //    if (schoolId == null) throw new Exception("School was not found");
-
-        //    _db.Schools.Update(school);
-        //    await _db.SaveChangesAsync();
-
-        //}
+       
 
         public async Task<string> UpdateSchoolAsync(School school)
         {
@@ -60,7 +49,7 @@ namespace SchoolMagazine.Infrastructure.Data.Service
 
         public async Task DeleteSchoolByIdAsync(School searchedSchool)
         {
-           var  schoolId = await _db.Schools.FindAsync(searchedSchool.Id);
+            var schoolId = await _db.Schools.FindAsync(searchedSchool.Id);
             if (schoolId == null) throw new Exception("School was not found");
 
             _db.Schools.Remove(searchedSchool);
@@ -94,6 +83,33 @@ namespace SchoolMagazine.Infrastructure.Data.Service
             return await _db.Schools.FindAsync(id);
         }
 
+
+
+        public async Task<PagedResult<School>> GetPagedResultAsync(int pageNumber, int pageSize)
+        {
+            var query = _db.Schools.AsQueryable();
+
+            int totalCount = await query.CountAsync();
+
+            var schools = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // Explicitly load adverts for each school
+            foreach (var school in schools)
+            {
+                await _db.Entry(school).Collection(s => s.Adverts).LoadAsync();
+            }
+
+            return new PagedResult<School>
+            {
+                TotalCount = totalCount,
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                Items = schools
+            };
+        }
 
         public async Task<List<School>> GetSchoolsByFeesRangeAsync(decimal feesRange)
         {

@@ -1,5 +1,4 @@
-﻿using SchoolMagazine.Domain.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SchoolMagazine.Application.DTOs
 {
-    public class SchoolDto
+    public class CreateSchoolDto
     {
         [Key]
         public string Id { get; set; } = Guid.NewGuid().ToString();
@@ -18,13 +17,8 @@ namespace SchoolMagazine.Application.DTOs
         [Required]
         public string SchoolName { get; set; }
 
-        
+
         public string UserId { get; set; } = Guid.NewGuid().ToString();
-
-
-        // Navigation Properties
-        // [Required]
-        // public User User { get; set; }
 
         [Required]
         public string Location { get; set; } //address
@@ -32,7 +26,7 @@ namespace SchoolMagazine.Application.DTOs
         public string EmailAddress { get; set; } // email address [Required]
 
 
-       [Required]
+        [Required]
         public string PhoneNumber { get; set; } // phone number
         [Required]
         public string WebsiteUrl { get; set; }
@@ -41,17 +35,11 @@ namespace SchoolMagazine.Application.DTOs
         [Required]
         public double Rating { get; set; }
 
-       [JsonIgnore]
+        [JsonIgnore]
         public ICollection<SchoolEventDto>? Events { get; set; }
-        //[JsonIgnore]
+        [JsonIgnore]
 
-      // public ICollection<SchoolAdvertDto>? Adverts { get; set; }
+        // public ICollection<SchoolAdvertDto>? Adverts { get; set; }
         public ICollection<SchoolAdvertDto>? Adverts { get; set; } = new List<SchoolAdvertDto>();
-
     }
-
-
-
-
-
 }
