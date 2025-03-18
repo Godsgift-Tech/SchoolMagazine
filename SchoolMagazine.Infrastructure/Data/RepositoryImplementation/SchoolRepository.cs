@@ -4,6 +4,7 @@ using SchoolMagazine.Domain.Interface;
 using SchoolMagazine.Domain.Paging;
 using SchoolMagazine.Domain.Service_Response;
 //using System.Data.Entity;
+//using System.Data.Entity;
 
 //using System.Data.Entity;  =>   This using gives me Server error 500
 
@@ -65,18 +66,7 @@ namespace SchoolMagazine.Infrastructure.Data.Service
                 .FirstOrDefaultAsync(s => s.SchoolName.ToLower() == schoolName.ToLower());
         }
 
-        public async Task<List<School>> GetSchoolsByLocationAsync(string location)
-        {
-            return await _db.Schools
-                .AsNoTracking()
-                .Where(s => s.Location.ToLower() == location.ToLower())
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<School>> GetAllSchoolAsync()
-        {
-            return await _db.Schools.ToListAsync();
-        }
+       
 
         public async Task<School> GetSchoolByIdAsync(Guid id)
         {
@@ -111,21 +101,42 @@ namespace SchoolMagazine.Infrastructure.Data.Service
             };
         }
 
-        public async Task<List<School>> GetSchoolsByFeesRangeAsync(decimal feesRange)
+       
+
+        public async Task<PagedResult<School>> GetSchoolsAsync(string? schoolName, string? location, decimal? feesRange, double? rating, int pageNumber, int pageSize)
         {
-            return await _db.Schools
-                .AsNoTracking()
-                .Where(s => s.FeesRange >= (feesRange - 500) && s.FeesRange <= (feesRange + 500))
+            var query = _db.Schools.Include(s => s.Adverts).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(schoolName))
+                query = query.Where(s => s.SchoolName.Contains(schoolName));
+
+            if (!string.IsNullOrWhiteSpace(location))
+                query = query.Where(s => s.Location.ToLower() == location.ToLower());
+
+            if (feesRange.HasValue)
+                query = query.Where(s => s.FeesRange >= (feesRange - 500) && s.FeesRange <= (feesRange + 500));
+
+            if (rating.HasValue)
+                query = query.Where(s => s.Rating >= (rating - 0.5) && s.Rating <= (rating + 0.5));
+
+            int totalCount = await query.CountAsync();
+
+            var schools = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            
+
+                return new PagedResult<School>
+            {
+                TotalCount = totalCount,
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                Items = schools
+            };
         }
 
-        public async Task<List<School>> GetSchoolsByRatingAsync(double rating)
-        {
-            return await _db.Schools
-                .AsNoTracking()
-                .Where(s => s.Rating >= (rating - 0.5) && s.Rating <= (rating + 0.5))
-                .ToListAsync();
-        }
 
 
 

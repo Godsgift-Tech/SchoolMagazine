@@ -4,6 +4,7 @@ using SchoolMagazine.Application.AppInterface;
 using SchoolMagazine.Application.DTOs;
 using SchoolMagazine.Domain.Entities;
 using SchoolMagazine.Domain.Interface;
+using SchoolMagazine.Domain.Paging;
 using SchoolMagazine.Domain.Service_Response;
 
 namespace SchoolMagazine.Application.AppService
@@ -148,6 +149,31 @@ namespace SchoolMagazine.Application.AppService
         {
             await _eventRepository.DeleteSchoolEventAsync(eventId);
         }
+
+        public async Task<ServiceResponse<PagedResult<SchoolEventDto>>> GetEventsAsync(
+      string? title, string? description, Guid? schoolId, string? schoolName, int pageNumber, int pageSize)
+        {
+            var pagedEvents = await _eventRepository.GetEventsAsync(title, description, schoolId, schoolName, pageNumber, pageSize);
+
+            if (pagedEvents.Items.Count == 0)
+                return new ServiceResponse<PagedResult<SchoolEventDto>>(null!, false, "No events found matching criteria.");
+
+            var eventDtos = _mapper.Map<List<SchoolEventDto>>(pagedEvents.Items);
+
+            var result = new PagedResult<SchoolEventDto>
+            {
+                TotalCount = pagedEvents.TotalCount,
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                Items = eventDtos
+            };
+
+            return new ServiceResponse<PagedResult<SchoolEventDto>>(result, true, "Events retrieved successfully.");
+        }
+
+
+
+
     }
 
 }

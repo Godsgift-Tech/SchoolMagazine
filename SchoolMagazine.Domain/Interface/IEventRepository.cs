@@ -1,4 +1,5 @@
 ﻿using SchoolMagazine.Domain.Entities;
+using SchoolMagazine.Domain.Paging;
 using SchoolMagazine.Domain.Service_Response;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,18 @@ namespace SchoolMagazine.Domain.Interface
     public interface IEventRepository
     {
         Task<IEnumerable<SchoolEvent>> GetAllEventsAsync();
-      
-        Task<IEnumerable<SchoolEvent>> GetEventsByName(string eventName);
-        Task<IEnumerable<SchoolEvent>> GetEventsBySchoolAsync(string schoolName);
+        Task<PagedResult<SchoolEvent>> GetEventsAsync(
+        string? title,
+        string? description,
+        Guid? schoolId,
+        string? schoolName,
+        int pageNumber,
+        int pageSize);
 
-        Task<SchoolEvent?> GetEventByTitleAndDescription(string title, string description, Guid schoolId);
+       // Task<IEnumerable<SchoolEvent>> GetEventsByName(string eventName);
+       Task<IEnumerable<SchoolEvent>> GetEventsBySchoolAsync(string schoolName);
+
+       Task<SchoolEvent?> GetEventByTitleAndDescription(string title, string description, Guid schoolId);
 
         Task<EventServiceResponse<SchoolEvent>> AddSchoolEventsAsync(SchoolEvent eventDetails);
         Task<bool> SchoolExistsAsync(Guid schoolId);

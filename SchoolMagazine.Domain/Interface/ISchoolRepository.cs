@@ -11,21 +11,21 @@ namespace SchoolMagazine.Domain.Interface
 {
     public interface ISchoolRepository
     {
-        Task<IEnumerable<School>> GetAllSchoolAsync();
+        Task<PagedResult<School>> GetSchoolsAsync(
+        string? schoolName,
+        string? location,
+        decimal? feesRange,
+        double? rating,
+        int pageNumber,
+        int pageSize);
         Task<School> GetSchoolByIdAsync(Guid id);
-        //Task AddSchoolAsync(School school);
-        //Task<bool> AddSchoolAsync(School school);
+       
         Task<School?> GetSchoolByNameAsync(string schoolName);
-        Task<List<School>> GetSchoolsByLocationAsync(string location);
-        Task<List<School>> GetSchoolsByFeesRangeAsync(decimal feesRange);
-        Task<List<School>> GetSchoolsByRatingAsync(double rating);
-
+      
         Task<ServiceResponse<School>> AddSchoolAsync(School school);
-        // Task<PagedResult<School>> GetPagedSchoolAsync(int pageNumber, int pageSize);
         Task<PagedResult<School>> GetPagedResultAsync(int pageNumber, int pageSize);
 
         Task<string> UpdateSchoolAsync(School school);
-      //  Task UpdateSchoolByIdAsync(School school);
         Task DeleteSchoolByIdAsync(School searchedSchool);
     }
 }

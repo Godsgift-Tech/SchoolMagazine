@@ -19,17 +19,6 @@ namespace SchoolMagazine.Application.AppService
             _mapper = mapper;
         }
 
-        public async Task<ServiceResponse<IEnumerable<CreateSchoolDto>>> GetAllSchoolAsync()
-        {
-
-            // Retrieve all schools including all events and adverts 
-            var schoolInfo = await _sr.GetAllSchoolAsync();
-
-            var allSchools = _mapper.Map<IEnumerable<CreateSchoolDto>>(schoolInfo);
-            return new ServiceResponse<IEnumerable<CreateSchoolDto>>(allSchools, success: true, message: "Schools were retrieved successfully!.");
-        }
-
-       
 
         public async Task<ServiceResponse<PagedResult<SchoolDto>>> GetPagedSchoolsAsync(int pageNumber, int pageSize)
         {
@@ -75,40 +64,6 @@ namespace SchoolMagazine.Application.AppService
             return new ServiceResponse<CreateSchoolDto>(schoolDto, true, "School retrieved successfully.");
         }
 
-        public async Task<ServiceResponse<List<CreateSchoolDto>>> GetSchoolsByLocationAsync(string location)
-        {
-            var schools = await _sr.GetSchoolsByLocationAsync(location);
-
-            if (schools == null || !schools.Any())
-                return new ServiceResponse<List<CreateSchoolDto>>(null!, false, "No schools found in this location.");
-
-            var schoolDtos = _mapper.Map<List<CreateSchoolDto>>(schools);
-            return new ServiceResponse<List<CreateSchoolDto>>(schoolDtos, true, "Schools retrieved successfully.");
-        }
-
-        public async Task<ServiceResponse<List<CreateSchoolDto>>> GetSchoolsByFeesRangeAsync(decimal feesRange)
-        {
-            var schools = await _sr.GetSchoolsByFeesRangeAsync(feesRange);
-
-            if (schools == null || !schools.Any())
-                return new ServiceResponse<List<CreateSchoolDto>>(null!, false, "No schools found within this fees range.");
-
-            var schoolDtos = _mapper.Map<List<CreateSchoolDto>>(schools);
-            return new ServiceResponse<List<CreateSchoolDto>>(schoolDtos, true, "Schools retrieved successfully.");
-        }
-
-
-        public async Task<ServiceResponse<List<CreateSchoolDto>>> GetSchoolsByRatingAsync(double rating)
-        {
-            var schools = await _sr.GetSchoolsByRatingAsync(rating);
-
-            if (schools == null || !schools.Any())
-                return new ServiceResponse<List<CreateSchoolDto>>(null!, false, "No schools found with this rating.");
-
-            var schoolDtos = _mapper.Map<List<CreateSchoolDto>>(schools);
-            return new ServiceResponse<List<CreateSchoolDto>>(schoolDtos, true, "Schools retrieved successfully.");
-        }
-
 
 
 
@@ -131,8 +86,6 @@ namespace SchoolMagazine.Application.AppService
 
             return new ServiceResponse<CreateSchoolDto>(createdSchool, true, "School was created successfully!");
         }
-
-
 
 
 
@@ -173,18 +126,36 @@ namespace SchoolMagazine.Application.AppService
 
             }
 
-            // var school = _mapper.Map<School>(searchedSchool);
-            //Task<ServiceResponse<bool>> DeleteProductByIdAsync(string id);
+            
 
 
 
             await _sr.DeleteSchoolByIdAsync(searchedSchool);
 
-            // var delSchool = _mapper.Map<SchoolDto>(searchedSchool);
 
             return new ServiceResponse<bool>(true, success: true, message: "School was removed successfully.");
         }
 
+        public async Task<ServiceResponse<PagedResult<SchoolDto>>> GetSchoolsAsync(
+    string? schoolName, string? location, decimal? feesRange, double? rating, int pageNumber, int pageSize)
+        {
+            var pagedSchools = await _sr.GetSchoolsAsync(schoolName, location, feesRange, rating, pageNumber, pageSize);
+
+            if (pagedSchools.Items.Count == 0)
+                return new ServiceResponse<PagedResult<SchoolDto>>(null!, false, "No schools found matching criteria.");
+
+            var schoolDtos = _mapper.Map<List<SchoolDto>>(pagedSchools.Items);
+
+            var result = new PagedResult<SchoolDto>
+            {
+                TotalCount = pagedSchools.TotalCount,
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                Items = schoolDtos
+            };
+
+            return new ServiceResponse<PagedResult<SchoolDto>>(result, true, "Schools retrieved successfully.");
+        }
 
 
 
