@@ -60,13 +60,7 @@ namespace SchoolMagazine.API.Controllers
         }
 
 
-        [HttpGet("getAllSchools")]
-
-        public async Task<IActionResult> GetAllSchoolAsync()
-        {
-            var allschool = await _ser.GetAllSchoolAsync();
-            return Ok(allschool);
-        }
+        
 
         [HttpGet("get-schools-by-fees")]
         public async Task<IActionResult> GetSchoolsByFeesRange(decimal feesRange)
@@ -112,7 +106,7 @@ namespace SchoolMagazine.API.Controllers
             return BadRequest(ModelState);
         }
 
-        [HttpGet("pagedSchoolandAdverts")]
+        [HttpGet("getAllSchools-Adverts")]
         public async Task<IActionResult> GetPagedSchools([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var response = await _ser.GetPagedSchoolsAsync(pageNumber, pageSize);
@@ -125,6 +119,18 @@ namespace SchoolMagazine.API.Controllers
             return Ok(response);
         }
 
+        [HttpGet("getBysearchQuery")]
+        public async Task<IActionResult> GetSchools(
+    [FromQuery] string? schoolName,
+    [FromQuery] string? location,
+    [FromQuery] decimal? feesRange,
+    [FromQuery] double? rating,
+    [FromQuery] int pageNumber = 1,
+    [FromQuery] int pageSize = 10)
+        {
+            var result = await _ser.GetSchoolsAsync(schoolName, location, feesRange, rating, pageNumber, pageSize);
+            return result.success ? Ok(result) : NotFound(result);
+        }
 
 
 

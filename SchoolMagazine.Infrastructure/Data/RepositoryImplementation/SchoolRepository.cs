@@ -4,6 +4,7 @@ using SchoolMagazine.Domain.Interface;
 using SchoolMagazine.Domain.Paging;
 using SchoolMagazine.Domain.Service_Response;
 //using System.Data.Entity;
+//using System.Data.Entity;
 
 //using System.Data.Entity;  =>   This using gives me Server error 500
 
@@ -73,10 +74,7 @@ namespace SchoolMagazine.Infrastructure.Data.Service
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<School>> GetAllSchoolAsync()
-        {
-            return await _db.Schools.ToListAsync();
-        }
+       
 
         public async Task<School> GetSchoolByIdAsync(Guid id)
         {
@@ -127,6 +125,40 @@ namespace SchoolMagazine.Infrastructure.Data.Service
                 .ToListAsync();
         }
 
+
+        public async Task<PagedResult<School>> GetSchoolsAsync(string? schoolName, string? location, decimal? feesRange, double? rating, int pageNumber, int pageSize)
+        {
+            var query = _db.Schools.Include(s => s.Adverts).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(schoolName))
+                query = query.Where(s => s.SchoolName.Contains(schoolName));
+
+            if (!string.IsNullOrWhiteSpace(location))
+                query = query.Where(s => s.Location.Contains(location));
+
+            if (feesRange.HasValue)
+                query = query.Where(s => s.FeesRange == feesRange.Value);
+
+            if (rating.HasValue)
+                query = query.Where(s => s.Rating >= rating.Value);
+
+            int totalCount = await query.CountAsync();
+
+            var schools = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            
+
+                return new PagedResult<School>
+            {
+                TotalCount = totalCount,
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                Items = schools
+            };
+        }
 
 
     }

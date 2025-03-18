@@ -6,7 +6,10 @@ namespace SchoolMagazine.Application.AppInterface
 {
     public interface ISchoolService
     {
-        Task<ServiceResponse<IEnumerable<CreateSchoolDto>>> GetAllSchoolAsync();
+        //Task<ServiceResponse<IEnumerable<CreateSchoolDto>>> GetAllSchoolAsync();
+
+        Task<ServiceResponse<PagedResult<SchoolDto>>> GetSchoolsAsync(string? schoolName, string? location, decimal? feesRange, double? rating, int pageNumber, int pageSize);
+
         Task<ServiceResponse<PagedResult<SchoolDto>>> GetPagedSchoolsAsync(int pageNumber, int pageSize);
 
         Task<ServiceResponse<CreateSchoolDto>> GetSchoolByIdAsync(Guid id);
