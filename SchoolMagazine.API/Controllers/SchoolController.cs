@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SchoolMagazine.Application.AppInterface;
 using SchoolMagazine.Application.AppService;
-using SchoolMagazine.Application.AppService.Paged;
 using SchoolMagazine.Application.DTOs;
-using SchoolMagazine.Domain.Entities;
+using SchoolMagazine.Domain.Paging;
 
 namespace SchoolMagazine.API.Controllers
 {
@@ -87,8 +85,8 @@ namespace SchoolMagazine.API.Controllers
         [HttpGet("get-schools-by-rating")]
         public async Task<IActionResult> GetSchoolsByRating(double rating)
         {
-            if (rating < 0 || rating > 5)
-                return BadRequest("Rating must be between 0 and 5.");
+            if (rating < 0 || rating > 1000)
+                return BadRequest("Rating must be between 0 and 1000.");
 
             var response = await _ser.GetSchoolsByRatingAsync(rating);
 
@@ -99,28 +97,32 @@ namespace SchoolMagazine.API.Controllers
         }
 
 
-        [HttpGet("paged")]
-        public async Task<ActionResult<PagedResult<SchoolDto>>> GetPagedSchoolAsync(
-       [FromQuery] int pageNumber = 1,
-       [FromQuery] int pageSize = 10)
-        {
-            var result = await _ser.GetPagedSchoolAsync(pageNumber, pageSize);
-            return Ok(result);
-        }
-
         [HttpPost("addNewSchool")]
-        public async Task<IActionResult> AddSchoolAsync(SchoolDto school)
+        public async Task<IActionResult> AddSchoolAsync(CreateSchoolDto school)
         {
 
             var addSchool = await _ser.AddSchoolAsync(school);
-            return Ok(addSchool);
+            // return Ok(addSchool);
 
-            //if (addSchool.success)
-            //{
-            //    return Ok(addSchool);
+            if (addSchool.success)
+            {
+                return Ok(addSchool);
 
-            //}
-            //return BadRequest(ModelState);
+            }
+            return BadRequest(ModelState);
+        }
+
+        [HttpGet("pagedSchoolandAdverts")]
+        public async Task<IActionResult> GetPagedSchools([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            var response = await _ser.GetPagedSchoolsAsync(pageNumber, pageSize);
+
+            if (!response.success)
+            {
+                return BadRequest(response.message);
+            }
+
+            return Ok(response);
         }
 
 
@@ -128,36 +130,8 @@ namespace SchoolMagazine.API.Controllers
 
 
 
-        //[HttpPut("updateSchool")]
-        //public async Task<IActionResult> UpdateSchoolByIdAsync(Guid id, SchoolDto schoolDto)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-
-        //    var updateSchool = await _ser.GetSchoolByIdAsync(id);
-        //    if (updateSchool == null)
-        //    {
-        //        return NotFound(new { Message = "School not found" });
-
-        //    }
-        //    try
-        //    {
-
-        //        await _ser.UpdateSchoolByIdAsync(id, schoolDto);
-        //        return NoContent();
-        //    }
-        //    catch (KeyNotFoundException)
-        //    {
-        //        return NotFound(new { Message = "School not found" });
-        //    }
-
-        //}
-
         [HttpPut("update-school-By-Id")]
-        public async Task<IActionResult> UpdateSchool(Guid id, [FromBody] SchoolDto schoolDto)
+        public async Task<IActionResult> UpdateSchool(Guid id, [FromBody] CreateSchoolDto schoolDto)
         {
             if (schoolDto == null)
                 return BadRequest("Invalid school data.");

@@ -26,6 +26,11 @@ namespace SchoolMagazine.Infrastructure.Data
                 .HasIndex(s => s.SchoolName)
                 .IsUnique(); // ✅ Ensures SchoolName is unique
 
+            modelBuilder.Entity<School>()
+    .HasMany(s => s.Adverts)
+    .WithOne(a => a.School)
+    .HasForeignKey(a => a.SchoolId)
+    .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<SchoolEvent>()
         .HasOne(e => e.School)

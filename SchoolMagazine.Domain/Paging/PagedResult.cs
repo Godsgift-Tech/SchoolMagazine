@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchoolMagazine.Application.AppService.Paged
+namespace SchoolMagazine.Domain.Paging
 {
-    public class PagedResult<T>
+    public class PagedResult <T>
     {
         public int TotalCount { get; set; }
-        public int PageSize { get; set; } = 10;
+        public int PageSize { get; set; } 
         public int PageNumber { get; set; }
-        public List<T> Items { get; set; }
+        public List<T> Items { get; set; } = new List<T>();
     }
 }

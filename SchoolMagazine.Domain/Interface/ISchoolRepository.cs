@@ -1,4 +1,5 @@
 ﻿using SchoolMagazine.Domain.Entities;
+using SchoolMagazine.Domain.Paging;
 using SchoolMagazine.Domain.Service_Response;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,8 @@ namespace SchoolMagazine.Domain.Interface
         Task<List<School>> GetSchoolsByRatingAsync(double rating);
 
         Task<ServiceResponse<School>> AddSchoolAsync(School school);
+        // Task<PagedResult<School>> GetPagedSchoolAsync(int pageNumber, int pageSize);
+        Task<PagedResult<School>> GetPagedResultAsync(int pageNumber, int pageSize);
 
         Task<string> UpdateSchoolAsync(School school);
       //  Task UpdateSchoolByIdAsync(School school);
