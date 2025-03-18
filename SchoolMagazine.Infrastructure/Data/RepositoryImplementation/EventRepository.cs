@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolMagazine.Domain.Entities;
 using SchoolMagazine.Domain.Interface;
+using SchoolMagazine.Domain.Paging;
 using SchoolMagazine.Domain.Service_Response;
+
 //using System.Data.Entity;
 
 
@@ -47,7 +49,7 @@ namespace SchoolMagazine.Infrastructure.Data.Service
                 .Where(e => e.School.SchoolName == schoolName) // Filter by SchoolName
                 .ToListAsync();
         }
-       
+
 
 
 
@@ -56,9 +58,9 @@ namespace SchoolMagazine.Infrastructure.Data.Service
 
 
             return await _db.Events
-           
+
         .Include(e => e.Title)  // Ensure School is a navigation property
-         .Where(e => e.Title== eventlName)  // Ensure SchoolName exists
+         .Where(e => e.Title == eventlName)  // Ensure SchoolName exists
          .AsNoTracking()  // Optional for performance
          .ToListAsync();
         }
@@ -141,6 +143,41 @@ namespace SchoolMagazine.Infrastructure.Data.Service
             return await _db.Events
                 .FirstOrDefaultAsync(e => e.Title == title && e.SchoolId == schoolId);
         }
+
+        public async Task<PagedResult<SchoolEvent>> GetEventsAsync(
+    string? title, string? description, Guid? schoolId, string? schoolName, int pageNumber, int pageSize)
+        {
+            var query = _db.Events.Include(e => e.School).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(title))
+                query = query.Where(e => e.Title.Contains(title));
+
+            if (!string.IsNullOrWhiteSpace(description))
+                query = query.Where(e => e.Description.Contains(description));
+
+            if (schoolId.HasValue)
+                query = query.Where(e => e.SchoolId == schoolId.Value);
+
+            if (!string.IsNullOrWhiteSpace(schoolName))
+                query = query.Where(e => e.School.SchoolName.Contains(schoolName));
+
+            int totalCount = await query.CountAsync();
+
+            var events = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<SchoolEvent>
+            {
+                TotalCount = totalCount,
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                Items = events
+            };
+        }
+
+
 
 
     }
