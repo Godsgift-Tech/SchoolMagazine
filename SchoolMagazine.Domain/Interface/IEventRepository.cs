@@ -11,7 +11,8 @@ namespace SchoolMagazine.Domain.Interface
 {
     public interface IEventRepository
     {
-        Task<IEnumerable<SchoolEvent>> GetAllEventsAsync();
+        //  Task<IEnumerable<SchoolEvent>> GetAllEventsAsync();
+        Task<PagedResult<SchoolEvent>> GetAllEventsAsync(int pageNumber, int pageSize);
         Task<PagedResult<SchoolEvent>> GetEventsAsync(
         string? title,
         string? description,

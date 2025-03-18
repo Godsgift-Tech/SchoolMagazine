@@ -14,7 +14,9 @@ namespace SchoolMagazine.Domain.Entities
         [Key]
         public Guid Id { get; set; } 
 
-        [Required]
+
+        [Required(ErrorMessage = "Title is required.")]
+        [StringLength(40, ErrorMessage = "Title cannot exceed 40 characters.")]
         public string SchoolName { get; set; }
         
         public Guid UserId { get; set; } 

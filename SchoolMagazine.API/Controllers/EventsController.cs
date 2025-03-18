@@ -16,26 +16,22 @@ namespace SchoolMagazine.API.Controllers
             _eventService = eventService;
         }
 
+        //[HttpGet("GetAllEvents")]
+
+        //public async Task<IActionResult> GetAllEvents()
+        //{
+        //    var events = await _eventService.GetAllEventsAsync();
+        //    return Ok(events);
+        //}
+
         [HttpGet("GetAllEvents")]
-
-        public async Task<IActionResult> GetAllEvents()
+        public async Task<IActionResult> GetAllEvents(
+    [FromQuery] int pageNumber = 1,
+    [FromQuery] int pageSize = 10)
         {
-            var events = await _eventService.GetAllEventsAsync();
-            return Ok(events);
+            var result = await _eventService.GetAllEventsAsync(pageNumber, pageSize);
+            return result.success ? Ok(result) : NotFound(result);
         }
-
-        //[HttpGet("GetEventsBySchool/{schoolName}")]
-        //public async Task<IActionResult> GetEventsBySchool(string schoolName)
-        //{
-        //    var events = await _eventService.GetEventsBySchoolAsync(schoolName);
-        //    return Ok(events);
-        //}
-        //[HttpGet("by-school/{schoolId}")]
-        //public async Task<IActionResult> GetEventsBySchool(Guid schoolId)
-        //{
-        //    var events = await _eventService.GetEventsBySchool(schoolId);
-        //    return Ok(events);
-        //}
 
 
         [HttpPost]

@@ -1,19 +1,16 @@
 ﻿using SchoolMagazine.Domain.Entities;
+using SchoolMagazine.Domain.Paging;
 using SchoolMagazine.Domain.Service_Response;
 
 namespace SchoolMagazine.Domain.Interface
 {
     public interface IAdvertRepository
     {
-        Task<IEnumerable<SchoolAdvert>> GetAllAdvertsAsync();
-     
-
-       // Task<IEnumerable<SchoolEvent>> GetAllEventsAsync();
-
-     //   Task<IEnumerable<SchoolAdvert>> GetAdvertByName(string eventName);
+        
+        Task<PagedResult<SchoolAdvert>> GetAllAdvertsAsync(int pageNumber, int pageSize);
+       
         Task<IEnumerable<SchoolAdvert>> GetAdvertBySchoolAsync(string schoolName);
 
-       // Task<SchoolEvent?> GetAdvertByTitleAndDescription(string title, string description, Guid schoolId);
 
         Task<AdvertServiceResponse<SchoolAdvert>> AddSchoolAdvertAsync(SchoolAdvert advertDetails);
         Task<bool> SchoolExistsAsync(Guid schoolId);

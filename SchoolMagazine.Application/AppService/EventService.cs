@@ -23,11 +23,33 @@ namespace SchoolMagazine.Application.AppService
         }
 
         // Get all events
-        public async Task<IEnumerable<SchoolEventDto>> GetAllEventsAsync()
+        //public async Task<IEnumerable<SchoolEventDto>> GetAllEventsAsync()
+        //{
+        //    var events = await _eventRepository.GetAllEventsAsync();
+        //    return _mapper.Map<IEnumerable<SchoolEventDto>>(events);
+        //}
+
+
+        public async Task<ServiceResponse<PagedResult<SchoolEventDto>>> GetAllEventsAsync(int pageNumber, int pageSize)
         {
-            var events = await _eventRepository.GetAllEventsAsync();
-            return _mapper.Map<IEnumerable<SchoolEventDto>>(events);
+            var pagedEvents = await _eventRepository.GetAllEventsAsync(pageNumber, pageSize);
+
+            if (pagedEvents.Items.Count == 0)
+                return new ServiceResponse<PagedResult<SchoolEventDto>>(null!, false, "No events found.");
+
+            var eventDtos = _mapper.Map<List<SchoolEventDto>>(pagedEvents.Items);
+
+            var result = new PagedResult<SchoolEventDto>
+            {
+                TotalCount = pagedEvents.TotalCount,
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                Items = eventDtos
+            };
+
+            return new ServiceResponse<PagedResult<SchoolEventDto>>(result, true, "Events retrieved successfully.");
         }
+
 
         // Get events by school name
         public async Task<IEnumerable<SchoolEventDto>> GetEventsBySchoolAsync(string schoolName)

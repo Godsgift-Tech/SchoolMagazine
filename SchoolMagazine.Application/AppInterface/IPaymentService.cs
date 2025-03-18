@@ -10,11 +10,9 @@ namespace SchoolMagazine.Application.AppInterface
 {
     public interface IPaymentService
     {
-        //Task<AdvertServiceResponse<string>> ProcessPayment(decimal amount, string currency, string paymentMethod);
        Task<PaymentResponseDto> ProcessPaymentAsync(PaymentRequestDto paymentRequest);
         
         
-    // Task<PaymentResponseDto> ProcessPaymentAsync(decimal amount, string currency, string paymentMethod);
         
 
     }

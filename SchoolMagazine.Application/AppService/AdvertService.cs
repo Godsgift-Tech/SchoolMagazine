@@ -3,6 +3,7 @@ using SchoolMagazine.Application.AppInterface;
 using SchoolMagazine.Application.DTOs;
 using SchoolMagazine.Domain.Entities;
 using SchoolMagazine.Domain.Interface;
+using SchoolMagazine.Domain.Paging;
 using SchoolMagazine.Domain.Service_Response;
 using System;
 using System.Collections.Generic;
@@ -76,29 +77,27 @@ namespace SchoolMagazine.Application.AppService
             };
         }
 
-        public async Task<AdvertServiceResponse<IEnumerable<SchoolAdvertDto>>> GetAllAdvertsAsync()
+      
+        public async Task<ServiceResponse<PagedResult<SchoolAdvertDto>>> GetAllAdvertsAsync(int pageNumber, int pageSize)
         {
-            var adverts = await _advertRepository.GetAllPaidAdvertsAsync(); // Fetch only paid adverts
+            var pagedAdverts = await _advertRepository.GetAllAdvertsAsync(pageNumber, pageSize);
 
-            if (!adverts.Any())
+            if (pagedAdverts.Items.Count == 0)
+                return new ServiceResponse<PagedResult<SchoolAdvertDto>>(null!, false, "No adverts found.");
+
+            var advertDtos = _mapper.Map<List<SchoolAdvertDto>>(pagedAdverts.Items);
+
+            var result = new PagedResult<SchoolAdvertDto>
             {
-                return new AdvertServiceResponse<IEnumerable<SchoolAdvertDto>>
-                {
-                    Success = false,
-                    Message = "No paid adverts found.",
-                    Data = Enumerable.Empty<SchoolAdvertDto>()
-                };
-            }
-
-            var advertDtos = _mapper.Map<IEnumerable<SchoolAdvertDto>>(adverts);
-
-            return new AdvertServiceResponse<IEnumerable<SchoolAdvertDto>>
-            {
-                Success = true,
-                Message = "Paid adverts retrieved successfully.",
-                Data = advertDtos
+                TotalCount = pagedAdverts.TotalCount,
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                Items = advertDtos
             };
+
+            return new ServiceResponse<PagedResult<SchoolAdvertDto>>(result, true, "Adverts retrieved successfully.");
         }
+
     }
 
 }

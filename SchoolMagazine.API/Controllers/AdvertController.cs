@@ -16,20 +16,18 @@ namespace SchoolMagazine.API.Controllers
             _advertService = advertService;
         }
 
+        
+
         [HttpGet("Get-AllPaid-Adverts")]
-        public async Task<IActionResult> GetAllAdverts()
+        public async Task<IActionResult> GetAllAdverts(
+    [FromQuery] int pageNumber = 1,
+    [FromQuery] int pageSize = 10)
         {
-            var result = await _advertService.GetAllAdvertsAsync();
-
-            if (!result.Success)
-            {
-                return NotFound(result);
-            }
-
-            return Ok(result);
+            var result = await _advertService.GetAllAdvertsAsync(pageNumber, pageSize);
+            return result.success ? Ok(result) : NotFound(result);
         }
 
-       
+
         [HttpPost("post-and-pay-for adverts")]
         public async Task<IActionResult> PostAdvertAndPay([FromBody] AdvertPaymentRequestDto request)
         {

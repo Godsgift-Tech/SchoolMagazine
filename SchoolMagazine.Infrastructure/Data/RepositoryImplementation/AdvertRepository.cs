@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolMagazine.Domain.Entities;
 using SchoolMagazine.Domain.Interface;
+using SchoolMagazine.Domain.Paging;
 using SchoolMagazine.Domain.Service_Response;
-//using System.Data.Entity;
+
 namespace SchoolMagazine.Infrastructure.Data.Service
 {
     public class AdvertRepository : IAdvertRepository
@@ -13,10 +14,28 @@ namespace SchoolMagazine.Infrastructure.Data.Service
             _db = db;
         }
 
-        public async Task<IEnumerable<SchoolAdvert>> GetAllAdvertsAsync()
+       
+        public async Task<PagedResult<SchoolAdvert>> GetAllAdvertsAsync(int pageNumber, int pageSize)
         {
-            return await _db.Adverts.ToListAsync();
+            var query = _db.Adverts.Include(a => a.School).AsQueryable();
+
+            int totalCount = await query.CountAsync();
+
+            var adverts = await query
+                .OrderByDescending(a => a.StartDate)  // Sort by latest adverts
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<SchoolAdvert>
+            {
+                TotalCount = totalCount,
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                Items = adverts
+            };
         }
+
 
         public async Task<IEnumerable<SchoolAdvert>> GetAdvertBySchoolAsync(string schoolName)
         {
