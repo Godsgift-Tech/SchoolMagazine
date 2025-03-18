@@ -66,14 +66,6 @@ namespace SchoolMagazine.Infrastructure.Data.Service
                 .FirstOrDefaultAsync(s => s.SchoolName.ToLower() == schoolName.ToLower());
         }
 
-        public async Task<List<School>> GetSchoolsByLocationAsync(string location)
-        {
-            return await _db.Schools
-                .AsNoTracking()
-                .Where(s => s.Location.ToLower() == location.ToLower())
-                .ToListAsync();
-        }
-
        
 
         public async Task<School> GetSchoolByIdAsync(Guid id)
@@ -109,22 +101,7 @@ namespace SchoolMagazine.Infrastructure.Data.Service
             };
         }
 
-        public async Task<List<School>> GetSchoolsByFeesRangeAsync(decimal feesRange)
-        {
-            return await _db.Schools
-                .AsNoTracking()
-                .Where(s => s.FeesRange >= (feesRange - 500) && s.FeesRange <= (feesRange + 500))
-                .ToListAsync();
-        }
-
-        public async Task<List<School>> GetSchoolsByRatingAsync(double rating)
-        {
-            return await _db.Schools
-                .AsNoTracking()
-                .Where(s => s.Rating >= (rating - 0.5) && s.Rating <= (rating + 0.5))
-                .ToListAsync();
-        }
-
+       
 
         public async Task<PagedResult<School>> GetSchoolsAsync(string? schoolName, string? location, decimal? feesRange, double? rating, int pageNumber, int pageSize)
         {
@@ -134,13 +111,13 @@ namespace SchoolMagazine.Infrastructure.Data.Service
                 query = query.Where(s => s.SchoolName.Contains(schoolName));
 
             if (!string.IsNullOrWhiteSpace(location))
-                query = query.Where(s => s.Location.Contains(location));
+                query = query.Where(s => s.Location.ToLower() == location.ToLower());
 
             if (feesRange.HasValue)
-                query = query.Where(s => s.FeesRange == feesRange.Value);
+                query = query.Where(s => s.FeesRange >= (feesRange - 500) && s.FeesRange <= (feesRange + 500));
 
             if (rating.HasValue)
-                query = query.Where(s => s.Rating >= rating.Value);
+                query = query.Where(s => s.Rating >= (rating - 0.5) && s.Rating <= (rating + 0.5));
 
             int totalCount = await query.CountAsync();
 

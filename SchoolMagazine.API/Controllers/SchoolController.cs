@@ -31,7 +31,7 @@ namespace SchoolMagazine.API.Controllers
             return Ok(getSchool);
         }
 
-        [HttpGet("get-school-by-SchoolName")]
+        [HttpGet("get-school-by-precise-SchoolName")]
         public async Task<IActionResult> GetSchoolByName(string schoolName)
         {
             if (string.IsNullOrWhiteSpace(schoolName))
@@ -45,50 +45,7 @@ namespace SchoolMagazine.API.Controllers
             return Ok(response);
         }
 
-        [HttpGet("get-schools-by-location")]
-        public async Task<IActionResult> GetSchoolsByLocation(string location)
-        {
-            if (string.IsNullOrWhiteSpace(location))
-                return BadRequest("Location cannot be empty.");
-
-            var response = await _ser.GetSchoolsByLocationAsync(location);
-
-            if (!response.success)
-                return NotFound(response.message);
-
-            return Ok(response);
-        }
-
-
-        
-
-        [HttpGet("get-schools-by-fees")]
-        public async Task<IActionResult> GetSchoolsByFeesRange(decimal feesRange)
-        {
-            if (feesRange < 0)
-                return BadRequest("Fees range cannot be negative.");
-
-            var response = await _ser.GetSchoolsByFeesRangeAsync(feesRange);
-
-            if (!response.success)
-                return NotFound(response.message);
-
-            return Ok(response);
-        }
-
-        [HttpGet("get-schools-by-rating")]
-        public async Task<IActionResult> GetSchoolsByRating(double rating)
-        {
-            if (rating < 0 || rating > 1000)
-                return BadRequest("Rating must be between 0 and 1000.");
-
-            var response = await _ser.GetSchoolsByRatingAsync(rating);
-
-            if (!response.success)
-                return NotFound(response.message);
-
-            return Ok(response);
-        }
+       
 
 
         [HttpPost("addNewSchool")]
@@ -131,8 +88,6 @@ namespace SchoolMagazine.API.Controllers
             var result = await _ser.GetSchoolsAsync(schoolName, location, feesRange, rating, pageNumber, pageSize);
             return result.success ? Ok(result) : NotFound(result);
         }
-
-
 
 
 

@@ -64,40 +64,6 @@ namespace SchoolMagazine.Application.AppService
             return new ServiceResponse<CreateSchoolDto>(schoolDto, true, "School retrieved successfully.");
         }
 
-        public async Task<ServiceResponse<List<CreateSchoolDto>>> GetSchoolsByLocationAsync(string location)
-        {
-            var schools = await _sr.GetSchoolsByLocationAsync(location);
-
-            if (schools == null || !schools.Any())
-                return new ServiceResponse<List<CreateSchoolDto>>(null!, false, "No schools found in this location.");
-
-            var schoolDtos = _mapper.Map<List<CreateSchoolDto>>(schools);
-            return new ServiceResponse<List<CreateSchoolDto>>(schoolDtos, true, "Schools retrieved successfully.");
-        }
-
-        public async Task<ServiceResponse<List<CreateSchoolDto>>> GetSchoolsByFeesRangeAsync(decimal feesRange)
-        {
-            var schools = await _sr.GetSchoolsByFeesRangeAsync(feesRange);
-
-            if (schools == null || !schools.Any())
-                return new ServiceResponse<List<CreateSchoolDto>>(null!, false, "No schools found within this fees range.");
-
-            var schoolDtos = _mapper.Map<List<CreateSchoolDto>>(schools);
-            return new ServiceResponse<List<CreateSchoolDto>>(schoolDtos, true, "Schools retrieved successfully.");
-        }
-
-
-        public async Task<ServiceResponse<List<CreateSchoolDto>>> GetSchoolsByRatingAsync(double rating)
-        {
-            var schools = await _sr.GetSchoolsByRatingAsync(rating);
-
-            if (schools == null || !schools.Any())
-                return new ServiceResponse<List<CreateSchoolDto>>(null!, false, "No schools found with this rating.");
-
-            var schoolDtos = _mapper.Map<List<CreateSchoolDto>>(schools);
-            return new ServiceResponse<List<CreateSchoolDto>>(schoolDtos, true, "Schools retrieved successfully.");
-        }
-
 
 
 
@@ -120,8 +86,6 @@ namespace SchoolMagazine.Application.AppService
 
             return new ServiceResponse<CreateSchoolDto>(createdSchool, true, "School was created successfully!");
         }
-
-
 
 
 
