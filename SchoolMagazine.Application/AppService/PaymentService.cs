@@ -13,67 +13,34 @@ namespace SchoolMagazine.Application.AppService
 
     public class PaymentService : IPaymentService
     {
-        private readonly IAdvertRepository _advertRepository;
+        private const decimal CostPerDay = 1000; // ₦1000 per day
 
-        public PaymentService(IAdvertRepository advertRepository)
+        public async Task<PaymentResponseDto> ProcessPaymentAsync(PaymentRequestDto paymentRequest)
         {
-            _advertRepository = advertRepository;
-        }
+            // Simulate external payment processing (e.g., Paystack, Flutterwave)
+            await Task.Delay(500); // Simulate processing delay
 
-        public async Task<PaymentResponseDto> ProcessPaymentAsync(PaymentRequestDto paymentDetails)
-        {
-            if (paymentDetails == null)
-            {
-                return new PaymentResponseDto
-                {
-                    Success = false,
-                    Message = "Payment details are required."
-                };
-            }
-
-            // Ensure advert exists
-            var advert = await _advertRepository.GetAdvertByIdAsync(paymentDetails.AdvertId);
-            if (advert == null)
-            {
-                return new PaymentResponseDto
-                {
-                    Success = false,
-                    Message = "Advert not found."
-                };
-            }
-
-            // Simulate payment processing
-            bool paymentSuccess = SimulatePaymentProcessing(paymentDetails);
-
-            if (!paymentSuccess)
-            {
-                return new PaymentResponseDto
-                {
-                    Success = false,
-                    Message = "Payment failed."
-                };
-            }
-
-            // Update advert as paid
-            advert.IsPaid = true;
-            advert.PaymentReference = Guid.NewGuid().ToString();
-            advert.PaymentDate = DateTime.UtcNow;
-
-            await _advertRepository.UpdateSchoolAdvertAsync(advert);
-
+            // Mock a successful payment response
             return new PaymentResponseDto
             {
-                Success = true,
-                Message = "Payment successful.",
-                TransactionId = advert.PaymentReference
+                IsSuccessful = true,
+                Message = "Payment processed successfully.",
+                TransactionId = Guid.NewGuid().ToString()
             };
         }
 
-        private bool SimulatePaymentProcessing(PaymentRequestDto paymentDetails)
+        public decimal CalculateExpectedAmount(DateTime startDate, DateTime endDate)
         {
-            // Simulated payment logic (Always returns true for testing)
-            return true;
+            int days = (endDate - startDate).Days;
+            return days * CostPerDay;
+        }
+
+        public bool ValidatePayment(decimal amountPaid, decimal expectedAmount)
+        {
+            return amountPaid >= expectedAmount;
         }
     }
+
+
 
 }

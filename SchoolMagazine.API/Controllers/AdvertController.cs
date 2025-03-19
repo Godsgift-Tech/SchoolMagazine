@@ -9,6 +9,8 @@ namespace SchoolMagazine.API.Controllers
     [ApiController]
     public class AdvertController : ControllerBase
     {
+
+
         private readonly IAdvertService _advertService;
 
         public AdvertController(IAdvertService advertService)
@@ -16,36 +18,60 @@ namespace SchoolMagazine.API.Controllers
             _advertService = advertService;
         }
 
-        
+      
+        [HttpPost("createAdvert")]
 
-        [HttpGet("Get-AllPaid-Adverts")]
-        public async Task<IActionResult> GetAllAdverts(
-    [FromQuery] int pageNumber = 1,
-    [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> CreateAdvert([FromBody] CreateAdvertDto advertDto)
         {
-            var result = await _advertService.GetAllAdvertsAsync(pageNumber, pageSize);
-            return result.success ? Ok(result) : NotFound(result);
-        }
-
-
-        [HttpPost("post-and-pay-for adverts")]
-        public async Task<IActionResult> PostAdvertAndPay([FromBody] AdvertPaymentRequestDto request)
-        {
-            if (request.Advert == null || request.PaymentDetails == null)
+            var response = await _advertService.CreateAdvertAsync(advertDto);
+            if (!response.success)
             {
-                return BadRequest("Advert and payment details are required.");
+                return BadRequest(response);
             }
-
-            var response = await _advertService.PostAdvertAndPayAsync(request.Advert, request.PaymentDetails);
-
-            if (!response.Success)
-            {
-                return BadRequest(response.Message);
-            }
-
             return Ok(response);
         }
 
+        [HttpGet("allAdverts")]
+        public async Task<IActionResult> GetAllAdverts([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            var response = await _advertService.GetAllAdvertsAsync(pageNumber, pageSize);
+            return Ok(response);
+        }
 
+        [HttpGet("{advertId}")]
+        public async Task<IActionResult> GetAdvertById(Guid advertId)
+        {
+            var response = await _advertService.GetAdvertByIdAsync(advertId);
+            if (!response.success)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
+        }
+
+        [HttpGet("school/{schoolId}")]
+        public async Task<IActionResult> GetAdvertsBySchoolId(Guid schoolId, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            var response = await _advertService.GetAdvertsBySchoolIdAsync(schoolId, pageNumber, pageSize);
+            return Ok(response);
+        }
+
+        [HttpGet("BysearchQuery")]
+        public async Task<IActionResult> SearchAdverts([FromQuery] string keyword, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            var response = await _advertService.SearchAdvertsAsync(keyword, pageNumber, pageSize);
+            return Ok(response);
+        }
+
+        [HttpDelete("{advertId}")]
+        public async Task<IActionResult> DeleteAdvert(Guid advertId)
+        {
+            var response = await _advertService.DeleteAdvertAsync(advertId);
+            if (!response.success)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
+        }
     }
 }

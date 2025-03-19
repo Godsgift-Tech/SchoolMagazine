@@ -7,21 +7,15 @@ namespace SchoolMagazine.Domain.Interface
     public interface IAdvertRepository
     {
         
-        Task<PagedResult<SchoolAdvert>> GetAllAdvertsAsync(int pageNumber, int pageSize);
-       
-        Task<IEnumerable<SchoolAdvert>> GetAdvertBySchoolAsync(string schoolName);
-
-
-        Task<AdvertServiceResponse<SchoolAdvert>> AddSchoolAdvertAsync(SchoolAdvert advertDetails);
+        
         Task<bool> SchoolExistsAsync(Guid schoolId);
-        Task<SchoolAdvert?> GetAdvertByIdAsync(Guid id);
+        Task AddAdvertAsync(SchoolAdvert advert);
+        Task<PagedResult<SchoolAdvert>> GetPagedAdvertsAsync(int pageNumber, int pageSize);
+        Task<SchoolAdvert?> GetAdvertByIdAsync(Guid advertId);
+        Task<PagedResult<SchoolAdvert>> GetPagedAdvertsBySchoolIdAsync(Guid schoolId, int pageNumber, int pageSize);
+        Task<PagedResult<SchoolAdvert>> SearchPagedAdvertsAsync(string keyword, int pageNumber, int pageSize);
+        Task<bool> DeleteAdvertAsync(Guid advertId);
 
-        Task<SchoolAdvert?> GetAdvertByTitleAsync(string title, Guid schoolId);
-        Task<IEnumerable<SchoolAdvert>> GetAdvertBySchoolId(Guid schoolId);
-
-        Task<IEnumerable<SchoolAdvert>> GetAllPaidAdvertsAsync();
-        Task UpdateSchoolAdvertAsync(SchoolAdvert advertDetails);
-        Task DeleteSchoolAdvertAsync(Guid edvertId);
 
     }
 }

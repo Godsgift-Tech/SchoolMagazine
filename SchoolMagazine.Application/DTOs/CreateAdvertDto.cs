@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchoolMagazine.Domain.Entities
+namespace SchoolMagazine.Application.DTOs
 {
-    public class SchoolAdvert
+    public class CreateAdvertDto
     {
         [Key]
         public Guid Id { get; set; }
@@ -24,12 +24,10 @@ namespace SchoolMagazine.Domain.Entities
         [Required]
 
         public Guid SchoolId { get; set; }
-        public  School School { get; set; }   // Navigation Property(virtual makes Ef recognize as Navigation)
-
+       
         [Required]
-        public decimal AmountPaid { get; set; } // ✅ Amount Paid for the Advert
-        public bool IsPaid { get; set; }=false;
-        public string? PaymentReference { get; set; }  // Ensure this exists and is nullable
-        public DateTime? PaymentDate { get; set; }
+        [Range(1000, double.MaxValue, ErrorMessage = "Amount paid must be <= 1000.")]
+        public decimal AmountPaid { get; set; }
+     
     }
 }

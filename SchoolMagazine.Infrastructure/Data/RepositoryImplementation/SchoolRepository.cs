@@ -90,6 +90,7 @@ namespace SchoolMagazine.Infrastructure.Data.Service
             foreach (var school in schools)
             {
                 await _db.Entry(school).Collection(s => s.Adverts).LoadAsync();
+                await _db.Entry(school).Collection(s => s.Events).LoadAsync();
             }
 
             return new PagedResult<School>
@@ -101,7 +102,35 @@ namespace SchoolMagazine.Infrastructure.Data.Service
             };
         }
 
-       
+        //
+
+        //public async Task<PagedResult<School>> GetEventPagedResultAsync(int pageNumber, int pageSize)
+        //{
+        //    var query = _db.Schools.AsQueryable();
+
+        //    int totalCount = await query.CountAsync();
+
+        //    var schools = await query
+        //        .Skip((pageNumber - 1) * pageSize)
+        //        .Take(pageSize)
+        //        .ToListAsync();
+
+        //    // Explicitly load adverts for each school
+        //    foreach (var school in schools)
+        //    {
+        //        await _db.Entry(school).Collection(s => s.Events).LoadAsync();
+        //    }
+
+        //    return new PagedResult<School>
+        //    {
+        //        TotalCount = totalCount,
+        //        PageSize = pageSize,
+        //        PageNumber = pageNumber,
+        //        Items = schools
+        //    };
+        //}
+
+
 
         public async Task<PagedResult<School>> GetSchoolsAsync(string? schoolName, string? location, decimal? feesRange, double? rating, int pageNumber, int pageSize)
         {

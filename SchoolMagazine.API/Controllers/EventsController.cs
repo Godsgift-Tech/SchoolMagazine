@@ -16,13 +16,7 @@ namespace SchoolMagazine.API.Controllers
             _eventService = eventService;
         }
 
-        //[HttpGet("GetAllEvents")]
-
-        //public async Task<IActionResult> GetAllEvents()
-        //{
-        //    var events = await _eventService.GetAllEventsAsync();
-        //    return Ok(events);
-        //}
+        
 
         [HttpGet("GetAllEvents")]
         public async Task<IActionResult> GetAllEvents(
@@ -34,7 +28,7 @@ namespace SchoolMagazine.API.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost("createEvent")]
         public async Task<IActionResult> AddEvent([FromBody] SchoolEventDto eventDto)
         {
             if (eventDto == null)
@@ -53,7 +47,7 @@ namespace SchoolMagazine.API.Controllers
         }
 
 
-        [HttpPut("{id}")]
+        [HttpPut("updateEvent/{id}")]
         public async Task<IActionResult> UpdateEvent(Guid id, [FromBody] SchoolEventDto eventDto)
         {
             var response = await _eventService.UpdateSchoolEventAsync(id, eventDto);
@@ -74,7 +68,7 @@ namespace SchoolMagazine.API.Controllers
         }
 
 
-        [HttpGet("search")]
+        [HttpGet("EventS-BysearchQuery")]
         public async Task<IActionResult> GetEvents(
     [FromQuery] string? title,
     [FromQuery] string? description,

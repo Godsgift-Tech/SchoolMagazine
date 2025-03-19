@@ -19,7 +19,7 @@ namespace SchoolMagazine.API.Controllers
         }
 
 
-        [HttpGet("get-school-by-ID")]
+        [HttpGet("getSchoolBy-ID")]
         public async Task<IActionResult> GetSchoolByIdAsync(Guid id)
         {
             var getSchool = await _ser.GetSchoolByIdAsync(id);
@@ -31,7 +31,7 @@ namespace SchoolMagazine.API.Controllers
             return Ok(getSchool);
         }
 
-        [HttpGet("get-school-by-precise-SchoolName")]
+        [HttpGet("by-SchoolName")]
         public async Task<IActionResult> GetSchoolByName(string schoolName)
         {
             if (string.IsNullOrWhiteSpace(schoolName))
@@ -63,7 +63,7 @@ namespace SchoolMagazine.API.Controllers
             return BadRequest(ModelState);
         }
 
-        [HttpGet("getAllSchools-Adverts")]
+        [HttpGet("Events-AdvertsDetails")]
         public async Task<IActionResult> GetPagedSchools([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var response = await _ser.GetPagedSchoolsAsync(pageNumber, pageSize);
@@ -76,7 +76,10 @@ namespace SchoolMagazine.API.Controllers
             return Ok(response);
         }
 
-        [HttpGet("getBysearchQuery")]
+
+
+
+        [HttpGet("BysearchQuery")]
         public async Task<IActionResult> GetSchools(
     [FromQuery] string? schoolName,
     [FromQuery] string? location,
@@ -91,7 +94,7 @@ namespace SchoolMagazine.API.Controllers
 
 
 
-        [HttpPut("update-school-By-Id")]
+        [HttpPut("updateSchoolBy-Id")]
         public async Task<IActionResult> UpdateSchool(Guid id, [FromBody] CreateSchoolDto schoolDto)
         {
             if (schoolDto == null)
