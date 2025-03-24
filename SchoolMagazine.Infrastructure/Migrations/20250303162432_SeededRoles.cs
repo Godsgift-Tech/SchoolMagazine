@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Migrations;
-using SchoolMagazine.Application.AppUsers;
-using SchoolMagazine.Infrastructure.Auth;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 

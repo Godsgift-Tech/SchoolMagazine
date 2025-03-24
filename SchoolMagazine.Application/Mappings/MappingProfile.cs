@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SchoolMagazine.Application.DTOs;
 using SchoolMagazine.Domain.Entities;
+using SchoolMagazine.Domain.UserRoleInfo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,8 @@ namespace SchoolMagazine.Application.Mappings
             // ForMember(dest => dest.SchoolName, opt => opt.MapFrom(src => src.School.SchoolName));
 
             CreateMap<CreateAdvertDto, SchoolAdvert>().ReverseMap();
+            CreateMap<UserDto, User>().ReverseMap();
+
 
 
         }

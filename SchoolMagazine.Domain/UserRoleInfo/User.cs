@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchoolMagazine.Infrastructure.Auth
+namespace SchoolMagazine.Domain.UserRoleInfo
 {
-    public class User: IdentityUser<Guid>
+    public class User : IdentityUser<Guid>
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

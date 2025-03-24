@@ -1,14 +1,17 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SchoolMagazine.Application.AppInterface;
 using SchoolMagazine.Application.AppService;
 using SchoolMagazine.Application.AppUsers;
+using SchoolMagazine.Application.Email_Messaging;
 using SchoolMagazine.Application.Mappings;
-using SchoolMagazine.Domain.Entities;
 using SchoolMagazine.Domain.Interface;
-using SchoolMagazine.Infrastructure.Auth;
+using SchoolMagazine.Domain.UserRoleInfo;
 using SchoolMagazine.Infrastructure.Data;
 using SchoolMagazine.Infrastructure.Data.Service;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +27,16 @@ builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IAdvertRepository, AdvertRepository>();
 builder.Services.AddScoped<IAdvertService, AdvertService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+//builder.Services.AddScoped<ITokenService, TokenService>();
+//builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<RoleManager<Role>>();
+
+
+
+builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailConfiguration"));
+builder.Services.AddSingleton<IEmailService, EmailService>();
+
+//builder.Services.AddScoped<IEmailService, EmailService>(); // Add this line
 
 // Register AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -34,7 +47,24 @@ builder.Services.AddDbContext<MagazineContext>(x => x.UseSqlServer(
     
 ));
 
+
+// Load appsettings.json
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+// Retrieve JWT Secret
+var jwtSecret = builder.Configuration["JwtSettings:Secret"];
+
+//if (string.IsNullOrEmpty(jwtSecret))
+//{
+//    throw new ArgumentNullException("JwtSettings:Secret", "JWT Secret cannot be null. Check appsettings.json or environment variables.");
+//}
+
 // Add services
+
+//builder.Services.AddIdentity<User, IdentityRole>()
+//    .AddEntityFrameworkStores<ApplicationDbContext>()
+//    .AddDefaultTokenProviders();
+
 
 
 // Configure Identity
@@ -49,24 +79,29 @@ builder.Services.AddIdentity<User, Role>(options =>
 .AddEntityFrameworkStores<MagazineContext>()
 .AddDefaultTokenProviders();
 
+
+
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+
+//     options.SaveToken = true,
+//options.RequireHttpsMetadata = false,
+options.TokenValidationParameters = new TokenValidationParameters
+    {
+       ValidateIssuer = true,
+        ValidateAudience = true,
+         ValidateLifetime = true,
+         ValidateIssuerSigningKey = true,
+          ValidIssuer = builder.Configuration["Jwt: Issuer"],
+          ValidAudience = builder.Configuration["Jwt: Audience"],
+          IssuerSigningKey= new SymmetricSecurityKey (
+              Encoding.UTF8.GetBytes(builder.Configuration["Jwt: Secret"]))
+
+    });
+
+
 var app = builder.Build();
-
-// Seed roles
-
-//using (var scope = app.Services.CreateScope())
-//{
-//    var services = scope.ServiceProvider;
-//    var roleManager = services.GetRequiredService<RoleManager<Role>>();
-//    var userManager = services.GetRequiredService<UserManager<User>>();
-
-//    // Call the SeededRole to seed roles and users
-//   await SeededRole.SeedRolesAndUsers(roleManager, userManager);
-//}
-
-
-
-
-
 
 
 // Configure the HTTP request pipeline

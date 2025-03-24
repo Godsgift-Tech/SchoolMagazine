@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SchoolMagazine.Application.AppInterface;
 using SchoolMagazine.Application.AppService;
 using SchoolMagazine.Application.DTOs;
@@ -8,6 +9,7 @@ namespace SchoolMagazine.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
 
     public class SchoolController : ControllerBase
     {
@@ -75,7 +77,6 @@ namespace SchoolMagazine.API.Controllers
 
             return Ok(response);
         }
-
 
 
 
