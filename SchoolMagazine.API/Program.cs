@@ -27,7 +27,7 @@ builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IAdvertRepository, AdvertRepository>();
 builder.Services.AddScoped<IAdvertService, AdvertService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
-//builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 //builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<RoleManager<Role>>();
 
@@ -52,7 +52,7 @@ builder.Services.AddDbContext<MagazineContext>(x => x.UseSqlServer(
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
 // Retrieve JWT Secret
-var jwtSecret = builder.Configuration["JwtSettings:Secret"];
+var jwtSecret = builder.Configuration["JwtSettings:Key"];
 
 //if (string.IsNullOrEmpty(jwtSecret))
 //{
@@ -96,7 +96,7 @@ options.TokenValidationParameters = new TokenValidationParameters
           ValidIssuer = builder.Configuration["Jwt: Issuer"],
           ValidAudience = builder.Configuration["Jwt: Audience"],
           IssuerSigningKey= new SymmetricSecurityKey (
-              Encoding.UTF8.GetBytes(builder.Configuration["Jwt: Secret"]))
+              Encoding.UTF8.GetBytes(builder.Configuration["Jwt: Key"]))
 
     });
 

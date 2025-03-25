@@ -21,16 +21,17 @@ namespace SchoolMagazine.API.Controllers
     {
          //private readonly IUserService _userService;
         // private readonly IEmailService _emailService;
-        //private readonly ITokenService _tokenService;
+        private readonly ITokenService _tokenService;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
 
        // public AuthController(UserManager<User> userManager, RoleManager<Role> roleManager, ITokenService tokenService, IUserService userService)
-        public AuthController(UserManager<User> userManager, RoleManager<Role> roleManager)
+        public AuthController(UserManager<User> userManager, RoleManager<Role> roleManager, ITokenService tokenService)
+        //public AuthController(UserManager<User> userManager, RoleManager<Role> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
-            //_tokenService = tokenService;
+            _tokenService = tokenService;
             //_userService = userService;
         }
 
@@ -101,8 +102,23 @@ namespace SchoolMagazine.API.Controllers
                 var isPasswordValid = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
                 if (isPasswordValid)
                 {
+                    // Get Roles for this user
+                 var roles =  await _userManager.GetRolesAsync(user);
+
+                    if(roles != null)
+                    {
+                        //  (Create JWT token)
+                        
+                        var jwtToken =  _tokenService.CreateJWTToken(user, roles.ToList());
+                        var response = new LoginResponse
+                        {
+                            Token = jwtToken,
+
+                        };
+                        return Ok(jwtToken);
+                    }
                     // Proceed with login logic (Create JWT token)
-                    return Ok("Login successful");
+                   //v return Ok("Login successful");
                 }
             }
 
