@@ -24,7 +24,7 @@ namespace SchoolMagazine.API.Controllers
         private readonly ITokenService _tokenService;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
-        private readonly IEmailService _emailService; // ✅ Add this
+        private readonly IEmailService _emailService; 
 
         public AuthController(UserManager<User> userManager, RoleManager<Role> roleManager, ITokenService tokenService, IUserService userService, IEmailService emailService)
         {
@@ -32,7 +32,7 @@ namespace SchoolMagazine.API.Controllers
             _roleManager = roleManager;
             _tokenService = tokenService;
             _userService = userService;
-            _emailService = emailService; // ✅ Assign email service
+            _emailService = emailService; //  Assign email service
         }
 
 
@@ -127,9 +127,7 @@ namespace SchoolMagazine.API.Controllers
             }
             try
             {
-                //Console.WriteLine($"Sending email to: {user.UserName}"); // ✅ Debugging
-                //await _emailService.SendEmailAsync(user.UserName, subject, body);
-                //Console.WriteLine("Email sent successfully!");
+                
                
 
                 await _emailService.SendEmailAsync(user.Email, subject, body);
