@@ -19,20 +19,20 @@ namespace SchoolMagazine.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-         //private readonly IUserService _userService;
-        // private readonly IEmailService _emailService;
+        
+        private readonly IUserService _userService;
         private readonly ITokenService _tokenService;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
+        private readonly IEmailService _emailService; // ✅ Add this
 
-       // public AuthController(UserManager<User> userManager, RoleManager<Role> roleManager, ITokenService tokenService, IUserService userService)
-        public AuthController(UserManager<User> userManager, RoleManager<Role> roleManager, ITokenService tokenService)
-        //public AuthController(UserManager<User> userManager, RoleManager<Role> roleManager)
+        public AuthController(UserManager<User> userManager, RoleManager<Role> roleManager, ITokenService tokenService, IUserService userService, IEmailService emailService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _tokenService = tokenService;
-            //_userService = userService;
+            _userService = userService;
+            _emailService = emailService; // ✅ Assign email service
         }
 
 
@@ -85,6 +85,9 @@ namespace SchoolMagazine.API.Controllers
             }
 
 
+      
+
+        //}
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
@@ -94,253 +97,101 @@ namespace SchoolMagazine.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            // Find user by email
             var user = await _userManager.FindByEmailAsync(loginRequestDto.Username);
-            if (user != null)
+            if (user == null)
             {
-                // Check if password is correct
-                var isPasswordValid = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
-                if (isPasswordValid)
-                {
-                    // Get Roles for this user
-                 var roles =  await _userManager.GetRolesAsync(user);
-
-                    if(roles != null)
-                    {
-                        //  (Create JWT token)
-                        
-                        var jwtToken =  _tokenService.CreateJWTToken(user, roles.ToList());
-                        var response = new LoginResponse
-                        {
-                            Token = jwtToken,
-
-                        };
-                        return Ok(jwtToken);
-                    }
-                    // Proceed with login logic (Create JWT token)
-                   //v return Ok("Login successful");
-                }
+                return BadRequest("Username or password is incorrect");
             }
 
-            return BadRequest("Username or password is incorrect");
+            var isPasswordValid = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
+            if (!isPasswordValid)
+            {
+                return BadRequest("Username or password is incorrect");
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            if (roles == null || roles.Count == 0)
+            {
+                return BadRequest("User has no roles assigned.");
+            }
+
+            // Generate JWT Token
+            var jwtToken = _tokenService.CreateJWTToken(user, roles.ToList());
+
+            // Send the token via email
+            var subject = "Your Login Token";
+            var body = $"Hello {user.Email},<br/><br/>Your login token:<br/><br/><strong>{jwtToken}</strong><br/><br/>Regards,<br/>School Magazine Team";
+            if (string.IsNullOrEmpty(user.Email))
+            {
+                return BadRequest("User email is missing.");
+            }
+            try
+            {
+                //Console.WriteLine($"Sending email to: {user.UserName}"); // ✅ Debugging
+                //await _emailService.SendEmailAsync(user.UserName, subject, body);
+                //Console.WriteLine("Email sent successfully!");
+               
+
+                await _emailService.SendEmailAsync(user.Email, subject, body);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending email: {ex.Message}");
+                return StatusCode(500, $"Error sending email: {ex.Message}");
+            }
+
+            return Ok(new { Message = "Login successful! Token has been sent to your email.", Token = jwtToken });
         }
 
 
-        //var tokenResponse = await _userService.LoginUser(loginRequestDto);
-
-        //if (tokenResponse == null || !tokenResponse.Status)
-        //{
-        //    return StatusCode(StatusCodes.Status400BadRequest,
-        //        new Response
-        //        {
-        //            Status = "Error",
-        //            Message = tokenResponse.Message,
-        //            IsSuccess = false
-
-        //        });
-        //}
-        //return Ok(tokenResponse);
-
-        //[AllowAnonymous]
-        //[HttpPost("login")]
-        //public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    var user = await _userManager.FindByNameAsync(loginRequestDto.Username);
-        //    if (user == null || !await _userManager.CheckPasswordAsync(user, loginRequestDto.Password))
-        //    {
-        //        return Unauthorized(new { Message = "Invalid username or password" });
-        //    }
-
-        //    var userRoles = await _userManager.GetRolesAsync(user);
-        //    var token = GenerateJwtToken(user, userRoles);
-
-        //    return Ok(new
-        //    {
-        //        Token = token,
-        //        UserId = user.Id,
-        //        Username = user.UserName,
-        //        Roles = userRoles
-        //    });
-        //}
-
-
-
-
-
-
-
-
-        // private readonly IMapper _mapper;
-
-        //public AuthController(IUserService userService, IEmailService emailService, UserManager<User> userManager, IMapper mapper)
-        //{
-        //    _userService = userService ?? throw new ArgumentNullException(nameof(userService));
-        //    _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
-        //    _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-        //    _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        //}
-
-
-        // --------------------------------------
-        // 🔹 User Registration & Authentication
-        // --------------------------------------
-
-        //[AllowAnonymous]
-        //[HttpPost("register")]
-        //public async  Task<IActionResult> Register([FromBody] RegisterRequestDto model)
-        //{
-        //    if (model == null)
-        //        return BadRequest(new Response { Message = "Invalid registration data.", IsSuccess = false, Status = "Error" });
-
-        //    if (string.IsNullOrWhiteSpace(model.Email))
-        //        return BadRequest(new Response { Message = "Email cannot be empty.", IsSuccess = false, Status = "Error" });
-
-        //    var tokenResponse = await _userService.RegisterUser(model);
-
-        //    if (tokenResponse == null || tokenResponse.Response == null)
-        //        return BadRequest(new Response { Message = "Registration failed.", IsSuccess = false, Status = "Error" });
-
-        //    var confirmationUrl = Url.Action(nameof(ConfirmEmail), "Auth",
-        //        new { token = tokenResponse.Response?.Token, email = model.Email }, Request.Scheme);
-
-        //    var message = new Message(new string[] { model.Email }, "Email Confirmation Link", confirmationUrl);
-
-        //    await _emailService.SendEmailAsync(message);
-
-        //    return Ok(new Response { IsSuccess = true, Message = tokenResponse.Message, Status = "Success" });
-        //}
-
-        //[AllowAnonymous]
-        //[HttpPost("register")]
-        //public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerRequestDto)
-        //{
-        //    var identityUser = new User
-        //    {
-        //        UserName = registerRequestDto.Username,
-        //        Email = registerRequestDto.Username
-
-
-        //    };
-
-        // var identityResult =   await _userManager.CreateAsync(identityUser, registerRequestDto.Password);
-        //    if (identityResult.Succeeded)
-        //    {
-        //        // add roles to the user
-        //        await _userManager.AddToRolesAsync(identityUser, "User");
-        //    }
-        //}
-
-
-
-
-
-        //[AllowAnonymous]
-        //[HttpPost("login")]
-        //public async Task<IActionResult> Login([FromBody] SignInModel model)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return BadRequest("Invalid login request.");
-
-        //    var tokenResponse = await _userService.LoginUser(model);
-
-        //    if (tokenResponse == null || !tokenResponse.Status)
-        //        return BadRequest(new Response { Status = "Error", Message = tokenResponse.Message, IsSuccess = false });
-
-        //    return Ok(tokenResponse);
-        //}
-
-        // --------------------------------------
-        // 🔹 Email Confirmation
-        // --------------------------------------
-
-        [HttpGet("confirm-email")]
-        public async Task<IActionResult> ConfirmEmail(string email, string token)
+        // AuthController.cs
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto forgotPasswordDto)
         {
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
-                return BadRequest("Invalid email confirmation request.");
+            var user = await _userManager.FindByEmailAsync(forgotPasswordDto.Email);
+            if (user == null) return BadRequest("User not found");
 
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
-                return NotFound(new Response { Status = "Error", Message = "User not found.", IsSuccess = false });
+            var token = await _userService.GeneratePasswordResetTokenAsync(user);
+            var resetLink = $"https://yourfrontend.com/reset-password?email={user.UserName}&token={token}";
+            await _userService.SendEmailAsync(user.UserName, "Password Reset", $"Click <a href='{resetLink}'>here</a> to reset your password");
 
-            var result = await _userManager.ConfirmEmailAsync(user, token);
-            if (!result.Succeeded)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Email confirmation failed.", IsSuccess = false });
-
-            return Ok(new Response { Status = "Success", Message = "Email verified successfully.", IsSuccess = true });
+            return Ok("Reset link sent to email");
         }
 
-        // --------------------------------------
-        // 🔹 User Management
-        // --------------------------------------
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+        {
+            var user = await _userManager.FindByEmailAsync(resetPasswordDto.Email);
+            if (user == null) return BadRequest("Invalid request");
 
-        //[Authorize(Roles = "User")]
-        //[HttpGet("{id:Guid}")]
-        //public async Task<IActionResult> GetUserById([FromRoute] Guid id)
-        //{
-        //    var user = await _userService.GetUserById(id);
-        //    if (user == null)
-        //        return NotFound("User not found.");
+            var result = await _userService.ResetPasswordAsync(user, resetPasswordDto.Token, resetPasswordDto.NewPassword);
+            return result ? Ok("Password reset successful") : BadRequest("Password reset failed");
+        }
 
-        //    return Ok(_mapper.Map<UserDto>(user));
-        //}
+        [HttpPost("enable-2fa")]
+        public async Task<IActionResult> EnableTwoFactor([FromBody] TwoFactorDto twoFactorDto)
+        {
+            var user = await _userManager.FindByEmailAsync(twoFactorDto.Email);
+            if (user == null) return BadRequest("User not found");
 
-        //[Authorize(Roles = "User")]
-        //[HttpPut("{id:Guid}")]
-        //public async Task<IActionResult> UpdateUser([FromRoute] Guid id, [FromBody] User user)
-        //{
-        //    if (user == null)
-        //        return BadRequest("Invalid user data.");
+            var token = await _userService.GenerateTwoFactorTokenAsync(user);
+            await _userService.SendEmailAsync(user.Email, "2FA Code", $"Your 2FA code is: {token}");
 
-        //    var updatedUser = await _userService.UpdateUser(user, id);
-        //    return Ok(_mapper.Map<UserDto>(updatedUser));
-        //}
+            return Ok("2FA code sent to email");
+        }
 
-        // --------------------------------------
-        // 🔹 Password Reset
-        // --------------------------------------
+        [HttpPost("verify-2fa")]
+        public async Task<IActionResult> VerifyTwoFactor([FromBody] VerifyTwoFactorDto verifyDto)
+        {
+            var user = await _userManager.FindByEmailAsync(verifyDto.Email);
+            if (user == null) return BadRequest("User not found");
 
-        //[AllowAnonymous]
-        //[HttpPost("forgot-password")]
-        //public async Task<IActionResult> ForgotPassword([Required] string email)
-        //{
-        //    if (string.IsNullOrEmpty(email))
-        //        return BadRequest("Email is required.");
+            var isValid = await _userService.VerifyTwoFactorTokenAsync(user, verifyDto.Token);
+            return isValid ? Ok("2FA verified") : BadRequest("Invalid 2FA code");
+        }
 
-        //    var forgotToken = await _userService.ForgotPassword(email);
-        //    var resetPasswordUrl = Url.Action(nameof(ResetPassword), "Auth", new { token = forgotToken, email }, Request.Scheme);
+      
 
-        //    var message = new Message(new string[] { email }, "Password Reset Request", resetPasswordUrl);
-        //    await _emailService.SendEmailAsync(message);
-
-        //    return Ok(new ApiResponse<string> { Status = true, Message = "Password reset instructions sent to email." });
-        //}
-
-        //[AllowAnonymous]
-        //[HttpGet("reset-password")]
-        //public IActionResult ResetPassword(string email, string token)
-        //{
-        //    if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
-        //        return BadRequest("Invalid password reset request.");
-
-        //    var model = new ResetPasswordModel { Email = email, Token = token };
-        //    return Ok(new { model });
-        //}
-
-        //[AllowAnonymous]
-        //[HttpPost("change-password")]
-        //public async Task<IActionResult> ChangePassword([FromBody] ResetPasswordModel model)
-        //{
-        //    if (model == null)
-        //        return BadRequest("Invalid password change request.");
-
-        //    await _userService.ResetPassword(model);
-        //    return Ok(new ApiResponse<string> { Status = true, Message = "Password changed successfully." });
-        //}
     }
 }

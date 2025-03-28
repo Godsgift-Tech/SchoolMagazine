@@ -9,16 +9,13 @@ using System.Threading.Tasks;
 
 namespace SchoolMagazine.Application.AppInterface
 {
-    //public interface IUserService
-    //{
-    //    Task<IEnumerable<User>> GetAllUser(int? pageIndex, int? pageSize);
-    //    Task<ApiResponse<LoginResponse>> LoginUser(LoginRequestDto signIn);
-    //    Task<ApiResponse<UserResponse>> RegisterUser(RegisterRequestDto signUp);
-    //    //Task<bool> ConfirmEmailAsync(string email, string token);
-    //    Task<string> ForgotPassword(string email);
-    //    Task<string> ResetPassword(ResetPasswordModel restPassword);
-    //    Task<User> DeleteUser(Guid id);
-    //    Task<User> GetUserById(Guid id);
-    //    Task<User> UpdateUser(User user, Guid id);
-    //}
+    public interface IUserService
+    {
+        
+        Task SendEmailAsync(string toEmail, string subject, string message);
+        Task<string> GeneratePasswordResetTokenAsync(User user);
+        Task<bool> ResetPasswordAsync(User user, string token, string newPassword);
+        Task<string> GenerateTwoFactorTokenAsync(User user);
+        Task<bool> VerifyTwoFactorTokenAsync(User user, string token);
+    }
 }
