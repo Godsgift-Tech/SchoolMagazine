@@ -14,7 +14,9 @@ namespace SchoolMagazine.Domain.Entities
         [Key]
         public Guid Id { get; set; } 
 
-        [Required]
+
+        [Required(ErrorMessage = "Title is required.")]
+        [StringLength(40, ErrorMessage = "Title cannot exceed 40 characters.")]
         public string SchoolName { get; set; }
         
         public Guid UserId { get; set; } 
@@ -38,12 +40,12 @@ namespace SchoolMagazine.Domain.Entities
         [Required]
         public double Rating { get; set; }
 
-        [JsonIgnore]
+        //[JsonIgnore]
 
-         public ICollection<SchoolEvent>? Events { get; set; }
-      // [JsonIgnore]
+         public ICollection<SchoolEvent>? Events { get; set; } = new List<SchoolEvent>();
+        // [JsonIgnore]
 
-       public ICollection<SchoolAdvert>? Adverts { get; set; } = new List<SchoolAdvert>();
+        public ICollection<SchoolAdvert>? Adverts { get; set; } = new List<SchoolAdvert>();
        // public ICollection<Advert> Adverts { get; set; } = new List<Advert>();
     }
 }

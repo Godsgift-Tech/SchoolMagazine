@@ -24,6 +24,7 @@ namespace SchoolMagazine.Domain.Interface
       
         Task<ServiceResponse<School>> AddSchoolAsync(School school);
         Task<PagedResult<School>> GetPagedResultAsync(int pageNumber, int pageSize);
+        //Task<PagedResult<School>> GetEventPagedResultAsync(int pageNumber, int pageSize);
 
         Task<string> UpdateSchoolAsync(School school);
         Task DeleteSchoolByIdAsync(School searchedSchool);

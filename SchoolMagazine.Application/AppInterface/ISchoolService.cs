@@ -10,6 +10,7 @@ namespace SchoolMagazine.Application.AppInterface
         Task<ServiceResponse<PagedResult<SchoolDto>>> GetSchoolsAsync(string? schoolName, string? location, decimal? feesRange, double? rating, int pageNumber, int pageSize);
 
         Task<ServiceResponse<PagedResult<SchoolDto>>> GetPagedSchoolsAsync(int pageNumber, int pageSize);
+        //Task<ServiceResponse<PagedResult<SchoolDto>>> GetEventsPagedSchoolsAsync(int pageNumber, int pageSize);
 
         Task<ServiceResponse<CreateSchoolDto>> GetSchoolByIdAsync(Guid id);
         Task<ServiceResponse<CreateSchoolDto>> GetSchoolByNameAsync(string schoolName);

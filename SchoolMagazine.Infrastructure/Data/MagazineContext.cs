@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SchoolMagazine.Application.AppUsers;
-using SchoolMagazine.Application.DTOs;
 using SchoolMagazine.Domain.Entities;
-using SchoolMagazine.Infrastructure.Auth;
-using SchoolMagazine.Infrastructure.Auto;
-using System;
+using SchoolMagazine.Domain.UserRoleInfo;
 namespace SchoolMagazine.Infrastructure.Data
 {
     public class MagazineContext : IdentityDbContext<User, Role, Guid>

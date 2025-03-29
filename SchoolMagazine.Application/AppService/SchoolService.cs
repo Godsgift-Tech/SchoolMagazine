@@ -32,8 +32,25 @@ namespace SchoolMagazine.Application.AppService
                 Items = _mapper.Map<List<SchoolDto>>(pagedResult.Items)
             };
 
-            return new ServiceResponse<PagedResult<SchoolDto>>(pagedResultDto, success: true, message: "Schools retrieved successfully");
+            return new ServiceResponse<PagedResult<SchoolDto>>(pagedResultDto, success: true, message: "Schools with advert and event details retrieved successfully");
         }
+
+        //
+
+        //public async Task<ServiceResponse<PagedResult<SchoolDto>>> GetEventsPagedSchoolsAsync(int pageNumber, int pageSize)
+        //{
+        //    var pagedResult = await _sr.GetEventPagedResultAsync(pageNumber, pageSize);
+
+        //    var pagedResultDto = new PagedResult<SchoolDto>
+        //    {
+        //        TotalCount = pagedResult.TotalCount,
+        //        PageSize = pagedResult.PageSize,
+        //        PageNumber = pagedResult.PageNumber,
+        //        Items = _mapper.Map<List<SchoolDto>>(pagedResult.Items)
+        //    };
+
+        //    return new ServiceResponse<PagedResult<SchoolDto>>(pagedResultDto, success: true, message: "Schools with event details retrieved successfully");
+        //}
         public async Task<ServiceResponse<CreateSchoolDto>> GetSchoolByIdAsync(Guid id)
         {
             var searchedSchool = await _sr.GetSchoolByIdAsync(id);

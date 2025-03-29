@@ -18,12 +18,33 @@ namespace SchoolMagazine.Infrastructure.Data.Service
             _db = db;
         }
 
-        public async Task<IEnumerable<SchoolEvent>> GetAllEventsAsync()
-        {
-            return await _db.Events.ToListAsync();
-            // return await _db.Schools.ToListAsync();
+        //public async Task<IEnumerable<SchoolEvent>> GetAllEventsAsync()
+        //{
+        //    return await _db.Events.ToListAsync();
+        //    // return await _db.Schools.ToListAsync();
 
+        //}
+        public async Task<PagedResult<SchoolEvent>> GetAllEventsAsync(int pageNumber, int pageSize)
+        {
+            var query = _db.Events.Include(e => e.School).AsQueryable();
+
+            int totalCount = await query.CountAsync();
+
+            var events = await query
+                .OrderByDescending(e => e.EventDate)  // Sorting by latest event first
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<SchoolEvent>
+            {
+                TotalCount = totalCount,
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                Items = events
+            };
         }
+
 
         public async Task<SchoolEvent?> GetEventByTitleAndDescription(string title, string description, Guid schoolId)
         {

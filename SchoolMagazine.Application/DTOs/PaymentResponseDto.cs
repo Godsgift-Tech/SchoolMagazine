@@ -8,8 +8,8 @@ namespace SchoolMagazine.Application.DTOs
 {
     public class PaymentResponseDto
     {
-        public bool Success { get; set; }  // Indicates if the payment was successful
-        public string Message { get; set; }  // Message describing the payment result
-        public string? TransactionId { get; set; }  // Unique identifier for the transaction (optional)
+        public bool IsSuccessful { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public string? TransactionId { get; set; } // Unique transaction ID if payment is successful
     }
 }

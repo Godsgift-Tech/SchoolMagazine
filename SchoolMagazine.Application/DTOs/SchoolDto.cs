@@ -41,7 +41,7 @@ namespace SchoolMagazine.Application.DTOs
         [Required]
         public double Rating { get; set; }
 
-       [JsonIgnore]
+       //[JsonIgnore]
         public ICollection<SchoolEventDto>? Events { get; set; }
         //[JsonIgnore]
 

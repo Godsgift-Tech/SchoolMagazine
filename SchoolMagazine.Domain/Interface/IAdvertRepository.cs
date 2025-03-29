@@ -1,30 +1,21 @@
 ﻿using SchoolMagazine.Domain.Entities;
+using SchoolMagazine.Domain.Paging;
 using SchoolMagazine.Domain.Service_Response;
 
 namespace SchoolMagazine.Domain.Interface
 {
     public interface IAdvertRepository
     {
-        Task<IEnumerable<SchoolAdvert>> GetAllAdvertsAsync();
-     
-
-       // Task<IEnumerable<SchoolEvent>> GetAllEventsAsync();
-
-     //   Task<IEnumerable<SchoolAdvert>> GetAdvertByName(string eventName);
-        Task<IEnumerable<SchoolAdvert>> GetAdvertBySchoolAsync(string schoolName);
-
-       // Task<SchoolEvent?> GetAdvertByTitleAndDescription(string title, string description, Guid schoolId);
-
-        Task<AdvertServiceResponse<SchoolAdvert>> AddSchoolAdvertAsync(SchoolAdvert advertDetails);
+        
+        
         Task<bool> SchoolExistsAsync(Guid schoolId);
-        Task<SchoolAdvert?> GetAdvertByIdAsync(Guid id);
+        Task AddAdvertAsync(SchoolAdvert advert);
+        Task<PagedResult<SchoolAdvert>> GetPagedAdvertsAsync(int pageNumber, int pageSize);
+        Task<SchoolAdvert?> GetAdvertByIdAsync(Guid advertId);
+        Task<PagedResult<SchoolAdvert>> GetPagedAdvertsBySchoolIdAsync(Guid schoolId, int pageNumber, int pageSize);
+        Task<PagedResult<SchoolAdvert>> SearchPagedAdvertsAsync(string keyword, int pageNumber, int pageSize);
+        Task<bool> DeleteAdvertAsync(Guid advertId);
 
-        Task<SchoolAdvert?> GetAdvertByTitleAsync(string title, Guid schoolId);
-        Task<IEnumerable<SchoolAdvert>> GetAdvertBySchoolId(Guid schoolId);
-
-        Task<IEnumerable<SchoolAdvert>> GetAllPaidAdvertsAsync();
-        Task UpdateSchoolAdvertAsync(SchoolAdvert advertDetails);
-        Task DeleteSchoolAdvertAsync(Guid edvertId);
 
     }
 }

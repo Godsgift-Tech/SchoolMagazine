@@ -16,29 +16,19 @@ namespace SchoolMagazine.API.Controllers
             _eventService = eventService;
         }
 
-        [HttpGet("GetAllEvents")]
+        
 
-        public async Task<IActionResult> GetAllEvents()
+        [HttpGet("GetAllEvents")]
+        public async Task<IActionResult> GetAllEvents(
+    [FromQuery] int pageNumber = 1,
+    [FromQuery] int pageSize = 10)
         {
-            var events = await _eventService.GetAllEventsAsync();
-            return Ok(events);
+            var result = await _eventService.GetAllEventsAsync(pageNumber, pageSize);
+            return result.success ? Ok(result) : NotFound(result);
         }
 
-        //[HttpGet("GetEventsBySchool/{schoolName}")]
-        //public async Task<IActionResult> GetEventsBySchool(string schoolName)
-        //{
-        //    var events = await _eventService.GetEventsBySchoolAsync(schoolName);
-        //    return Ok(events);
-        //}
-        //[HttpGet("by-school/{schoolId}")]
-        //public async Task<IActionResult> GetEventsBySchool(Guid schoolId)
-        //{
-        //    var events = await _eventService.GetEventsBySchool(schoolId);
-        //    return Ok(events);
-        //}
 
-
-        [HttpPost]
+        [HttpPost("createEvent")]
         public async Task<IActionResult> AddEvent([FromBody] SchoolEventDto eventDto)
         {
             if (eventDto == null)
@@ -57,7 +47,7 @@ namespace SchoolMagazine.API.Controllers
         }
 
 
-        [HttpPut("{id}")]
+        [HttpPut("updateEvent/{id}")]
         public async Task<IActionResult> UpdateEvent(Guid id, [FromBody] SchoolEventDto eventDto)
         {
             var response = await _eventService.UpdateSchoolEventAsync(id, eventDto);
@@ -78,7 +68,7 @@ namespace SchoolMagazine.API.Controllers
         }
 
 
-        [HttpGet("search")]
+        [HttpGet("EventS-BysearchQuery")]
         public async Task<IActionResult> GetEvents(
     [FromQuery] string? title,
     [FromQuery] string? description,
