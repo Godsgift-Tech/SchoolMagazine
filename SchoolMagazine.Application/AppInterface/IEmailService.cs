@@ -15,6 +15,7 @@ namespace SchoolMagazine.Application.AppInterface
         //Task SendEmailAsync(string toEmail, string subject, string message);
         //void SendEmail(string to, string subject, string body);
         Task SendEmailAsync(string to, string subject, string body);
+
         //  Task SendEmailAsync(string toEmail, string subject, string message);
         //Task SendEmailAsync(Message message);
     }

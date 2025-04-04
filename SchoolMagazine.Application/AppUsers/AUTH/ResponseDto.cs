@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace SchoolMagazine.Application.AppUsers.AUTH
 {
-    public class LoginResponseDto
+    public class ResponseDto
     {
-        // public string JwtToken { get; set; }
         public bool Success { get; set; }
-        public string Token { get; set; }
-        public string[] Errors { get; set; }
+        public List<string> Errors { get; set; } = new List<string>();
+
     }
 }

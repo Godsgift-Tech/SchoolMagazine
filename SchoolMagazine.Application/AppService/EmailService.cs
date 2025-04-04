@@ -1,52 +1,64 @@
-﻿//using MailKit.Net.Smtp;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using MimeKit;
+﻿using Microsoft.Extensions.Configuration;
 using SchoolMagazine.Application.AppInterface;
-using SchoolMagazine.Application.Email_Messaging;
-using System.Net;
-using System.Net.Mail;
-//using System.Net.Mail;
+using MimeKit;
+using MailKit.Net.Smtp;
+using System;
+using System.Threading.Tasks;
 
 namespace SchoolMagazine.Application.AppService
 {
-
-
-
-
-
     public class EmailService : IEmailService
     {
-        public async Task SendEmailAsync(string toEmail, string subject, string body)
+        private readonly IConfiguration _configuration;
+
+        public EmailService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        public async Task SendEmailAsync(string to, string subject, string body)
         {
             try
             {
-                using (var smtpClient = new SmtpClient("smtp.gmail.com"))
+                // Create a MimeMessage
+                var emailMessage = new MimeMessage();
+
+                // Set the sender's email (From)
+                emailMessage.From.Add(new MailboxAddress("Your Name or Display Name", _configuration["EmailSettings:FromEmail"]));
+
+                // Set the recipient's email (To)
+                emailMessage.To.Add(new MailboxAddress("Recipient Name or Display Name", to));
+
+                // Set the subject of the email
+                emailMessage.Subject = subject;
+
+                // Create the email body with HTML content
+                var bodyBuilder = new BodyBuilder { HtmlBody = body };
+                emailMessage.Body = bodyBuilder.ToMessageBody();
+
+                // Connect to SMTP server using MailKit SmtpClient
+                using (var smtpClient = new SmtpClient())
                 {
-                    smtpClient.Port = 587; //  Correct Port
-                    smtpClient.Credentials = new NetworkCredential("godsgiftoghenechohwo@gmail.com", "lxgk rznf mchp fayh");
-                    smtpClient.EnableSsl = true; //  Use TLS
+                    // Ensure the client connects and authenticates
+                    await smtpClient.ConnectAsync(_configuration["EmailSettings:Host"], int.Parse(_configuration["EmailSettings:Port"]), true);
 
-                    var mailMessage = new MailMessage
-                    {
-                        From = new MailAddress("godsgiftoghenechohwo@gmail.com"),
-                        Subject = subject,
-                        Body = body,
-                        IsBodyHtml = true
-                    };
+                    // Authenticate using credentials from configuration
+                    await smtpClient.AuthenticateAsync(_configuration["EmailSettings:UserName"], _configuration["EmailSettings:Password"]);
 
-                    mailMessage.To.Add(toEmail);
-
-                    await smtpClient.SendMailAsync(mailMessage);
+                    // Send the email asynchronously
+                    await smtpClient.SendAsync(emailMessage);
                     Console.WriteLine("Email sent successfully!");
+
+                    // Disconnect and dispose the client after sending the email
+                    await smtpClient.DisconnectAsync(true);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error sending email: {ex.Message}");
+                Console.WriteLine($"General Error: {ex.Message}");
+                // Log the exception for further debugging
+                throw new InvalidOperationException("An unexpected error occurred while sending the email.", ex);
             }
         }
     }
-
-
 }

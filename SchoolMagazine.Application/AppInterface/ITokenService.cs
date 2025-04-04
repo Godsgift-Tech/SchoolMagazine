@@ -12,7 +12,10 @@ namespace SchoolMagazine.Application.AppInterface
         // string GenerateToken(User user, List<string> roles);
         // string GenerateToken(ApplicationUser user, IList<string> roles);
         //string GenerateToken(User user, List<string> roles);
+      //  string CreateJWTToken(User user, IList<string> roles);
         string CreateJWTToken(User user, List<string> roles);
+
+
         //string GenerateToken(User user, List<string> roles);
         //object GenerateToken(User user, IList<string> userRoles);
     }

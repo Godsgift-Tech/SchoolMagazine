@@ -1,4 +1,5 @@
-﻿using SchoolMagazine.Application.AppUsers.AUTH;
+﻿using Org.BouncyCastle.Asn1.Ocsp;
+using SchoolMagazine.Application.AppUsers.AUTH;
 using SchoolMagazine.Domain.Service_Response;
 using SchoolMagazine.Domain.UserRoleInfo;
 using System;
@@ -11,11 +12,28 @@ namespace SchoolMagazine.Application.AppInterface
 {
     public interface IUserService
     {
-        
-        Task SendEmailAsync(string toEmail, string subject, string message);
-        Task<string> GeneratePasswordResetTokenAsync(User user);
-        Task<bool> ResetPasswordAsync(User user, string token, string newPassword);
-        Task<string> GenerateTwoFactorTokenAsync(User user);
-        Task<bool> VerifyTwoFactorTokenAsync(User user, string token);
+
+        //Task<UserResponse> RegisterUserAsync(RegisterRequestDto model);
+
+        //Task<ServiceResponse<string>> ConfirmEmailAsync(string email, string token);
+        //Task<LoginResponseDto> SendPasswordResetEmailAsync(string email);
+        //Task<UserResponse> LoginAsync(LoginRequestDto request);
+
+        //Task<LoginResponseDto> EnableTwoFactorAsync(string email);
+
+        //Task<ServiceResponse<bool>> VerifyTwoFactorAsync(string email, string token);
+
+        //Task<ServiceResponse<string>> GeneratePasswordResetTokenAsync(string email);
+        //Task<ServiceResponse<bool>> ResetPasswordAsync(ResetPasswordDto model);
+
+        Task<UserResponse> RegisterUserAsync(RegisterRequestDto model);
+        Task<UserResponse> LoginUserAsync(LoginRequestDto model);
+        Task<bool> ConfirmEmailAsync(string email, string token);
+
+        Task<UserResponse> ForgotPasswordAsync(string email);
+        Task<UserResponse> ResetPasswordAsync(ResetPasswordDto model);
+        Task<UserResponse> EnableTwoFactorAuthenticationAsync(string userId);
+        Task<UserResponse> VerifyTwoFactorCodeAsync(TwoFactorDto model);
+
     }
 }

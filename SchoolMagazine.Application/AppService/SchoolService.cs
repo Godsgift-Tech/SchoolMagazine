@@ -35,22 +35,7 @@ namespace SchoolMagazine.Application.AppService
             return new ServiceResponse<PagedResult<SchoolDto>>(pagedResultDto, success: true, message: "Schools with advert and event details retrieved successfully");
         }
 
-        //
-
-        //public async Task<ServiceResponse<PagedResult<SchoolDto>>> GetEventsPagedSchoolsAsync(int pageNumber, int pageSize)
-        //{
-        //    var pagedResult = await _sr.GetEventPagedResultAsync(pageNumber, pageSize);
-
-        //    var pagedResultDto = new PagedResult<SchoolDto>
-        //    {
-        //        TotalCount = pagedResult.TotalCount,
-        //        PageSize = pagedResult.PageSize,
-        //        PageNumber = pagedResult.PageNumber,
-        //        Items = _mapper.Map<List<SchoolDto>>(pagedResult.Items)
-        //    };
-
-        //    return new ServiceResponse<PagedResult<SchoolDto>>(pagedResultDto, success: true, message: "Schools with event details retrieved successfully");
-        //}
+       
         public async Task<ServiceResponse<CreateSchoolDto>> GetSchoolByIdAsync(Guid id)
         {
             var searchedSchool = await _sr.GetSchoolByIdAsync(id);
@@ -80,8 +65,6 @@ namespace SchoolMagazine.Application.AppService
 
             return new ServiceResponse<CreateSchoolDto>(schoolDto, true, "School retrieved successfully.");
         }
-
-
 
 
         public async Task<ServiceResponse<CreateSchoolDto>> AddSchoolAsync(CreateSchoolDto schoolDto)
@@ -142,8 +125,6 @@ namespace SchoolMagazine.Application.AppService
                 return new ServiceResponse<bool>(false, success: false, message: "School was not found.");
 
             }
-
-            
 
 
 
