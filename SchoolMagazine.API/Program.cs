@@ -12,7 +12,6 @@ using SchoolMagazine.Domain.Interface;
 using SchoolMagazine.Domain.UserRoleInfo;
 using SchoolMagazine.Infrastructure.Data;
 using SchoolMagazine.Infrastructure.Data.Service;
-using System.Configuration;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,12 +56,9 @@ builder.Services.AddScoped<IAdvertRepository, AdvertRepository>();
 builder.Services.AddScoped<IAdvertService, AdvertService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
-//builder.Services.AddScoped<IEmailService, EmailService>();
-// Load configuration from appsettings.json
-//builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+// Register IConfiguration
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
-// Register EmailService
-//builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailSettings"));
 
 builder.Services.AddSingleton<IEmailService, EmailService>();
@@ -70,13 +66,7 @@ builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<RoleManager<Role>>();
 
-//var builder = WebApplication.CreateBuilder(args);
 
-
-//builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection("EmailConfiguration"));
-//builder.Services.AddSingleton<IEmailService, EmailService>();
-
-//builder.Services.AddScoped<IEmailService, EmailService>(); // Add this line
 
 // Register AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -84,35 +74,16 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 // Configure EF Core with SQL Server and connection string from appsettings.json
 builder.Services.AddDbContext<MagazineContext>(x => x.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")
-    
+
 ));
 
-
-// Load appsettings.json
-//builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-
-
-//// Ensure configuration is added
-//builder.Configuration
-//    .SetBasePath(Directory.GetCurrentDirectory())
-//    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-//    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-//    .AddEnvironmentVariables();
-
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+{
+    options.TokenLifespan = TimeSpan.FromMinutes(30);// Extend token validity to 7 days   imeSpan.FromHours(3);
+});
 
 // Retrieve JWT Secret
 var jwtSecret = builder.Configuration["JwtSettings:Key"];
-
-//if (string.IsNullOrEmpty(jwtSecret))
-//{
-//    throw new ArgumentNullException("JwtSettings:Secret", "JWT Secret cannot be null. Check appsettings.json or environment variables.");
-//}
-
-// Add services
-
-//builder.Services.AddIdentity<User, IdentityRole>()
-//    .AddEntityFrameworkStores<ApplicationDbContext>()
-//    .AddDefaultTokenProviders();
 
 
 
@@ -128,26 +99,21 @@ builder.Services.AddIdentity<User, Role>(options =>
 .AddEntityFrameworkStores<MagazineContext>()
 .AddDefaultTokenProviders();
 
-
-
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
 
-//     options.SaveToken = true,
-//options.RequireHttpsMetadata = false,
 options.TokenValidationParameters = new TokenValidationParameters
-    {
-       ValidateIssuer = true,
-        ValidateAudience = true,
-         ValidateLifetime = true,
-         ValidateIssuerSigningKey = true,
-          ValidIssuer = builder.Configuration["Jwt: Issuer"],
-          ValidAudience = builder.Configuration["Jwt: Audience"],
-          IssuerSigningKey= new SymmetricSecurityKey (
+{
+    ValidateIssuer = true,
+    ValidateAudience = true,
+    ValidateLifetime = true,
+    ValidateIssuerSigningKey = true,
+    ValidIssuer = builder.Configuration["Jwt: Issuer"],
+    ValidAudience = builder.Configuration["Jwt: Audience"],
+    IssuerSigningKey = new SymmetricSecurityKey(
               Encoding.UTF8.GetBytes(builder.Configuration["Jwt: Key"]))
 
-    });
+});
 
 
 // Ensure configuration is added
@@ -158,6 +124,7 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 var configuration = builder.Configuration;
+
 
 
 var app = builder.Build();

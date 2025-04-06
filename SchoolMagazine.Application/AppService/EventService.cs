@@ -63,7 +63,7 @@ namespace SchoolMagazine.Application.AppService
             var response = new EventServiceResponse<IEnumerable<SchoolEventDto>>();
             try
             {
-                var searchedEvents = await _eventRepository.GetEventsBySchoolId(schoolId); // ✅ Get events by SchoolId
+                var searchedEvents = await _eventRepository.GetEventsBySchoolId(schoolId); //  Get events by SchoolId
 
                 if (searchedEvents == null || !searchedEvents.Any())
                 {
@@ -72,7 +72,7 @@ namespace SchoolMagazine.Application.AppService
                     return response;
                 }
 
-                response.Data = _mapper.Map<IEnumerable<SchoolEventDto>>(searchedEvents); // ✅ Correct mapping
+                response.Data = _mapper.Map<IEnumerable<SchoolEventDto>>(searchedEvents);
                 response.Success = true;
                 response.Message = "Events retrieved successfully.";
             }

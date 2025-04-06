@@ -10,44 +10,42 @@ using System.Text;
 namespace SchoolMagazine.Application.AppService
 {
 
-
-    
     public class TokenService : ITokenService
     {
-        private readonly IConfiguration _config;    // this  enables us to use apsettings.json
+        private readonly IConfiguration _configuration;
 
-        public TokenService(IConfiguration config)
+        public TokenService(IConfiguration configuration)
         {
-            _config = config;
+            _configuration = configuration;
         }
 
-       
         public string CreateJWTToken(User user, List<string> roles)
         {
-            // Create claim
-            var claim = new List<Claim>();
-            claim.Add(new Claim (ClaimTypes.Email, user.Email));
-            //adding roles to claim
-            foreach (var role in roles)
-            {
-                claim.Add(new Claim(ClaimTypes.Role, role));
+            var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Name, user.UserName)
+        };
 
-            }
-            // working on token
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));  //from appsettings.json
-            var credentials =new SigningCredentials(key,SecurityAlgorithms.HmacSha256);
+            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(
-               _config["Jwt: Issuer"],
-               _config["jWT: Audience"],
-               claim,
-               expires: DateTime.Now.AddMinutes(15),
-               signingCredentials: credentials);
-            // return token as a string
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(60),
+                signingCredentials: creds
+            );
+
             return new JwtSecurityTokenHandler().WriteToken(token);
-
-
         }
     }
+
+
+
 
 
 }
