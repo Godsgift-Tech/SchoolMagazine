@@ -38,29 +38,40 @@ namespace SchoolMagazine.Application.AppService
 
         public async Task<UserResponse> RegisterUserAsync(RegisterRequestDto model)
         {
-            // Step 1: Create the user
-            var user = new User { FirstName = model.FirstName, LastName = model.LastName, Email = model.Username, UserName = model.Username };
+            //  Create the user
+            var user = new User
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Username,
+                UserName = model.Username
+            };
+
             var result = await _userManager.CreateAsync(user, model.Password);
 
-            // Step 2: If user creation failed, return errors
+            // user creation condictions
             if (!result.Succeeded)
             {
-                return new UserResponse { Success = false, Errors = result.Errors.Select(e => e.Description).ToList() };
+                return new UserResponse
+                {
+                    Success = false,
+                    Errors = result.Errors.Select(e => e.Description).ToList()
+                };
             }
 
-            // Step 3: Generate the email confirmation token
+            // Generate email confirmation token
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             Console.WriteLine($"Generated Token: {token}");
 
-            // Step 4: Build the confirmation link
+            //  Build confirmation link
             var confirmationLink = $"{_configuration["FrontendUrl"]}/confirm-email?email={user.Email}&token={WebUtility.UrlEncode(token)}";
             Console.WriteLine($"Confirmation Link: {confirmationLink}");
 
-            // Step 5: Read email template and replace placeholders
-            string emailTemplate;
+            //  Load and customize email template
+            string emailBody;
             try
             {
-                emailTemplate = File.ReadAllText("Helpers/EmailConfirmationTemplate.html");
+                emailBody = await _emailService.GetEmailTemplate("EmailConfirmationTemplate.html", confirmationLink, user.UserName);
             }
             catch (Exception ex)
             {
@@ -68,16 +79,10 @@ namespace SchoolMagazine.Application.AppService
                 return new UserResponse { Success = false, Message = "Failed to load email template." };
             }
 
-            emailTemplate = emailTemplate.Replace("{UserName}", user.UserName)
-                                         .Replace("{ConfirmationLink}", confirmationLink);
-
-            // Step 6: Log the final email content (for debugging)
-            Console.WriteLine($"Email Template Content: {emailTemplate}");
-
-            // Step 7: Send the confirmation email
+            // Send confirmation email
             try
             {
-                await _emailService.SendEmailAsync(user.Email, "Confirm Your Email", emailTemplate);
+                await _emailService.SendEmailAsync(user.Email, "Confirm Your Email", emailBody);
             }
             catch (Exception ex)
             {
@@ -85,15 +90,15 @@ namespace SchoolMagazine.Application.AppService
                 return new UserResponse { Success = false, Message = "Failed to send confirmation email." };
             }
 
-            // Step 8: Return success response with token and user details
+            //  Response
             return new UserResponse
             {
                 Success = true,
-                Token = token,  // Include the generated token here
+                // Token = token,  =>  avoid registration token to be exposed 
                 User = new
                 {
                     user.UserName,
-                    user.Email
+                    // user.Email
                 },
                 Message = "Registration successful. Check your email for confirmation."
             };
@@ -110,16 +115,47 @@ namespace SchoolMagazine.Application.AppService
             var roles = (await _userManager.GetRolesAsync(user)).ToList();
             var jwtToken = _tokenService.CreateJWTToken(user, roles);
 
-            return new UserResponse { Success = true, Token = jwtToken, Message = "Login successful!" };
+            return new UserResponse { Success = true, Token = jwtToken, Message = "Login successful!." };
         }
+
+        //public async Task<User> FindByEmailAsync(string email)
+        //{
+        //    return await _userManager.FindByEmailAsync(email);
+        //}
+        //public async Task<bool> ConfirmEmailAsync(string email, string token)
+        //{
+        //    var user = await _userManager.FindByEmailAsync(email);
+        //    if (user == null) return false;
+
+        //    var decodedToken = WebUtility.UrlDecode(token); // Ensure it's decoded
+
+        //    var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
+        //    return result.Succeeded;
+        //}
 
         public async Task<bool> ConfirmEmailAsync(string email, string token)
         {
+            // Find user by email
             var user = await _userManager.FindByEmailAsync(email);
-            if (user == null) return false;
+            if (user == null)
+            {
+                Console.WriteLine($"User not found for email: {email}");
+                return false;
+            }
 
-            var result = await _userManager.ConfirmEmailAsync(user, token);
-            return result.Succeeded;
+            // Decode token
+            var decodedToken = WebUtility.UrlDecode(token);
+
+            // Confirm email
+            var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
+            if (!result.Succeeded)
+            {
+                Console.WriteLine($"Email confirmation failed for {email}. Errors: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                return false;
+            }
+
+            Console.WriteLine($"Email confirmed successfully for {email}");
+            return true;
         }
 
         public async Task<UserResponse> ForgotPasswordAsync(string email)
@@ -131,27 +167,55 @@ namespace SchoolMagazine.Application.AppService
             }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var resetLink = $"{_configuration["FrontendUrl"]}/reset-password?email={email}&token={WebUtility.UrlEncode(token)}";
 
-            string emailTemplate = File.ReadAllText("Helpers/ResetPasswordTemplate.html")
-                .Replace("{UserName}", user.UserName)
-                .Replace("{ResetLink}", resetLink);
+            var resetLink = $"{_configuration["FrontendUrl"]}/reset-password?email={user.Email}&token={WebUtility.UrlEncode(token)}";
 
-            await _emailService.SendEmailAsync(user.Email, "Reset Your Password", emailTemplate);
+            string emailTemplate;
+            try
+            {
+                var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Helpers", "ResetPasswordTemplate.html");
+                emailTemplate = await File.ReadAllTextAsync(templatePath);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error reading reset password email template: {ex.Message}");
+                return new UserResponse { Success = false, Message = "Failed to load reset password email template." };
+            }
 
-            return new UserResponse { Success = true, Message = "Reset password link sent to your email." };
+            emailTemplate = emailTemplate.Replace("{UserName}", user.UserName)
+                                         .Replace("{ResetLink}", resetLink);
+
+            try
+            {
+                await _emailService.SendEmailAsync(user.Email, "Reset Your Password", emailTemplate);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending reset password email: {ex.Message}");
+                return new UserResponse { Success = false, Message = "Failed to send password reset email." };
+            }
+
+            return new UserResponse
+            {
+                Success = true,
+                Message = "Password reset link sent to your email."
+            };
         }
-
 
         public async Task<UserResponse> ResetPasswordAsync(ResetPasswordDto model)
         {
+            //  Find user by email
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 return new UserResponse { Success = false, Message = "User not found." };
             }
 
-            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
+            // Decode the token
+            var decodedToken = WebUtility.UrlDecode(model.Token);
+
+            // Password reset
+            var result = await _userManager.ResetPasswordAsync(user, decodedToken, model.NewPassword);
             if (!result.Succeeded)
             {
                 return new UserResponse
@@ -162,8 +226,42 @@ namespace SchoolMagazine.Application.AppService
                 };
             }
 
+            // Personalize the confirmation email template
+            string emailTemplate;
+            try
+            {
+                var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Helpers", "ResetPasswordTemplate.html");
+                emailTemplate = await File.ReadAllTextAsync(templatePath);
+
+                emailTemplate = emailTemplate
+                    .Replace("{UserName}", user.UserName ?? user.Email)
+                    .Replace("{ResetMessage}", "Your password has been successfully reset.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading or processing the email template: {ex.Message}");
+
+                return new UserResponse
+                {
+                    Success = true,
+                    Message = "Password reset successful, but confirmation email failed to send."
+                };
+            }
+
+            // Send the confirmation email
+            try
+            {
+                await _emailService.SendEmailAsync(user.Email, "Password Reset Confirmation", emailTemplate);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to send password reset confirmation email: {ex.Message}");
+            }
+
             return new UserResponse { Success = true, Message = "Password reset successfully." };
         }
+
+
 
         public async Task<UserResponse> EnableTwoFactorAuthenticationAsync(string userId)
         {

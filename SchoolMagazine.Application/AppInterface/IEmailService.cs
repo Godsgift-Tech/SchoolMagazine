@@ -10,13 +10,8 @@ namespace SchoolMagazine.Application.AppInterface
 {
     public interface IEmailService
     {
-        //void SendEmail(Message message);
-        //Task<bool> SendEmailAsync(string to, string subject, string body);
-        //Task SendEmailAsync(string toEmail, string subject, string message);
-        //void SendEmail(string to, string subject, string body);
         Task SendEmailAsync(string to, string subject, string body);
+        Task<string> GetEmailTemplate(string templateFileName, string confirmationLink, string userName);
 
-        //  Task SendEmailAsync(string toEmail, string subject, string message);
-        //Task SendEmailAsync(Message message);
     }
 }

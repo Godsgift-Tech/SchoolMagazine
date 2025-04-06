@@ -8,7 +8,6 @@ namespace SchoolMagazine.Application.AppUsers.AUTH
 {
     public class LoginResponseDto
     {
-        // public string JwtToken { get; set; }
         public bool Success { get; set; }
         public string Token { get; set; }
         public string[] Errors { get; set; }

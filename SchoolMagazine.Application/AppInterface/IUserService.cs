@@ -13,23 +13,12 @@ namespace SchoolMagazine.Application.AppInterface
     public interface IUserService
     {
 
-        //Task<UserResponse> RegisterUserAsync(RegisterRequestDto model);
-
-        //Task<ServiceResponse<string>> ConfirmEmailAsync(string email, string token);
-        //Task<LoginResponseDto> SendPasswordResetEmailAsync(string email);
-        //Task<UserResponse> LoginAsync(LoginRequestDto request);
-
-        //Task<LoginResponseDto> EnableTwoFactorAsync(string email);
-
-        //Task<ServiceResponse<bool>> VerifyTwoFactorAsync(string email, string token);
-
-        //Task<ServiceResponse<string>> GeneratePasswordResetTokenAsync(string email);
-        //Task<ServiceResponse<bool>> ResetPasswordAsync(ResetPasswordDto model);
+       
 
         Task<UserResponse> RegisterUserAsync(RegisterRequestDto model);
         Task<UserResponse> LoginUserAsync(LoginRequestDto model);
         Task<bool> ConfirmEmailAsync(string email, string token);
-
+       // Task<User> FindByEmailAsync(string email);
         Task<UserResponse> ForgotPasswordAsync(string email);
         Task<UserResponse> ResetPasswordAsync(ResetPasswordDto model);
         Task<UserResponse> EnableTwoFactorAuthenticationAsync(string userId);

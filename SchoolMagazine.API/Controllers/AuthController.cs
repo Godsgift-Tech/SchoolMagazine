@@ -13,6 +13,7 @@ using SchoolMagazine.Application.Email_Messaging;
 using SchoolMagazine.Domain.Service_Response;
 using SchoolMagazine.Domain.UserRoleInfo;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 namespace SchoolMagazine.API.Controllers
 {
@@ -41,20 +42,54 @@ namespace SchoolMagazine.API.Controllers
             return result.Success ? Ok(result) : BadRequest(result);
         }
 
+        //[HttpGet("confirm-email")]
+        //public async Task<IActionResult> ConfirmEmail(string email, string token)
+        //{
+        //    if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
+        //    {
+        //        return BadRequest(new { message = "Invalid email or token." });
+        //    }
+
+        //    token = WebUtility.UrlDecode(token); // Decode the token
+
+        //    var result = await _userService.ConfirmEmailAsync(email, token);
+        //    if (!result)
+        //    {
+        //        return BadRequest(new { message = "Invalid or expired token." });
+        //    }
+
+        //    return Ok(new { message = "Email confirmed successfully!" });
+        //}
+
         [HttpGet("confirm-email")]
         public async Task<IActionResult> ConfirmEmail(string email, string token)
         {
-            return await _userService.ConfirmEmailAsync(email, token) ? Ok("Email confirmed") : BadRequest("Invalid token");
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
+            {
+                return BadRequest(new { message = "Invalid email or token." });
+            }
+
+            var result = await _userService.ConfirmEmailAsync(email, token);
+            if (!result)
+            {
+                return BadRequest(new { message = "Invalid or expired token." });
+            }
+
+            return Ok(new { message = "Email confirmed successfully!" });
         }
-       
+
 
 
         [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto model)
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto request)
         {
-            var result = await _userService.ForgotPasswordAsync(model.Email);
-            return result.Success ? Ok(result) : BadRequest(result);
+            var response = await _userService.ForgotPasswordAsync(request.Email);
+            if (!response.Success)
+                return BadRequest(response);
+
+            return Ok(response);
         }
+
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
         {

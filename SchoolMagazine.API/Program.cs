@@ -77,6 +77,10 @@ builder.Services.AddDbContext<MagazineContext>(x => x.UseSqlServer(
 
 ));
 
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+{
+    options.TokenLifespan = TimeSpan.FromMinutes(30);// Extend token validity to 7 days   imeSpan.FromHours(3);
+});
 
 // Retrieve JWT Secret
 var jwtSecret = builder.Configuration["JwtSettings:Key"];
