@@ -1,5 +1,7 @@
 ﻿using Org.BouncyCastle.Asn1.Ocsp;
 using SchoolMagazine.Application.AppUsers.AUTH;
+using SchoolMagazine.Application.DTOs;
+using SchoolMagazine.Domain.Paging;
 using SchoolMagazine.Domain.Service_Response;
 using SchoolMagazine.Domain.UserRoleInfo;
 using System;
@@ -13,8 +15,10 @@ namespace SchoolMagazine.Application.AppInterface
     public interface IUserService
     {
 
-       
 
+        Task<UserDto> GetUserByIdAsync(Guid userId);
+        Task<bool> DeleteUserByIdAsync(Guid userId);
+        Task<PagedResult<UserDto>> GetAllUsersAsync(UserQueryParameters parameters);
         Task<UserResponse> RegisterUserAsync(RegisterRequestDto model);
         Task<UserResponse> LoginUserAsync(LoginRequestDto model);
         Task<bool> ConfirmEmailAsync(string email, string token);

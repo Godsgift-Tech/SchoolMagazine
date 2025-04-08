@@ -11,6 +11,7 @@ namespace SchoolMagazine.Application.DTOs
 {
     public class SchoolEventDto
     {
+        [JsonIgnore]   // the Id is auto-generated  
         [Key]
         public Guid Id { get; set; }
         [Required]

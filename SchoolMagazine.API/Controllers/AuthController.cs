@@ -42,25 +42,7 @@ namespace SchoolMagazine.API.Controllers
             return result.Success ? Ok(result) : BadRequest(result);
         }
 
-        //[HttpGet("confirm-email")]
-        //public async Task<IActionResult> ConfirmEmail(string email, string token)
-        //{
-        //    if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
-        //    {
-        //        return BadRequest(new { message = "Invalid email or token." });
-        //    }
-
-        //    token = WebUtility.UrlDecode(token); // Decode the token
-
-        //    var result = await _userService.ConfirmEmailAsync(email, token);
-        //    if (!result)
-        //    {
-        //        return BadRequest(new { message = "Invalid or expired token." });
-        //    }
-
-        //    return Ok(new { message = "Email confirmed successfully!" });
-        //}
-
+       
         [HttpGet("confirm-email")]
         public async Task<IActionResult> ConfirmEmail(string email, string token)
         {

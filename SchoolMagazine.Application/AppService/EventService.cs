@@ -22,12 +22,7 @@ namespace SchoolMagazine.Application.AppService
             _schoolRepository = schoolRepository;
         }
 
-        // Get all events
-        //public async Task<IEnumerable<SchoolEventDto>> GetAllEventsAsync()
-        //{
-        //    var events = await _eventRepository.GetAllEventsAsync();
-        //    return _mapper.Map<IEnumerable<SchoolEventDto>>(events);
-        //}
+        
 
 
         public async Task<ServiceResponse<PagedResult<SchoolEventDto>>> GetAllEventsAsync(int pageNumber, int pageSize)

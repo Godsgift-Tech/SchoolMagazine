@@ -10,6 +10,8 @@ namespace SchoolMagazine.Application.DTOs
 {
     public class CreateSchoolDto
     {
+        [JsonIgnore]   // the Id is auto-generated
+
         [Key]
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
@@ -17,8 +19,9 @@ namespace SchoolMagazine.Application.DTOs
         [Required]
         public string SchoolName { get; set; }
 
+        [JsonIgnore]   // the Id is auto-generated
 
-        public string UserId { get; set; } = Guid.NewGuid().ToString();
+        public string? UserId { get; set; } = Guid.NewGuid().ToString();
 
         [Required]
         public string Location { get; set; } //address
@@ -39,7 +42,6 @@ namespace SchoolMagazine.Application.DTOs
         public ICollection<SchoolEventDto>? Events { get; set; }
         [JsonIgnore]
 
-        // public ICollection<SchoolAdvertDto>? Adverts { get; set; }
         public ICollection<SchoolAdvertDto>? Adverts { get; set; } = new List<SchoolAdvertDto>();
     }
 }

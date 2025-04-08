@@ -64,7 +64,7 @@ builder.Services.Configure<EmailConfiguration>(builder.Configuration.GetSection(
 builder.Services.AddSingleton<IEmailService, EmailService>();
 
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<RoleManager<Role>>();
+//builder.Services.AddScoped<RoleManager<Role>>();
 
 
 
