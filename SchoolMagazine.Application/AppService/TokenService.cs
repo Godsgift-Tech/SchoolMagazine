@@ -26,6 +26,7 @@ namespace SchoolMagazine.Application.AppService
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Name, user.UserName)
+
         };
 
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));

@@ -4,12 +4,13 @@ using SchoolMagazine.Application.AppInterface;
 using SchoolMagazine.Application.AppService;
 using SchoolMagazine.Application.DTOs;
 using SchoolMagazine.Domain.Paging;
+using System.Security.Claims;
 
 namespace SchoolMagazine.API.Controllers
 {
-    [Route("api/[controller]")]
+    
     [ApiController]
-    //[Authorize]
+    [Route("api/[controller]")]
 
     public class SchoolController : ControllerBase
     {
@@ -21,7 +22,9 @@ namespace SchoolMagazine.API.Controllers
         }
 
 
-        [HttpGet("getSchoolBy-ID")]
+        [HttpGet("getSchoolBy-ID/{id}")]
+        [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
+
         public async Task<IActionResult> GetSchoolByIdAsync(Guid id)
         {
             var getSchool = await _ser.GetSchoolByIdAsync(id);
@@ -34,6 +37,7 @@ namespace SchoolMagazine.API.Controllers
         }
 
         [HttpGet("by-SchoolName")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetSchoolByName(string schoolName)
         {
             if (string.IsNullOrWhiteSpace(schoolName))
@@ -47,15 +51,16 @@ namespace SchoolMagazine.API.Controllers
             return Ok(response);
         }
 
-       
+
 
 
         [HttpPost("addNewSchool")]
+       
+        [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
         public async Task<IActionResult> AddSchoolAsync(CreateSchoolDto school)
         {
 
             var addSchool = await _ser.AddSchoolAsync(school);
-            // return Ok(addSchool);
 
             if (addSchool.success)
             {
@@ -65,7 +70,9 @@ namespace SchoolMagazine.API.Controllers
             return BadRequest(ModelState);
         }
 
+
         [HttpGet("Events-AdvertsDetails")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetPagedSchools([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var response = await _ser.GetPagedSchoolsAsync(pageNumber, pageSize);
@@ -81,6 +88,7 @@ namespace SchoolMagazine.API.Controllers
 
 
         [HttpGet("BysearchQuery")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetSchools(
     [FromQuery] string? schoolName,
     [FromQuery] string? location,
@@ -94,8 +102,8 @@ namespace SchoolMagazine.API.Controllers
         }
 
 
-
-        [HttpPut("updateSchoolBy-Id")]
+        [HttpPut("updateSchoolBy-Id/{id}")]
+        [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
         public async Task<IActionResult> UpdateSchool(Guid id, [FromBody] CreateSchoolDto schoolDto)
         {
             if (schoolDto == null)
@@ -111,6 +119,7 @@ namespace SchoolMagazine.API.Controllers
 
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "SuperAdmin")]
 
         public async Task<IActionResult> DeleteSchoolByIdAsync(Guid id)
 
@@ -121,10 +130,6 @@ namespace SchoolMagazine.API.Controllers
 
 
         }
-
-
-
-
 
     }
 
