@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolMagazine.Application.AppInterface;
 using SchoolMagazine.Application.DTOs;
@@ -19,6 +20,8 @@ namespace SchoolMagazine.API.Controllers
         
 
         [HttpGet("GetAllEvents")]
+        [Authorize(Roles = "SuperAdmin")]
+
         public async Task<IActionResult> GetAllEvents(
     [FromQuery] int pageNumber = 1,
     [FromQuery] int pageSize = 10)
@@ -29,6 +32,8 @@ namespace SchoolMagazine.API.Controllers
 
 
         [HttpPost("createEvent")]
+        [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
+
         public async Task<IActionResult> AddEvent([FromBody] SchoolEventDto eventDto)
         {
             if (eventDto == null)
@@ -48,6 +53,8 @@ namespace SchoolMagazine.API.Controllers
 
 
         [HttpPut("updateEvent/{id}")]
+        [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
+
         public async Task<IActionResult> UpdateEvent(Guid id, [FromBody] SchoolEventDto eventDto)
         {
             var response = await _eventService.UpdateSchoolEventAsync(id, eventDto);
@@ -61,6 +68,7 @@ namespace SchoolMagazine.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
         public async Task<IActionResult> DeleteEvent(Guid id)
         {
             await _eventService.DeleteSchoolEventAsync(id);
@@ -69,6 +77,7 @@ namespace SchoolMagazine.API.Controllers
 
 
         [HttpGet("EventS-BysearchQuery")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetEvents(
     [FromQuery] string? title,
     [FromQuery] string? description,

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolMagazine.Application.AppInterface;
 using SchoolMagazine.Application.DTOs;
@@ -20,7 +21,7 @@ namespace SchoolMagazine.API.Controllers
 
       
         [HttpPost("createAdvert")]
-
+        [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
         public async Task<IActionResult> CreateAdvert([FromBody] CreateAdvertDto advertDto)
         {
             var response = await _advertService.CreateAdvertAsync(advertDto);
@@ -32,6 +33,8 @@ namespace SchoolMagazine.API.Controllers
         }
 
         [HttpGet("allAdverts")]
+        [Authorize(Roles = "SuperAdmin")]
+
         public async Task<IActionResult> GetAllAdverts([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var response = await _advertService.GetAllAdvertsAsync(pageNumber, pageSize);
@@ -39,6 +42,8 @@ namespace SchoolMagazine.API.Controllers
         }
 
         [HttpGet("{advertId}")]
+        [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
+
         public async Task<IActionResult> GetAdvertById(Guid advertId)
         {
             var response = await _advertService.GetAdvertByIdAsync(advertId);
@@ -50,6 +55,8 @@ namespace SchoolMagazine.API.Controllers
         }
 
         [HttpGet("school/{schoolId}")]
+        [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
+
         public async Task<IActionResult> GetAdvertsBySchoolId(Guid schoolId, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var response = await _advertService.GetAdvertsBySchoolIdAsync(schoolId, pageNumber, pageSize);
@@ -57,6 +64,7 @@ namespace SchoolMagazine.API.Controllers
         }
 
         [HttpGet("BysearchQuery")]
+        [AllowAnonymous]
         public async Task<IActionResult> SearchAdverts([FromQuery] string keyword, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var response = await _advertService.SearchAdvertsAsync(keyword, pageNumber, pageSize);
@@ -64,6 +72,8 @@ namespace SchoolMagazine.API.Controllers
         }
 
         [HttpDelete("{advertId}")]
+        [Authorize(Roles = "SuperAdmin")]
+
         public async Task<IActionResult> DeleteAdvert(Guid advertId)
         {
             var response = await _advertService.DeleteAdvertAsync(advertId);

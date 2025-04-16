@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Asn1.Ocsp;
 using SchoolMagazine.Application.AppInterface;
+using SchoolMagazine.Application.AppUsers;
 using SchoolMagazine.Application.AppUsers.AUTH;
 using SchoolMagazine.Application.DTOs;
 using SchoolMagazine.Domain.Paging;
@@ -15,6 +16,8 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+//using Microsoft.AspNet.Identity;  => this  will make RoleManager and UserManager throw error
+
 
 namespace SchoolMagazine.Application.AppService
 {
@@ -22,34 +25,36 @@ namespace SchoolMagazine.Application.AppService
 
     public class UserService : IUserService
     {
+        private readonly RoleManager<Role> _roleManager;
         private readonly UserManager<User> _userManager;
         private readonly ITokenService _tokenService;
         private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
 
-        public UserService(UserManager<User> userManager, ITokenService tokenService, IEmailService emailService, IConfiguration configuration)
+        public UserService(UserManager<User> userManager, RoleManager<Role> roleManager, ITokenService tokenService, IEmailService emailService, IConfiguration configuration)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _emailService = emailService;
             _configuration = configuration;
+            _roleManager = roleManager;
         }
-
 
         public async Task<UserResponse> RegisterUserAsync(RegisterRequestDto model)
         {
-            //  Create the user
+            // Create the user
             var user = new User
             {
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Email = model.Username,
-                UserName = model.Username
+                UserName = model.Username,
             };
 
+            // Create the user
             var result = await _userManager.CreateAsync(user, model.Password);
 
-            // user creation condictions
+            // Check if user creation was successful
             if (!result.Succeeded)
             {
                 return new UserResponse
@@ -59,15 +64,30 @@ namespace SchoolMagazine.Application.AppService
                 };
             }
 
+            // Check if the provided role exists
+            if (!string.IsNullOrWhiteSpace(model.Role))
+            {
+                var roleExists = await _roleManager.RoleExistsAsync(model.Role);
+                if (!roleExists)
+                {
+                    // If role doesn't exist, create it
+                    var role = new Role { Name = model.Role };
+                    await _roleManager.CreateAsync(role);
+                }
+
+                // Assign the role to the user
+                await _userManager.AddToRoleAsync(user, model.Role);
+            }
+
             // Generate email confirmation token
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             Console.WriteLine($"Generated Token: {token}");
 
-            //  Build confirmation link
+            // Build confirmation link
             var confirmationLink = $"{_configuration["FrontendUrl"]}/confirm-email?email={user.Email}&token={WebUtility.UrlEncode(token)}";
             Console.WriteLine($"Confirmation Link: {confirmationLink}");
 
-            //  Load and customize email template
+            // Load and customize email template
             string emailBody;
             try
             {
@@ -90,7 +110,7 @@ namespace SchoolMagazine.Application.AppService
                 return new UserResponse { Success = false, Message = "Failed to send confirmation email." };
             }
 
-            //  Response
+            // Response
             return new UserResponse
             {
                 Success = true,
@@ -106,6 +126,7 @@ namespace SchoolMagazine.Application.AppService
 
 
 
+
         public async Task<UserResponse> LoginUserAsync(LoginRequestDto model)
         {
             var user = await _userManager.FindByEmailAsync(model.Username);
@@ -118,20 +139,98 @@ namespace SchoolMagazine.Application.AppService
             return new UserResponse { Success = true, Token = jwtToken, Message = "Login successful!." };
         }
 
-        //public async Task<User> FindByEmailAsync(string email)
-        //{
-        //    return await _userManager.FindByEmailAsync(email);
-        //}
-        //public async Task<bool> ConfirmEmailAsync(string email, string token)
-        //{
-        //    var user = await _userManager.FindByEmailAsync(email);
-        //    if (user == null) return false;
 
-        //    var decodedToken = WebUtility.UrlDecode(token); // Ensure it's decoded
+        public async Task<PagedResult<UserDto>> GetAllUsersAsync(UserQueryParameters parameters)
+        {
+            // Start with all users
+            var usersQuery = _userManager.Users.AsQueryable();
 
-        //    var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
-        //    return result.Succeeded;
-        //}
+            // Optional filters
+            if (!string.IsNullOrWhiteSpace(parameters.Email))
+                usersQuery = usersQuery.Where(u => u.Email.Contains(parameters.Email));
+
+            if (!string.IsNullOrWhiteSpace(parameters.FirstName))
+                usersQuery = usersQuery.Where(u => u.FirstName.ToLower().Contains(parameters.FirstName.ToLower()));
+
+            if (!string.IsNullOrWhiteSpace(parameters.LastName))
+                usersQuery = usersQuery.Where(u => u.LastName.ToLower().Contains(parameters.LastName.ToLower()));
+
+
+            // Materialize the filtered query into a list
+            var userList = await usersQuery.AsNoTracking().ToListAsync();
+
+            var filteredUsers = new List<User>();
+
+            foreach (var user in userList)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                if (string.IsNullOrWhiteSpace(parameters.Role) || roles.Any(r => r.Equals(parameters.Role, StringComparison.OrdinalIgnoreCase)))
+
+                {
+                    filteredUsers.Add(user);
+                }
+            }
+
+            // Project to DTOs sequentially
+            var dtoList = new List<UserDto>();
+            foreach (var user in filteredUsers)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                dtoList.Add(new UserDto
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Role = roles.FirstOrDefault() ?? "None"
+                });
+            }
+
+            // Apply pagination
+            var totalCount = dtoList.Count;
+            var pagedItems = dtoList
+                .Skip((parameters.PageNumber - 1) * parameters.PageSize)
+                .Take(parameters.PageSize)
+                .ToList();
+
+            return new PagedResult<UserDto>
+            {
+                Items = pagedItems,
+                TotalCount = totalCount,
+                PageNumber = parameters.PageNumber,
+                PageSize = parameters.PageSize
+            };
+
+        }
+
+
+        public async Task<UserDto> GetUserByIdAsync(Guid userId)
+        {
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null) return null;
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            return new UserDto
+            {
+                Id = user.Id,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Role = roles.FirstOrDefault() ?? "None"
+            };
+        }
+
+        public async Task<bool> DeleteUserByIdAsync(Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null) return false;
+
+            var result = await _userManager.DeleteAsync(user);
+            return result.Succeeded;
+        }
+
+
 
         public async Task<bool> ConfirmEmailAsync(string email, string token)
         {

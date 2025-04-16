@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace SchoolMagazine.Application.DTOs
 {
     public class CreateAdvertDto
     {
+        [JsonIgnore]   // the Id is auto-generated  
+
         [Key]
         public Guid Id { get; set; }
         [Required]
@@ -16,6 +19,7 @@ namespace SchoolMagazine.Application.DTOs
         [Required]
 
         public string Content { get; set; }
+
 
         [Required]
         public DateTime StartDate { get; set; }
