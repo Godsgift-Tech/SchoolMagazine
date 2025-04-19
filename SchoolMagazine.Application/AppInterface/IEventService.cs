@@ -12,7 +12,7 @@ namespace SchoolMagazine.Application.AppInterface
         Task<ServiceResponse<PagedResult<SchoolEventDto>>> GetEventsAsync(
          string? title, string? description, Guid? schoolId, string? schoolName, int pageNumber, int pageSize);
         Task<IEnumerable<SchoolEventDto>> GetEventsBySchoolAsync(string schoolName);
-        Task<EventServiceResponse<SchoolEventDto>> AddSchoolEventsAsync(SchoolEventDto eventDetails);
+        Task<EventServiceResponse<CreateEventDto>> AddSchoolEventsAsync(CreateEventDto eventDetails);
         Task<EventServiceResponse<IEnumerable<SchoolEventDto>>> GetEventsBySchool(Guid schoolId);
 
         Task<EventServiceResponse<SchoolEventDto>> UpdateSchoolEventAsync(Guid id, SchoolEventDto schoolEvent);

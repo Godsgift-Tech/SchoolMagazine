@@ -22,10 +22,12 @@ namespace SchoolMagazine.Application.DTOs
         public Guid SchoolId { get; set; }
        
         [Required]
-        public decimal AmountPaid { get; set; } // ✅ Amount Paid for the Advert
+        public decimal AmountPaid { get; set; } //  Amount Paid for the Advert
         public bool IsPaid { get; set; }  // dont think it is neccessary
         public string? PaymentReference { get; set; }  // Ensure this exists and is nullable
         public DateTime? PaymentDate { get; set; }
+
+        public List<MediaItemDto> MediaItems { get; set; } = new();
 
     }
 

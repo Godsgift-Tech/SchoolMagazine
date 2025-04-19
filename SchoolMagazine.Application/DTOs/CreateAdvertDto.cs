@@ -32,6 +32,11 @@ namespace SchoolMagazine.Application.DTOs
         [Required]
         [Range(1000, double.MaxValue, ErrorMessage = "Amount paid must be <= 1000.")]
         public decimal AmountPaid { get; set; }
-     
+
+        // Optional: List of files (images or videos) for the advert
+        //public List<string>? MediaUrls { get; set; } = new List<string>();
+        public List<MediaItemDto>? MediaItems { get; set; }
+
+
     }
 }

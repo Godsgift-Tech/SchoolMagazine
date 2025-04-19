@@ -34,7 +34,7 @@ namespace SchoolMagazine.API.Controllers
         [HttpPost("createEvent")]
         [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
 
-        public async Task<IActionResult> AddEvent([FromBody] SchoolEventDto eventDto)
+        public async Task<IActionResult> AddEvent([FromBody] CreateEventDto eventDto)
         {
             if (eventDto == null)
             {
