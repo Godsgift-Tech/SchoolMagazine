@@ -23,6 +23,7 @@ namespace SchoolMagazine.Domain.Entities
 
         public DateTime EventDate { get; set; }
 
-        public string? MediaUrl { get; set; }  // Images/Videos 
+        // Nullable list of image or video URLs (optional)
+        public List<SchoolEventMedia>? EventMediaItems  { get; set; }
     }
 }

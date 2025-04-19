@@ -25,7 +25,8 @@ namespace SchoolMagazine.Infrastructure.Data.Service
 
         public async Task<PagedResult<SchoolAdvert>> GetPagedAdvertsAsync(int pageNumber, int pageSize)
         {
-            var query = _db.Adverts.Include(a => a.School).AsQueryable();
+            var query = _db.Adverts.Include(a => a.School).Include(a => a.AdvertMediaItems)
+                .AsQueryable();
             return await PagedResult<SchoolAdvert>.CreateAsync(query, pageNumber, pageSize);
         }
 
@@ -33,6 +34,7 @@ namespace SchoolMagazine.Infrastructure.Data.Service
         {
             return await _db.Adverts
                 .Include(a => a.School)
+                .Include(a => a.AdvertMediaItems)
                 .FirstOrDefaultAsync(a => a.Id == advertId);
         }
 
@@ -41,29 +43,52 @@ namespace SchoolMagazine.Infrastructure.Data.Service
             var query = _db.Adverts
                 .Where(a => a.SchoolId == schoolId)
                 .Include(a => a.School)
+                .Include(a => a.AdvertMediaItems)
                 .AsQueryable();
 
             return await PagedResult<SchoolAdvert>.CreateAsync(query, pageNumber, pageSize);
         }
+
 
         public async Task<PagedResult<SchoolAdvert>> SearchPagedAdvertsAsync(string keyword, int pageNumber, int pageSize)
         {
             var query = _db.Adverts
                 .Where(a => a.Title.Contains(keyword) || a.Content.Contains(keyword))
                 .Include(a => a.School)
+                .Include(a => a.AdvertMediaItems)
                 .AsQueryable();
 
             return await PagedResult<SchoolAdvert>.CreateAsync(query, pageNumber, pageSize);
         }
 
+
+        //public async Task<bool> DeleteAdvertAsync(Guid advertId)
+        //{
+        //    var advert = await _db.Adverts.FindAsync(advertId);
+        //    if (advert == null)
+        //        return false;
+
+        //    _db.Adverts.Remove(advert);
+        //    await _db.SaveChangesAsync();
+        //    return true;
+        //}
+
         public async Task<bool> DeleteAdvertAsync(Guid advertId)
         {
-            var advert = await _db.Adverts.FindAsync(advertId);
+            var advert = await _db.Adverts
+                .Include(a => a.AdvertMediaItems)
+                .FirstOrDefaultAsync(a => a.Id == advertId);
+
             if (advert == null)
                 return false;
 
+            // Remove related media items first (if not using cascade delete)
+            if (advert.AdvertMediaItems != null && advert.AdvertMediaItems.Any())
+                _db.SchoolAdvertMedias.RemoveRange(advert.AdvertMediaItems);
+
             _db.Adverts.Remove(advert);
             await _db.SaveChangesAsync();
+
             return true;
         }
 

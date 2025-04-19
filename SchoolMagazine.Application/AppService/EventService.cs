@@ -81,9 +81,9 @@ namespace SchoolMagazine.Application.AppService
         }
 
         // Add a new event
-        public async Task<EventServiceResponse<SchoolEventDto>> AddSchoolEventsAsync(SchoolEventDto eventDto)
+        public async Task<EventServiceResponse<CreateEventDto>> AddSchoolEventsAsync(CreateEventDto eventDto)
         {
-            var response = new EventServiceResponse<SchoolEventDto>();
+            var response = new EventServiceResponse<CreateEventDto>();
 
             try
             {
@@ -105,14 +105,14 @@ namespace SchoolMagazine.Application.AppService
                     return response;
                 }
 
-                // ✅ Step 3: Convert DTO to Entity
+                // Step 3: Convert DTO to Entity
                 var newEvent = _mapper.Map<SchoolEvent>(eventDto);
                 newEvent.Id = Guid.NewGuid(); // Assign a new ID
 
-                // ✅ Step 4: Save the Event
+                // Step 4: Save the Event
                 await _eventRepository.AddSchoolEventsAsync(newEvent);
 
-                response.Data = _mapper.Map<SchoolEventDto>(newEvent);
+                response.Data = _mapper.Map<CreateEventDto>(newEvent);
                 response.Message = "Event created successfully.";
             }
             catch (Exception ex)
@@ -145,7 +145,7 @@ namespace SchoolMagazine.Application.AppService
                 existingEvent.Title = schoolEventDto.Title;
                 existingEvent.Description = schoolEventDto.Description;
                 existingEvent.EventDate = schoolEventDto.EventDate;
-                existingEvent.MediaUrl = schoolEventDto.MediaUrl;
+                existingEvent.EventMediaItems = schoolEventDto.EventMediaItems;
 
                 await _eventRepository.UpdateSchoolEventAsync(existingEvent);
 

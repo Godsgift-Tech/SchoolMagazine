@@ -27,9 +27,12 @@ namespace SchoolMagazine.Domain.Entities
         public  School School { get; set; }   // Navigation Property(virtual makes Ef recognize as Navigation)
 
         [Required]
-        public decimal AmountPaid { get; set; } // ✅ Amount Paid for the Advert
+        public decimal AmountPaid { get; set; } //  Amount Paid for the Advert
         public bool IsPaid { get; set; }=false;
         public string? PaymentReference { get; set; }  // Ensure this exists and is nullable
         public DateTime? PaymentDate { get; set; }
+
+        // New property: list of media (images/videos)
+        public ICollection<SchoolAdvertMedia>? AdvertMediaItems { get; set; } = new List<SchoolAdvertMedia>();
     }
 }

@@ -43,7 +43,7 @@ namespace SchoolMagazine.Domain.Entities
         //[JsonIgnore]
 
          public ICollection<SchoolEvent>? Events { get; set; } = new List<SchoolEvent>();
-        // [JsonIgnore]
+        //[JsonIgnore]
 
         public ICollection<SchoolAdvert>? Adverts { get; set; } = new List<SchoolAdvert>();
        // public ICollection<Advert> Adverts { get; set; } = new List<Advert>();

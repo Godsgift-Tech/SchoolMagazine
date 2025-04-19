@@ -41,36 +41,41 @@ namespace SchoolMagazine.Application.AppService
                 return new ServiceResponse<CreateAdvertDto>(null!, false, "School not found.");
             }
 
-            // Calculate required payment amount
-            var totalDays = (advertDto.EndDate - advertDto.StartDate).Days;
+            // Ensure valid date range
+            var totalDays = (advertDto.EndDate.Date - advertDto.StartDate.Date).Days;
+            if (totalDays < 1)
+            {
+                return new ServiceResponse<CreateAdvertDto>(null!, false, "Advert must run for at least one day.");
+            }
+
+            // Calculate required amount
             var requiredAmount = totalDays * CostPerDay;
 
-            // Validate payment
+            // Check for sufficient payment
             if (advertDto.AmountPaid < requiredAmount)
             {
-                return new ServiceResponse<CreateAdvertDto>(null!, false, $"Insufficient payment. Expected ₦{requiredAmount}, but received ₦{advertDto.AmountPaid}.");
+                return new ServiceResponse<CreateAdvertDto>(null!, false,
+                    $"Insufficient payment. Expected ₦{requiredAmount}, but received ₦{advertDto.AmountPaid}.");
             }
 
             var paymentRequest = new PaymentRequestDto
             {
                 AmountPaid = advertDto.AmountPaid,
-                PaymentReference = Guid.NewGuid().ToString(), // Generate a unique payment reference
+                PaymentReference = Guid.NewGuid().ToString(), // Unique payment ref
                 PaymentDate = DateTime.UtcNow
             };
 
-
-            // Process payment via Payment Service
-            var paymentResult = await _paymentService.ProcessPaymentAsync(paymentRequest); // ✅ Correct
-
+            // Process payment
+            var paymentResult = await _paymentService.ProcessPaymentAsync(paymentRequest);
             if (!paymentResult.IsSuccessful)
             {
                 return new ServiceResponse<CreateAdvertDto>(null!, false, "Payment processing failed.");
             }
 
-            // Create advert entity
+            // Create and save the advert
             var advert = _mapper.Map<SchoolAdvert>(advertDto);
             advert.IsPaid = true;
-            advert.PaymentReference = paymentResult.TransactionId;      
+            advert.PaymentReference = paymentResult.TransactionId;
             advert.PaymentDate = DateTime.UtcNow;
 
             await _advertRepository.AddAdvertAsync(advert);
@@ -79,8 +84,7 @@ namespace SchoolMagazine.Application.AppService
             return new ServiceResponse<CreateAdvertDto>(advertResponse, true, "Advert created successfully.");
         }
 
-
-        public async Task<ServiceResponse<PagedResult<SchoolAdvertDto>>> GetAllAdvertsAsync(int pageNumber, int pageSize)
+        public async Task<ServiceResponse<PagedResult<SchoolAdvertDto>>> GetPagedAdvertsAsync(int pageNumber, int pageSize)
         {
             var adverts = await _advertRepository.GetPagedAdvertsAsync(pageNumber, pageSize);
             var mappedAdverts = _mapper.Map<List<SchoolAdvertDto>>(adverts.Items);
@@ -120,6 +124,28 @@ namespace SchoolMagazine.Application.AppService
             }, true, "Adverts retrieved successfully.");
         }
 
+        public async Task<ServiceResponse<PagedResult<SchoolAdvertDto>>> GetAllAdvertsAsync(int pageNumber, int pageSize)
+        {
+            var adverts = await _advertRepository.GetPagedAdvertsAsync(pageNumber, pageSize);
+
+            if (adverts == null || !adverts.Items.Any())
+            {
+                return new ServiceResponse<PagedResult<SchoolAdvertDto>>(null!, false, "No adverts found.");
+            }
+
+            var mappedAdverts = _mapper.Map<List<SchoolAdvertDto>>(adverts.Items);
+
+            var result = new PagedResult<SchoolAdvertDto>
+            {
+                TotalCount = adverts.TotalCount,
+                PageSize = adverts.PageSize,
+                PageNumber = adverts.PageNumber,
+                Items = mappedAdverts
+            };
+
+            return new ServiceResponse<PagedResult<SchoolAdvertDto>>(result, true, "Adverts retrieved successfully.");
+        }
+
         public async Task<ServiceResponse<PagedResult<SchoolAdvertDto>>> SearchAdvertsAsync(string keyword, int pageNumber, int pageSize)
         {
             var adverts = await _advertRepository.SearchPagedAdvertsAsync(keyword, pageNumber, pageSize);
@@ -141,9 +167,11 @@ namespace SchoolMagazine.Application.AppService
             {
                 return new ServiceResponse<string>(null!, false, "Failed to delete advert.");
             }
+
             return new ServiceResponse<string>("Advert deleted successfully.", true);
         }
     }
+
 
 
 }
