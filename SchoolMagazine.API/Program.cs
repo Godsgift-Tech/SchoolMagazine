@@ -6,12 +6,16 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SchoolMagazine.Application.AppInterface;
 using SchoolMagazine.Application.AppService;
+using SchoolMagazine.Application.AppService.BackgroudApp;
+using SchoolMagazine.Application.AppService.BackgroundApp;
 using SchoolMagazine.Application.AppUsers;
 using SchoolMagazine.Application.Email_Messaging;
 using SchoolMagazine.Application.Mappings;
 using SchoolMagazine.Domain.Interface;
 using SchoolMagazine.Domain.UserRoleInfo;
 using SchoolMagazine.Infrastructure.Data;
+using SchoolMagazine.Infrastructure.Data.RepositoryImplementation;
+using SchoolMagazine.Infrastructure.Data.RepositoryImplementation.Tracker;
 using SchoolMagazine.Infrastructure.Data.Service;
 using System.Security.Claims;
 using System.Text;
@@ -62,6 +66,12 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddSingleton<IEmailService, EmailService>();
+builder.Services.AddScoped<IVendorService, VendorService>();
+builder.Services.AddScoped<IVendorRepository, VendorRepository>();
+
+builder.Services.AddScoped<ISubscriptionTrackerService, SubscriptionTrackerService>();
+builder.Services.AddHostedService<SubscriptionExpiryService>();
+
 
 // Register AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
