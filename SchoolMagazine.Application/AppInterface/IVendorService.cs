@@ -13,17 +13,17 @@ namespace SchoolMagazine.Application.AppInterface
     public interface IVendorService
     {
         Task<ServiceResponse<VendorDto>> AddVendorAsync(VendorDto vendor);
-        Task<ServiceResponse<Vendor>> ApproveVendorAsync(Guid vendorId);
-        Task CreateProductAsync(Guid vendorId, Product product);
+        Task<ServiceResponse<SchoolVendor>> ApproveVendorAsync(Guid vendorId);
+        Task CreateProductAsync(Guid vendorId, SchoolProduct product);
         Task <ServiceResponse<CreateProductDto>>CreateProductAsync(Guid vendorId, CreateProductDto product);
         Task DeleteProductAsync(Guid productId);
-        Task<PagedResult<Vendor>> GetAllApprovedVendorsAsync(int pageNumber, int pageSize);
+        Task<PagedResult<SchoolVendor>> GetAllApprovedVendorsAsync(int pageNumber, int pageSize);
       
         Task<bool> HasActiveSubscriptionAsync(Guid vendorId);
         Task<ServiceResponse<string>> SubscribeVendorAsync(SubscriptionRequestDto request);
 
         Task SubscribeVendorAsync(Guid vendorId);
-        Task<Vendor> GetVendorByIdAsync(Guid vendorId);
+        Task<SchoolVendor> GetVendorByIdAsync(Guid vendorId);
         Task DeleteVendorAsync(Guid vendorId);
     }
 }

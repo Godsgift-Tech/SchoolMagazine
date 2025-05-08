@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SchoolMagazine.Domain.Entities.VendorEntities
 {
-    public class Vendor
+    public class SchoolVendor
     {
         public Guid Id { get; set; }
         public string Email { get; set; }
@@ -20,6 +20,6 @@ namespace SchoolMagazine.Domain.Entities.VendorEntities
         public DateTime? SubscriptionStartDate { get; set; }
         public DateTime? SubscriptionEndDate { get; set; }
 
-        public ICollection<Product> Products { get; set; }
+        public ICollection<SchoolProduct> Products { get; set; }
     }
 }

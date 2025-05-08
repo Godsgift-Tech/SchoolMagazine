@@ -30,7 +30,7 @@ namespace SchoolMagazine.Application.AppService
         public async Task<ServiceResponse<VendorDto>> AddVendorAsync(VendorDto vendorDto)
         {
             // Map DTO to Entity
-            var vendor = _mapper.Map<Vendor>(vendorDto);
+            var vendor = _mapper.Map<SchoolVendor>(vendorDto);
 
             // Call repository to add vendor
             var result = await _vR.AddVendorAsync(vendor);
@@ -44,19 +44,19 @@ namespace SchoolMagazine.Application.AppService
             return new ServiceResponse<VendorDto>(newVendorDto, true, result.message);
         }
 
-        public async Task<ServiceResponse<Vendor>> ApproveVendorAsync(Guid vendorId)
+        public async Task<ServiceResponse<SchoolVendor>> ApproveVendorAsync(Guid vendorId)
         {
         var vendor = await _vR.GetVendorByIdAsync(vendorId);
             if (vendor == null)
             
-                return new ServiceResponse<Vendor>(null!, false, "Vendor not found");
+                return new ServiceResponse<SchoolVendor>(null!, false, "Vendor not found");
             vendor.IsApproved = true;
             await _vR.UpdateVendorAsync(vendor);
-                return new ServiceResponse<Vendor>(null!, true, "Vendor approved successfully!");
+                return new ServiceResponse<SchoolVendor>(null!, true, "Vendor approved successfully!");
 
         }
 
-        public async Task CreateProductAsync(Guid vendorId, Product product)
+        public async Task CreateProductAsync(Guid vendorId, SchoolProduct product)
         {
             var vendor = await _vR.GetVendorByIdAsync(vendorId);
             if (vendor == null) throw new Exception("Vendor not found");
@@ -79,7 +79,7 @@ namespace SchoolMagazine.Application.AppService
             if (!await _vR.HasActiveSubscriptionAsync(vendorId))
                 return new ServiceResponse<CreateProductDto>(null!, false, "Vendor does not have an active subscription.");
 
-            var product = _mapper.Map<Product>(productDto);
+            var product = _mapper.Map<SchoolProduct>(productDto);
             product.VendorId = vendorId;
 
             await _pR.AddAsync(product);
@@ -102,10 +102,10 @@ namespace SchoolMagazine.Application.AppService
             await _vR.DeleteVendorAsync(vendor);
         }
 
-        public async Task<PagedResult<Vendor>> GetAllApprovedVendorsAsync(int pageNumber, int pageSize)
+        public async Task<PagedResult<SchoolVendor>> GetAllApprovedVendorsAsync(int pageNumber, int pageSize)
             => await _vR.GetAllApprovedVendorsAsync(pageNumber, pageSize);
 
-        public async Task<Vendor> GetVendorByIdAsync(Guid vendorId)
+        public async Task<SchoolVendor> GetVendorByIdAsync(Guid vendorId)
         {
             var findVendor = await _vR.GetVendorByIdAsync(vendorId);
             if (findVendor == null) throw new Exception("Vendor does not exist");

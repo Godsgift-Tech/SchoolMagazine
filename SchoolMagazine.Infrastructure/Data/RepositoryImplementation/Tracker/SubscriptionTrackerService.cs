@@ -19,7 +19,7 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation.Tracker
 
         public async Task TrackExpiredVendorsAsync()
         {
-            var expiredVendors = await _context.Vendors
+            var expiredVendors = await _context.SchoolVendors
                 .Where(v => v.SubscriptionEndDate < DateTime.UtcNow && v.HasActiveSubscription)
                 .ToListAsync();
 

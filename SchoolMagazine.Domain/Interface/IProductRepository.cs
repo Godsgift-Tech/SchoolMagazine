@@ -9,19 +9,19 @@ namespace SchoolMagazine.Domain.Interface
 {
     public interface IProductRepository
     {
-        Task AddAsync(Product product);
-        Task DeleteProductAsync(Product product);
-        Task<IEnumerable<Product>> GetPagedProductsAsync(string? name, string? category,
+        Task AddAsync(SchoolProduct product);
+        Task DeleteProductAsync(SchoolProduct product);
+        Task<IEnumerable<SchoolProduct>> GetPagedProductsAsync(string? name, string? category,
             Guid? vendorId, int pageNumber, int pageSize);
         Task PurchaseProductAsync(Guid schoolAdminId, Guid productId, int quantity);
-        Task AddPurchaseAsync(SchoolPurchaseProduct purchase);
-        Task<Product> GetByProductIdAsync(Product product);
+        Task AddPurchaseAsync(PurchaseProduct purchase);
+        Task<SchoolProduct> GetByProductIdAsync(SchoolProduct product);
 
        // Task<Product> GetByVendorIdAsync(Guid vendorId);
-        Task<Vendor> GetVendorByIdAsync(Guid vendorId);
-        Task UpdateAsync(Product product);
-        Task DeleteProductAsync(Vendor product);
-        Task<Product> GetByProductIdAsync(Guid productId);
+        Task<SchoolVendor> GetVendorByIdAsync(Guid vendorId);
+        Task UpdateAsync(SchoolProduct product);
+        Task DeleteProductAsync(SchoolVendor product);
+        Task<SchoolProduct> GetByProductIdAsync(Guid productId);
         //Task GetByProductIdAsync(Guid id);
     }
 }

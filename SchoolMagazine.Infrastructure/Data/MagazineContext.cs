@@ -19,12 +19,12 @@ namespace SchoolMagazine.Infrastructure.Data
         public DbSet<SchoolAdvert> Adverts { get; set; }
         public DbSet<SchoolAdvertMedia> SchoolAdvertMedias { get; set; }
         public DbSet<SchoolEventMedia> SchoolEventMedias { get; set; }
-        public DbSet<VendorSubscription> VendorSubscriptions { get; set; }
+        public DbSet<SchoolVendorSubscription> SchoolVendorSubscriptions { get; set; }
 
-        public DbSet<Vendor> Vendors { get; set; }
-        public DbSet<Product> Products { get; set; }
-        public DbSet<SchoolPurchase> SchoolPurchases { get; set; }
-        public DbSet<SchoolPurchaseProduct> SchoolPurchaseProducts { get; set; }
+        public DbSet<SchoolVendor> SchoolVendors { get; set; }
+        public DbSet<SchoolProduct> SchoolProducts { get; set; }
+        public DbSet<Purchases> purchases { get; set; }
+        public DbSet<PurchaseProduct> PurchaseProducts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -74,48 +74,52 @@ namespace SchoolMagazine.Infrastructure.Data
 
 
             // Vendor - Product relationship
-            modelBuilder.Entity<Product>()
+            modelBuilder.Entity<SchoolProduct>()
                 .HasOne(p => p.Vendor)
                 .WithMany(v => v.Products)
                 .HasForeignKey(p => p.VendorId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+
             // SchoolPurchaseProduct
-            modelBuilder.Entity<SchoolPurchaseProduct>()
+            modelBuilder.Entity<PurchaseProduct>()
                 .HasKey(spp => new { spp.SchoolPurchaseId, spp.ProductId });
 
             // SchoolPurchase - SchoolPurchaseProduct relationship
-            modelBuilder.Entity<SchoolPurchaseProduct>()
-                .HasOne(spp => spp.SchoolPurchase)
+            modelBuilder.Entity<PurchaseProduct>()
+                .HasOne(spp => spp.Schoolpurchase)
                 .WithMany(sp => sp.SchoolPurchaseProducts)
                 .HasForeignKey(spp => spp.SchoolPurchaseId);
 
             
 
             // Product and vendor relationship
-            modelBuilder.Entity<Product>()
+            modelBuilder.Entity<SchoolProduct>()
                 .HasOne(p => p.Vendor)
                 .WithMany(v => v.Products)
                 .HasForeignKey(p => p.VendorId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Vendor>()
+            modelBuilder.Entity<SchoolVendor>()
         .Property(v => v.AmountPaid)
         .HasColumnName("AmountPaid");
 
-            modelBuilder.Entity<Vendor>()
+            modelBuilder.Entity<SchoolVendor>()
                 .Property(v => v.HasActiveSubscription)
                 .HasColumnName("HasActiveSubscription");
 
-            modelBuilder.Entity<Vendor>()
+            modelBuilder.Entity<SchoolVendor>()
                 .Property(v => v.SubscriptionEndDate)
                 .HasColumnName("SubscriptionEndDate");
 
-            modelBuilder.Entity<Vendor>()
+            modelBuilder.Entity<SchoolVendor>()
                 .Property(v => v.SubscriptionStartDate)
                 .HasColumnName("SubscriptionStartDate");
 
+          // modelBuilder.Entity<SchoolPurchases>().ToTable("SchoolPurchases");
 
+            modelBuilder.Entity<Purchases>().ToTable("NewSchoolPurchases");
+           // modelBuilder.Entity<Vendor>().ToTable("AppVendors");
 
 
 

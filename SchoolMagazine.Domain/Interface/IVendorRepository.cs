@@ -18,11 +18,11 @@ namespace SchoolMagazine.Domain.Interface
         //Task<IEnumerable<Vendor>> GetVendorsWithActiveSubscriptionAsync();
         ////
 
-        Task<ServiceResponse<Vendor>> AddVendorAsync(Vendor vendor);
-        Task<PagedResult<Vendor>> GetAllApprovedVendorsAsync(int pageNumber, int pageSize);
-        Task<Vendor> GetVendorByIdAsync(Guid vendorId);
-        Task UpdateVendorAsync(Vendor vendor);
-        Task DeleteVendorAsync(Vendor vendor);
+        Task<ServiceResponse<SchoolVendor>> AddVendorAsync(SchoolVendor vendor);
+        Task<PagedResult<SchoolVendor>> GetAllApprovedVendorsAsync(int pageNumber, int pageSize);
+        Task<SchoolVendor> GetVendorByIdAsync(Guid vendorId);
+        Task UpdateVendorAsync(SchoolVendor vendor);
+        Task DeleteVendorAsync(SchoolVendor vendor);
         Task<bool> HasActiveSubscriptionAsync(Guid vendorId);
         Task SubscribeVendorAsync(Guid vendorId);
         Task<bool> SaveChangesAsync();

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SchoolMagazine.Domain.Entities.VendorEntities
 {
-    public class Product
+    public class SchoolProduct
     {
        
             [Key]
@@ -36,7 +36,7 @@ namespace SchoolMagazine.Domain.Entities.VendorEntities
 
             // Navigation Properties
             [ForeignKey(nameof(VendorId))]
-            public Vendor Vendor { get; set; }
+            public SchoolVendor Vendor { get; set; }
 
            // public ICollection<SchoolPurchaseProduct> SchoolPurchaseProducts { get; set; } = new List<SchoolPurchaseProduct>();
         }

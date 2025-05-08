@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace SchoolMagazine.Domain.Entities.VendorEntities
 {
-    public class SchoolPurchaseProduct
+    public class PurchaseProduct
     {
         public Guid SchoolPurchaseId { get; set; }
-        public SchoolPurchase SchoolPurchase { get; set; }
+        public Purchases Schoolpurchase { get; set; }
         public Guid ProductId { get; set; }
-        public Product Product { get; set; }
+        public SchoolProduct Product { get; set; }
         public int Quantity { get; set; }
     }
 

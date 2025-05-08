@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using SchoolMagazine.Domain.Entities.VendorEntities;
 
@@ -9,6 +11,9 @@ namespace SchoolMagazine.Application.DTOs
 {
     public class VendorDto
     {
+        [JsonIgnore]
+        [Key]
+     //   public string Name { get; set; }
         public Guid Id { get; set; }
         public string Email { get; set; }
         public string CompanyName { get; set; }

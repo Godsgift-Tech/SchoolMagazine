@@ -25,8 +25,8 @@ namespace SchoolMagazine.Application.Mappings
             // ForMember(dest => dest.SchoolName, opt => opt.MapFrom(src => src.School.SchoolName));
 
             CreateMap<CreateAdvertDto, SchoolAdvert>().ReverseMap();
-            CreateMap<CreateProductDto, Product>().ReverseMap();
-            CreateMap<VendorDto, Vendor>().ReverseMap();
+            CreateMap<CreateProductDto, SchoolProduct>().ReverseMap();
+            CreateMap<VendorDto, SchoolVendor>().ReverseMap();
             CreateMap<CreateEventDto, SchoolAdvert>().ReverseMap();
             CreateMap<UserDto, User>().ReverseMap();
 

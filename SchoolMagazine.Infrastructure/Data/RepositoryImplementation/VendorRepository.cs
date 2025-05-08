@@ -19,28 +19,28 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
         {
             _db = db;
         }
-        public async Task<ServiceResponse<Vendor>> AddVendorAsync(Vendor vendor)
+        public async Task<ServiceResponse<SchoolVendor>> AddVendorAsync(SchoolVendor vendor)
 
         {     //  inspecting for existing vendor by company name
-            var existingVendor = await _db.Vendors.FirstOrDefaultAsync(v => v.CompanyName == vendor.CompanyName);
+            var existingVendor = await _db.SchoolVendors.FirstOrDefaultAsync(v => v.CompanyName == vendor.CompanyName);
             if (existingVendor != null)
-                return new ServiceResponse<Vendor>(null!, success: false, message: "A vendor with this company name already exist.");
+                return new ServiceResponse<SchoolVendor>(null!, success: false, message: "A vendor with this company name already exist.");
             // inspecting for duplicate email
-            var existingVendorEmail = await _db.Vendors.FirstOrDefaultAsync(v => v.Email == vendor.Email);
+            var existingVendorEmail = await _db.SchoolVendors.FirstOrDefaultAsync(v => v.Email == vendor.Email);
             if (existingVendorEmail != null)
-                return new ServiceResponse<Vendor>(null!, success: false, message: "This Email Address is already registered by a Vendor.");
+                return new ServiceResponse<SchoolVendor>(null!, success: false, message: "This Email Address is already registered by a Vendor.");
 
             //  add vendor after validation
-            await _db.Vendors.AddAsync(vendor);
+            await _db.SchoolVendors.AddAsync(vendor);
             await _db.SaveChangesAsync();
-            return new ServiceResponse<Vendor>(null!, success: true, message: "Vendor was added successfully!.");
+            return new ServiceResponse<SchoolVendor>(null!, success: true, message: "Vendor was added successfully!.");
 
 
         }
 
-        public async Task<PagedResult<Vendor>> GetAllApprovedVendorsAsync(int pageNumber, int pageSize)
+        public async Task<PagedResult<SchoolVendor>> GetAllApprovedVendorsAsync(int pageNumber, int pageSize)
         {
-            var query = _db.Vendors
+            var query = _db.SchoolVendors
                            .Where(v => v.IsApproved)
                            .Include(v => v.Products) // Include all related products
                            .AsQueryable();
@@ -58,7 +58,7 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
                 vendor.Products = vendor.Products.Where(p => p.Vendor.IsApproved).ToList();
             }
 
-            return new PagedResult<Vendor>
+            return new PagedResult<SchoolVendor>
             {
                 TotalCount = totalCount,
                 PageSize = pageSize,
@@ -67,25 +67,25 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
             };
         }
 
-        public async Task<Vendor> GetVendorByIdAsync(Guid vendorId)
+        public async Task<SchoolVendor> GetVendorByIdAsync(Guid vendorId)
         {
-            return await _db.Vendors
+            return await _db.SchoolVendors
                 .Include(v => v.Products)
                 .FirstOrDefaultAsync(v => v.Id == vendorId)
                 ?? throw new KeyNotFoundException($"Vendor with ID {vendorId} was not found.");
         }
 
 
-        public async Task UpdateVendorAsync(Vendor vendor)
+        public async Task UpdateVendorAsync(SchoolVendor vendor)
         {
-            _db.Vendors.Update(vendor);
+            _db.SchoolVendors.Update(vendor);
             await _db.SaveChangesAsync();
 
         }
 
         public async Task<bool> HasActiveSubscriptionAsync(Guid vendorId)
         {
-            return await _db.VendorSubscriptions
+            return await _db.SchoolVendorSubscriptions
                 .AnyAsync(vs => vs.VendorId == vendorId && vs.ExpiryDate >= DateTime.UtcNow);
         }
 
@@ -93,14 +93,14 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
 
         public async Task SubscribeVendorAsync(Guid vendorId)
         {
-            var vendor = await _db.Vendors.FindAsync(vendorId);
+            var vendor = await _db.SchoolVendors.FindAsync(vendorId);
             if (vendor == null) throw new Exception("Vendor not found");
 
             vendor.HasActiveSubscription = true;
             vendor.SubscriptionStartDate = DateTime.UtcNow;
             vendor.SubscriptionEndDate = DateTime.UtcNow.AddDays(30); // 30 days subscription
 
-            _db.Vendors.Update(vendor);
+            _db.SchoolVendors.Update(vendor);
             await _db.SaveChangesAsync();
         }
 
@@ -114,45 +114,17 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
         //    return await _db.Vendors.ToListAsync();
         //}
 
-        public  async Task DeleteVendorAsync(Vendor vendor)
+        public  async Task DeleteVendorAsync(SchoolVendor vendor)
         {
             //throw new NotImplementedException();
-            var findVendor = await _db.Vendors.FindAsync(vendor.Id);
+            var findVendor = await _db.SchoolVendors.FindAsync(vendor.Id);
             if (findVendor != null)
             {
-                _db.Vendors.Remove(vendor);
+                _db.SchoolVendors.Remove(vendor);
                 await _db.SaveChangesAsync();
             }
         }
 
-        //public Task<PagedResult<Vendor>> GetAllVendorsAsync(int pageNumber, int pageSize)
-        //{
-        //    // throw new NotImplementedException();
-        //    var query = _db.Vendors
-        //                  // .Where(v => v.IsApproved)
-        //                   .Include(v => v.Products) // Include all related products
-        //                   .AsQueryable();
-
-        //    int totalCount = await query.CountAsync();
-
-        //    var vendors = await query
-        //        .Skip((pageNumber - 1) * pageSize)
-        //        .Take(pageSize)
-        //        .ToListAsync();
-
-        //    // If you only want to return vendors with only their approved products (optional)
-        //    foreach (var vendor in vendors)
-        //    {
-        //        vendor.Products = vendor.Products.Where(p => p.Vendor.IsApproved).ToList();
-        //    }
-
-        //    return new PagedResult<Vendor>
-        //    {
-        //        TotalCount = totalCount,
-        //        PageSize = pageSize,
-        //        PageNumber = pageNumber,
-        //        Items = vendors
-        //    };
-        //}
+       
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SchoolMagazine.Domain.Entities.VendorEntities
 {
-    public class VendorSubscription
+    public class SchoolVendorSubscription
     {
         
             [Key]
@@ -25,7 +25,7 @@ namespace SchoolMagazine.Domain.Entities.VendorEntities
             [Required]
             public decimal AmountPaid { get; set; } = 5000; // Default ₦5000
 
-            public Vendor Vendor { get; set; }
+            public SchoolVendor Vendor { get; set; }
         }
 
     }

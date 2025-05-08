@@ -18,15 +18,15 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
             _db = db;
         }
 
-        public async Task AddAsync(Product product)
+        public async Task AddAsync(SchoolProduct product)
         {
-            await _db.Products.AddAsync(product);
+            await _db.SchoolProducts.AddAsync(product);
             await _db.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Product>> GetPagedProductsAsync(string? name, string? category, Guid? vendorId, int pageNumber, int pageSize)
+        public async Task<IEnumerable<SchoolProduct>> GetPagedProductsAsync(string? name, string? category, Guid? vendorId, int pageNumber, int pageSize)
         {
-            var query = _db.Products.AsQueryable();
+            var query = _db.SchoolProducts.AsQueryable();
 
             if (!string.IsNullOrEmpty(name))
                 query = query.Where(p => p.Name.Contains(name));
@@ -44,7 +44,7 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
         public async Task PurchaseProductAsync(Guid schoolAdminId, Guid productId, int quantity)
         {
             // Find the product and reduce quantity
-            var product = await _db.Products.FindAsync(productId);
+            var product = await _db.SchoolProducts.FindAsync(productId);
             if (product != null && product.AvailableQuantity >= quantity)
             {
                 product.AvailableQuantity -= quantity;
@@ -56,54 +56,54 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
             }
 
         }
-        public async Task AddPurchaseAsync(SchoolPurchaseProduct purchase)
+        public async Task AddPurchaseAsync(PurchaseProduct purchase)
         {
-            await _db.SchoolPurchaseProducts.AddAsync(purchase);
+            await _db.PurchaseProducts.AddAsync(purchase);
             await _db.SaveChangesAsync();
         }
-        public async Task DeleteAsync(Product product)
+        public async Task DeleteAsync(SchoolProduct product)
         {
-            _db.Products.Remove(product);
+            _db.SchoolProducts.Remove(product);
             await _db.SaveChangesAsync();
         }
 
 
-        public async Task<Product> GetByProductIdAsync(Product product)
+        public async Task<SchoolProduct> GetByProductIdAsync(SchoolProduct product)
         {
             //return await _db.Products
             //    .Include(p => p.VendorId);
             //.Where(p => p.VendorId == vendorId)
             //.ToListAsync();
-            return await _db.Products.FindAsync(product.Id);
+            return await _db.SchoolProducts.FindAsync(product.Id);
         }
 
 
-        public async Task<Vendor> GetVendorByIdAsync(Guid vendorId)
+        public async Task<SchoolVendor> GetVendorByIdAsync(Guid vendorId)
         {
-            return await _db.Vendors
+            return await _db.SchoolVendors
                 .Include(v => v.Products)
                 .FirstOrDefaultAsync(v => v.Id == vendorId)
                 ?? throw new KeyNotFoundException($"Vendor with ID {vendorId} was not found.");
         }
 
-        public async Task UpdateAsync(Product product)
+        public async Task UpdateAsync(SchoolProduct product)
         {
-            _db.Products.Update(product);
+            _db.SchoolProducts.Update(product);
             await _db.SaveChangesAsync();
         }
 
-        public async Task DeleteProductAsync(Product product)
+        public async Task DeleteProductAsync(SchoolProduct product)
         {
-            _db.Products.Remove(product);
+            _db.SchoolProducts.Remove(product);
             await _db.SaveChangesAsync();
         }
 
-        public Task DeleteProductAsync(Vendor product)
+        public Task DeleteProductAsync(SchoolVendor product)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Product> GetByProductIdAsync(Guid productId)
+        public Task<SchoolProduct> GetByProductIdAsync(Guid productId)
         {
             throw new NotImplementedException();
         }
