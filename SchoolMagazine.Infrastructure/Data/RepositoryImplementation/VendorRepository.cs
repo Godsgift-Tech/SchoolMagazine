@@ -85,11 +85,17 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
 
         public async Task<bool> HasActiveSubscriptionAsync(Guid vendorId)
         {
-            return await _db.SchoolVendorSubscriptions
-                .AnyAsync(vs => vs.VendorId == vendorId && vs.ExpiryDate >= DateTime.UtcNow);
-        }
+            var vendor = await _db.SchoolVendors
+                .FirstOrDefaultAsync(v => v.Id == vendorId && v.IsApproved);
 
-      
+            if (vendor == null)
+                return false;
+
+            return vendor.SubscriptionStartDate.HasValue &&
+                   vendor.SubscriptionEndDate.HasValue &&
+                   vendor.SubscriptionStartDate <= DateTime.UtcNow &&
+                   vendor.SubscriptionEndDate >= DateTime.UtcNow;
+        }
 
         public async Task SubscribeVendorAsync(Guid vendorId)
         {
