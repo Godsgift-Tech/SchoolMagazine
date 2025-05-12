@@ -26,6 +26,7 @@ namespace SchoolMagazine.Application.Mappings
 
             CreateMap<CreateAdvertDto, SchoolAdvert>().ReverseMap();
             CreateMap<CreateProductDto, SchoolProduct>().ReverseMap();
+            CreateMap<SchoolProductDto, SchoolProduct>().ReverseMap();
             CreateMap<VendorDto, SchoolVendor>().ReverseMap();
             CreateMap<CreateEventDto, SchoolAdvert>().ReverseMap();
             CreateMap<UserDto, User>().ReverseMap();

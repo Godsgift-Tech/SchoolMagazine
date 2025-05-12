@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SchoolMagazine.Domain.Entities.VendorEntities;
+using SchoolMagazine.Domain.Paging;
 
 namespace SchoolMagazine.Domain.Interface
 {
@@ -11,19 +12,19 @@ namespace SchoolMagazine.Domain.Interface
     {
         Task AddAsync(SchoolProduct product);
         Task DeleteProductAsync(SchoolProduct product);
-        Task<IEnumerable<SchoolProduct>> GetPagedProductsAsync(string? name, string? category,
-            Guid? vendorId, int pageNumber, int pageSize);
-        //Task PurchaseProductAsync(Guid schoolAdminId, Guid productId, int quantity);
-        //Task AddPurchaseAsync(PurchaseProduct purchase);
+
+        Task<PagedResult<SchoolProduct>> GetPagedProductsAsync(
+    string? name,
+    string? category,
+    Guid? vendorId,
+    int pageNumber,
+    int pageSize);
         Task<SchoolProduct> GetByProductIdAsync(SchoolProduct product);
 
-       // Task<Product> GetByVendorIdAsync(Guid vendorId);
         Task<SchoolVendor> GetVendorByIdAsync(Guid vendorId);
         Task UpdateAsync(SchoolProduct product);
-       // Task DeleteProductAsync(SchoolVendor product);
         Task<SchoolProduct> GetProductWithVendorAsync(Guid productId);
 
         Task<SchoolProduct> GetByProductIdAsync(Guid productId);
-        //Task GetByProductIdAsync(Guid id);
     }
 }

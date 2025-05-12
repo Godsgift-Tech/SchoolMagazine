@@ -3,19 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using SchoolMagazine.Application.AppInterface;
 using SchoolMagazine.Application.DTOs;
 using SchoolMagazine.Domain.Interface;
+using SchoolMagazine.Domain.Paging;
+using SchoolMagazine.Domain.Service_Response;
 
 namespace SchoolMagazine.Application.AppService
 {
     public class PurchaseService : IPurchaseService
     {
         private readonly IProductRepository _pR;
+        private readonly IMapper _mapper;
 
-        public PurchaseService(IProductRepository pR)
+
+        public PurchaseService(IProductRepository pR, IMapper mapper)
         {
             _pR = pR;
+            _mapper = mapper;
         }
 
         public async Task<PurchaseProductResponseDto> CalculatePurchaseAsync(PurchaseProductRequestDto request)
@@ -60,6 +66,28 @@ namespace SchoolMagazine.Application.AppService
             };
         }
 
+
+       
+
+        public async Task<ServiceResponse<PagedResult<SchoolProductDto>>> GetAllProductAsync(string? name, string? category, Guid? vendorId, int pageNumber, int pageSize)
+        {
+            var pagedProducts = await _pR.GetPagedProductsAsync(name, category, vendorId, pageNumber, pageSize);
+
+            if (pagedProducts.Items.Count == 0)
+                return new ServiceResponse<PagedResult<SchoolProductDto>>(null!, false, "No product found matching criteria.");
+
+            var productDtos = _mapper.Map<List<SchoolProductDto>>(pagedProducts.Items);
+
+            var result = new PagedResult<SchoolProductDto>
+            {
+                TotalCount = pagedProducts.TotalCount,
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                Items = productDtos
+            };
+
+            return new ServiceResponse<PagedResult<SchoolProductDto>>(result, true, "School Products retrieved successfully.");
+        }
 
 
     }
