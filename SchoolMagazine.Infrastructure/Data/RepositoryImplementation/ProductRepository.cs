@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+//using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,26 +42,7 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
             return await query.Skip(skip).Take(pageSize).ToListAsync();
         }
 
-        public async Task PurchaseProductAsync(Guid schoolAdminId, Guid productId, int quantity)
-        {
-            // Find the product and reduce quantity
-            var product = await _db.SchoolProducts.FindAsync(productId);
-            if (product != null && product.AvailableQuantity >= quantity)
-            {
-                product.AvailableQuantity -= quantity;
-                await _db.SaveChangesAsync();
-            }
-            else
-            {
-                throw new Exception("Insufficient product quantity.");
-            }
 
-        }
-        public async Task AddPurchaseAsync(PurchaseProduct purchase)
-        {
-            await _db.PurchaseProducts.AddAsync(purchase);
-            await _db.SaveChangesAsync();
-        }
         public async Task DeleteAsync(SchoolProduct product)
         {
             _db.SchoolProducts.Remove(product);
@@ -70,10 +52,7 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
 
         public async Task<SchoolProduct> GetByProductIdAsync(SchoolProduct product)
         {
-            //return await _db.Products
-            //    .Include(p => p.VendorId);
-            //.Where(p => p.VendorId == vendorId)
-            //.ToListAsync();
+           
             return await _db.SchoolProducts.FindAsync(product.Id);
         }
 
@@ -85,6 +64,8 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
                 .FirstOrDefaultAsync(v => v.Id == vendorId)
                 ?? throw new KeyNotFoundException($"Vendor with ID {vendorId} was not found.");
         }
+
+
 
         public async Task UpdateAsync(SchoolProduct product)
         {
@@ -98,14 +79,23 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
             await _db.SaveChangesAsync();
         }
 
-        public Task DeleteProductAsync(SchoolVendor product)
-        {
-            throw new NotImplementedException();
-        }
+       
 
         public Task<SchoolProduct> GetByProductIdAsync(Guid productId)
         {
             throw new NotImplementedException();
         }
+
+        public async Task<SchoolProduct> GetProductWithVendorAsync(Guid productId)
+        {
+            return await _db.SchoolProducts
+                .Include(p => p.Vendor)
+                .FirstOrDefaultAsync(p => p.Id == productId);
+        }
+
+        //public Task DeleteProductAsync(SchoolVendor product)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

@@ -68,6 +68,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IPurchaseService, PurchaseService>();
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 
 builder.Services.AddScoped<ISubscriptionTrackerService, SubscriptionTrackerService>();
