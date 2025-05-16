@@ -12,6 +12,7 @@ using SchoolMagazine.Application.AppUsers;
 using SchoolMagazine.Application.Email_Messaging;
 using SchoolMagazine.Application.Mappings;
 using SchoolMagazine.Domain.Interface;
+using SchoolMagazine.Domain.RepositoryInterface;
 using SchoolMagazine.Domain.UserRoleInfo;
 using SchoolMagazine.Infrastructure.Data;
 using SchoolMagazine.Infrastructure.Data.RepositoryImplementation;
@@ -70,6 +71,10 @@ builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IPurchaseService, PurchaseService>();
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
+
+builder.Services.AddScoped<IAppUserRepository, AppUserRepository>();
+builder.Services.AddScoped<IJobNotificationRepository, JobNotificationRepository>();
+builder.Services.AddScoped<IJobNotificationService, JobNotificationService>();
 
 builder.Services.AddScoped<ISubscriptionTrackerService, SubscriptionTrackerService>();
 builder.Services.AddHostedService<SubscriptionExpiryService>();

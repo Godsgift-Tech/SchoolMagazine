@@ -11,12 +11,7 @@ namespace SchoolMagazine.Domain.Interface
 {
     public interface IVendorRepository
     {
-        //Task<Vendor> GetByIdAsync(Guid id);
-        //Task<IEnumerable<Vendor>> GetAllApprovedVendorsAsync();
-        //Task AddAsync(Vendor vendor);
-        //Task UpdateAsync(Vendor vendor);
-        //Task<IEnumerable<Vendor>> GetVendorsWithActiveSubscriptionAsync();
-        ////
+       
 
         Task<ServiceResponse<SchoolVendor>> AddVendorAsync(SchoolVendor vendor);
         Task<PagedResult<SchoolVendor>> GetAllApprovedVendorsAsync(int pageNumber, int pageSize);

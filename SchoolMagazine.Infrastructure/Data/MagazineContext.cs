@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SchoolMagazine.Application.AppUsers;
 using SchoolMagazine.Domain.Entities;
+using SchoolMagazine.Domain.Entities.JobEntities;
 using SchoolMagazine.Domain.Entities.VendorEntities;
 using SchoolMagazine.Domain.UserRoleInfo;
 
@@ -15,6 +16,12 @@ namespace SchoolMagazine.Infrastructure.Data
 
         // DbSets
         public DbSet<School> Schools { get; set; }
+
+        // School JOBS
+        public DbSet<JobPost> JobPosts { get; set; }
+        public DbSet<JobApplication> JobApplications { get; set; }
+        public DbSet<JobMessage> JobMessages { get; set; }
+        public DbSet<JobNotificationSubscription> JobAlerts { get; set; }
         public DbSet<SchoolEvent> Events { get; set; }
         public DbSet<SchoolAdvert> Adverts { get; set; }
         public DbSet<SchoolAdvertMedia> SchoolAdvertMedias { get; set; }
@@ -91,7 +98,7 @@ namespace SchoolMagazine.Infrastructure.Data
                 .WithMany(sp => sp.SchoolPurchaseProducts)
                 .HasForeignKey(spp => spp.SchoolPurchaseId);
 
-            
+
 
             // Product and vendor relationship
             modelBuilder.Entity<SchoolProduct>()
@@ -116,12 +123,56 @@ namespace SchoolMagazine.Infrastructure.Data
                 .Property(v => v.SubscriptionStartDate)
                 .HasColumnName("SubscriptionStartDate");
 
-          // modelBuilder.Entity<SchoolPurchases>().ToTable("SchoolPurchases");
+            // modelBuilder.Entity<SchoolPurchases>().ToTable("SchoolPurchases");
 
             modelBuilder.Entity<Purchases>().ToTable("NewSchoolPurchases");
-           // modelBuilder.Entity<Vendor>().ToTable("AppVendors");
+            // modelBuilder.Entity<Vendor>().ToTable("AppVendors");
 
+            // SCHOOL JOBS
 
+            modelBuilder.Entity<JobPost>()
+                .HasOne(j => j.PostedBy)
+                .WithMany()
+                .HasForeignKey(j => j.PostedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<JobPost>()
+                .HasOne(j => j.School)
+                .WithMany(s => s.JobPosts)
+                .HasForeignKey(j => j.SchoolId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<JobApplication>()
+                .HasOne(a => a.JobPosting)
+                .WithMany(j => j.Applications)
+                .HasForeignKey(a => a.JobPostingId);
+
+            modelBuilder.Entity<JobApplication>()
+                .HasOne(a => a.Users)
+                .WithMany()
+                .HasForeignKey(a => a.UserId);
+
+            modelBuilder.Entity<JobMessage>()
+                .HasOne(m => m.JobPost)
+                .WithMany(j => j.Messages)
+                .HasForeignKey(m => m.JobId);
+
+            modelBuilder.Entity<JobMessage>()
+                .HasOne(m => m.Sender)
+                .WithMany()
+                .HasForeignKey(m => m.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<JobMessage>()
+                .HasOne(m => m.Receiver)
+                .WithMany()
+                .HasForeignKey(m => m.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<JobNotificationSubscription>()
+       .HasOne(n => n.Users)
+       .WithMany(u => u.JobAlertSubscriptions)
+       .HasForeignKey(n => n.UserId);
 
 
         }

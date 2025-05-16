@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SchoolMagazine.Domain.Entities.VendorEntities;
 using SchoolMagazine.Domain.Interface;
+using SchoolMagazine.Domain.Paging;
 
 namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
 {
@@ -25,7 +26,13 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
             await _db.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<SchoolProduct>> GetPagedProductsAsync(string? name, string? category, Guid? vendorId, int pageNumber, int pageSize)
+       
+        public async Task<PagedResult<SchoolProduct>> GetPagedProductsAsync(
+    string? name,
+    string? category,
+    Guid? vendorId,
+    int pageNumber,
+    int pageSize)
         {
             var query = _db.SchoolProducts.AsQueryable();
 
@@ -38,9 +45,22 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
             if (vendorId.HasValue)
                 query = query.Where(p => p.VendorId == vendorId.Value);
 
-            var skip = (pageNumber - 1) * pageSize;
-            return await query.Skip(skip).Take(pageSize).ToListAsync();
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<SchoolProduct>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
+
 
 
         public async Task DeleteAsync(SchoolProduct product)
@@ -93,9 +113,6 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
                 .FirstOrDefaultAsync(p => p.Id == productId);
         }
 
-        //public Task DeleteProductAsync(SchoolVendor product)
-        //{
-        //    throw new NotImplementedException();
-        //}
+       
     }
 }

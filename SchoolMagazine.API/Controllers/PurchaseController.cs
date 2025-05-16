@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolMagazine.Application.AppInterface;
+using SchoolMagazine.Application.AppService;
 using SchoolMagazine.Application.DTOs;
 
 namespace SchoolMagazine.API.Controllers
@@ -30,6 +31,22 @@ namespace SchoolMagazine.API.Controllers
             {
                 return BadRequest(response);
             }
+
+            return Ok(response);
+        }
+
+        [HttpGet("products")]
+        public async Task<IActionResult> GetAllProducts(
+      [FromQuery] string? name,
+      [FromQuery] string? category,
+      [FromQuery] Guid? vendorId,
+      [FromQuery] int pageNumber = 1,
+      [FromQuery] int pageSize = 10)
+        {
+            var response = await _purchaseProductService.GetAllProductAsync(name, category, vendorId, pageNumber, pageSize);
+
+            if (!response.success)
+                return BadRequest(response);
 
             return Ok(response);
         }

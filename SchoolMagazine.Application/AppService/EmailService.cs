@@ -63,6 +63,60 @@ namespace SchoolMagazine.Application.AppService
             return template.Replace("{UserName}", userName)
                            .Replace("{ConfirmationLink}", confirmationLink);
         }
+
+        public async Task SendJobAlertEmailAsync(string toEmail, string subject, string htmlMessage)
+        {
+            try
+            {
+                var emailMessage = new MimeMessage();
+
+                emailMessage.From.Add(new MailboxAddress("School Magazine Alerts", _configuration["EmailSettings:FromEmail"]));
+                emailMessage.To.Add(new MailboxAddress("Subscriber", toEmail));
+                emailMessage.Subject = subject;
+
+                var bodyBuilder = new BodyBuilder { HtmlBody = htmlMessage };
+                emailMessage.Body = bodyBuilder.ToMessageBody();
+
+                using (var smtpClient = new SmtpClient())
+                {
+                    await smtpClient.ConnectAsync(_configuration["EmailSettings:Host"],
+                        int.Parse(_configuration["EmailSettings:Port"]), true);
+
+                    await smtpClient.AuthenticateAsync(
+                        _configuration["EmailSettings:UserName"],
+                        _configuration["EmailSettings:Password"]
+                    );
+
+                    await smtpClient.SendAsync(emailMessage);
+                    Console.WriteLine("Job alert email sent successfully!");
+                    await smtpClient.DisconnectAsync(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Email Sending Error: {ex.Message}");
+                throw new InvalidOperationException("An error occurred while sending job alert email.", ex);
+            }
+        }
+        public async Task<string> GetJobAlertTemplate(string templateFileName, string jobTitle,
+      string location, string qualification, string description, string postedAt)
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Helpers", templateFileName);
+
+            if (!File.Exists(filePath))
+                throw new FileNotFoundException($"Email template not found at: {filePath}");
+
+            var template = await File.ReadAllTextAsync(filePath);
+
+            return template.Replace("{JobTitle}", jobTitle)
+                           .Replace("{Location}", location)
+                           .Replace("{Qualification}", qualification)
+                           .Replace("{Description}", description)
+                           .Replace("{PostedAt}", postedAt);
+        }
+
+
+
     }
 
 }

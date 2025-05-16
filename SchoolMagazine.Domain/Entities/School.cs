@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNet.Identity;
+using SchoolMagazine.Domain.Entities.JobEntities;
+using SchoolMagazine.Domain.UserRoleInfo;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -23,9 +25,21 @@ namespace SchoolMagazine.Domain.Entities
 
         // Navigation Properties
         
-      //  public User User { get; set; }
+       // public User User { get; set; }
         [Required]
         public string Location { get; set; } //address
+        [Required]
+
+        [MaxLength(100)]
+        public string City { get; set; }
+        [Required]
+
+        [MaxLength(100)]
+        public string State { get; set; }
+        [Required]
+
+        [MaxLength(100)]
+        public string Country { get; set; }
 
         [Required]
         public string EmailAddress { get; set; } // email address [Required]
@@ -40,12 +54,17 @@ namespace SchoolMagazine.Domain.Entities
         [Required]
         public double Rating { get; set; }
 
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
         //[JsonIgnore]
 
-         public ICollection<SchoolEvent>? Events { get; set; } = new List<SchoolEvent>();
+        public ICollection<SchoolEvent>? Events { get; set; } = new List<SchoolEvent>();
         //[JsonIgnore]
 
         public ICollection<SchoolAdvert>? Adverts { get; set; } = new List<SchoolAdvert>();
-       // public ICollection<Advert> Adverts { get; set; } = new List<Advert>();
+
+        // Navigation
+        public ICollection<JobPost> JobPosts { get; set; } = new List<JobPost>();
+        // public ICollection<Advert> Adverts { get; set; } = new List<Advert>();
     }
 }

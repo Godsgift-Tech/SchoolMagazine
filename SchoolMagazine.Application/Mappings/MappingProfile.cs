@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SchoolMagazine.Application.DTOs;
 using SchoolMagazine.Domain.Entities;
+using SchoolMagazine.Domain.Entities.JobEntities;
 using SchoolMagazine.Domain.Entities.VendorEntities;
 using SchoolMagazine.Domain.UserRoleInfo;
 using System;
@@ -26,6 +27,17 @@ namespace SchoolMagazine.Application.Mappings
 
             CreateMap<CreateAdvertDto, SchoolAdvert>().ReverseMap();
             CreateMap<CreateProductDto, SchoolProduct>().ReverseMap();
+            CreateMap<SchoolProductDto, SchoolProduct>().ReverseMap();
+            // Job Notifications
+            CreateMap<JobPost, JobPostNotificationDto>().ReverseMap();
+
+            CreateMap<JobNotificationSubscription, JobNotificationSubscriptionDto>()
+      .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Users.Email))
+      .ReverseMap()
+      .ForMember(dest => dest.Users, opt => opt.Ignore());
+
+
+
             CreateMap<VendorDto, SchoolVendor>().ReverseMap();
             CreateMap<CreateEventDto, SchoolAdvert>().ReverseMap();
             CreateMap<UserDto, User>().ReverseMap();
