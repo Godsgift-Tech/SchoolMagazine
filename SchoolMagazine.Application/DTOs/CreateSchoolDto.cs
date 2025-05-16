@@ -26,6 +26,18 @@ namespace SchoolMagazine.Application.DTOs
         [Required]
         public string Location { get; set; } //address
         [Required]
+
+        [MaxLength(100)]
+        public string City { get; set; }
+        [Required]
+
+        [MaxLength(100)]
+        public string State { get; set; }
+        [Required]
+
+        [MaxLength(100)]
+        public string Country { get; set; }
+        [Required]
         public string EmailAddress { get; set; } // email address [Required]
 
 
@@ -37,6 +49,8 @@ namespace SchoolMagazine.Application.DTOs
         public decimal FeesRange { get; set; }
         [Required]
         public double Rating { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
 
         [JsonIgnore]
         public ICollection<SchoolEventDto>? Events { get; set; }

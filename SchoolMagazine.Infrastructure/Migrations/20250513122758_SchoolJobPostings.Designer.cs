@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolMagazine.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using SchoolMagazine.Infrastructure.Data;
 namespace SchoolMagazine.Infrastructure.Migrations
 {
     [DbContext(typeof(MagazineContext))]
-    partial class MagazineContextModelSnapshot : ModelSnapshot
+    [Migration("20250513122758_SchoolJobPostings")]
+    partial class SchoolJobPostings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -176,16 +179,11 @@ namespace SchoolMagazine.Infrastructure.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("UserId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("JobPostingId");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("JobApplications");
                 });
@@ -219,12 +217,6 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UserId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("JobId");
@@ -233,30 +225,7 @@ namespace SchoolMagazine.Infrastructure.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("UserId1");
-
                     b.ToTable("JobMessages");
-                });
-
-            modelBuilder.Entity("SchoolMagazine.Domain.Entities.JobEntities.JobNotificationSubscription", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("SubscribedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("JobAlerts");
                 });
 
             modelBuilder.Entity("SchoolMagazine.Domain.Entities.JobEntities.JobPost", b =>
@@ -293,16 +262,11 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PostedById");
 
                     b.HasIndex("SchoolId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("JobPosts");
                 });
@@ -800,10 +764,6 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SchoolMagazine.Domain.UserRoleInfo.User", null)
-                        .WithMany("JobApplications")
-                        .HasForeignKey("UserId1");
-
                     b.Navigation("JobPosting");
 
                     b.Navigation("Users");
@@ -829,30 +789,11 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SchoolMagazine.Domain.UserRoleInfo.User", null)
-                        .WithMany("ReceivedMessages")
-                        .HasForeignKey("UserId");
-
-                    b.HasOne("SchoolMagazine.Domain.UserRoleInfo.User", null)
-                        .WithMany("SentMessages")
-                        .HasForeignKey("UserId1");
-
                     b.Navigation("JobPost");
 
                     b.Navigation("Receiver");
 
                     b.Navigation("Sender");
-                });
-
-            modelBuilder.Entity("SchoolMagazine.Domain.Entities.JobEntities.JobNotificationSubscription", b =>
-                {
-                    b.HasOne("SchoolMagazine.Domain.UserRoleInfo.User", "Users")
-                        .WithMany("JobAlertSubscriptions")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("SchoolMagazine.Domain.Entities.JobEntities.JobPost", b =>
@@ -868,10 +809,6 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         .HasForeignKey("SchoolId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("SchoolMagazine.Domain.UserRoleInfo.User", null)
-                        .WithMany("PostedJobs")
-                        .HasForeignKey("UserId");
 
                     b.Navigation("PostedBy");
 
@@ -1003,19 +940,6 @@ namespace SchoolMagazine.Infrastructure.Migrations
             modelBuilder.Entity("SchoolMagazine.Domain.Entities.VendorEntities.SchoolVendor", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("SchoolMagazine.Domain.UserRoleInfo.User", b =>
-                {
-                    b.Navigation("JobAlertSubscriptions");
-
-                    b.Navigation("JobApplications");
-
-                    b.Navigation("PostedJobs");
-
-                    b.Navigation("ReceivedMessages");
-
-                    b.Navigation("SentMessages");
                 });
 #pragma warning restore 612, 618
         }
