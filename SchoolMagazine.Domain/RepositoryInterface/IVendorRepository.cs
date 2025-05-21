@@ -16,6 +16,8 @@ namespace SchoolMagazine.Domain.Interface
         Task<ServiceResponse<SchoolVendor>> AddVendorAsync(SchoolVendor vendor);
         Task<PagedResult<SchoolVendor>> GetAllApprovedVendorsAsync(int pageNumber, int pageSize);
         Task<SchoolVendor> GetVendorByIdAsync(Guid vendorId);
+        Task<SchoolProduct?> GetProductByIdAsync(Guid productId);
+        Task UpdateProductAsync(SchoolProduct product);
         Task UpdateVendorAsync(SchoolVendor vendor);
         Task DeleteVendorAsync(SchoolVendor vendor);
         Task<bool> HasActiveSubscriptionAsync(Guid vendorId);

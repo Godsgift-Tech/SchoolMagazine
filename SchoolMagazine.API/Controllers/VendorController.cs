@@ -65,7 +65,61 @@ namespace SchoolMagazine.API.Controllers
 
             return Ok(result);
         }
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateVendor([FromBody] VendorDto vendor)
+        {
+            if (vendor == null || vendor.Id == Guid.Empty)
+                return BadRequest(new { success = false, message = "Invalid vendor data." });
 
+            try
+            {
+                var result = await _vendorService.UpdateVendorAsync(vendor);
+
+                if (!result.success)
+                    return BadRequest(new { success = false, message = result.message });
+
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message,
+                    data = result.Data
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
+
+        //[HttpPut("{vendorId}/products/{productId}")]
+        //public async Task<IActionResult> UpdateProduct(Guid vendorId, Guid productId, [FromBody] UpdateProductDto productDto)
+        //{
+        //    if (productDto == null || productId != productDto.Id)
+        //        return BadRequest(new { success = false, message = "Product ID mismatch or invalid request." });
+
+        //    var response = await _vendorService.UpdateProductAsync(vendorId, productDto);
+
+        //    if (!response.success)
+        //        return BadRequest(new { success = false, message = response.message });
+
+        //    return Ok(new
+        //    {
+        //        success = true,
+        //        message = response.message,
+        //        data = response.Data
+        //    });
+        //}
+
+        [HttpPut("{vendorId}/update-product/{productId}")]
+        public async Task<IActionResult> UpdateProduct(Guid vendorId, Guid productId, [FromBody] UpdateProductDto productDto)
+        {
+            var result = await _vendorService.UpdateProductAsync(vendorId, productId, productDto);
+
+            if (!result.success)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
 
         [HttpDelete("products/{productId}")]
         public async Task<IActionResult> DeleteProduct(Guid productId)

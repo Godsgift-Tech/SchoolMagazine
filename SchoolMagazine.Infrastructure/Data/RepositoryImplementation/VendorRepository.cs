@@ -114,11 +114,6 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
 
       
 
-        //public async Task<IEnumerable<Vendor>> GetAllVendorsAsync()
-        //{
-        //    // Directly use ToListAsync() on the DbSet
-        //    return await _db.Vendors.ToListAsync();
-        //}
 
         public  async Task DeleteVendorAsync(SchoolVendor vendor)
         {
@@ -131,6 +126,17 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
             }
         }
 
-       
+        public async Task<SchoolProduct?> GetProductByIdAsync(Guid productId)
+        {
+            return await _db.SchoolProducts
+                .FirstOrDefaultAsync(p => p.Id == productId);
+        }
+
+        public async Task UpdateProductAsync(SchoolProduct product)
+        {
+            _db.SchoolProducts.Update(product);
+            await _db.SaveChangesAsync();
+        }
+
     }
 }

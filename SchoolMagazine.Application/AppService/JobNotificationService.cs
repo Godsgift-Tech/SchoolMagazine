@@ -74,10 +74,7 @@ namespace SchoolMagazine.Application.AppService
                 await _eS.SendJobAlertEmailAsync(user.Email, subject, htmlBody);
             }
         }
-        //public Task NotifySubscribersAsync(JobPostNotificationDto jobPostDto)
-        //{
-        //    throw new NotImplementedException();
-        //}
+       
 
         public async Task<bool> SubscribeAsync(Guid userId) => await _jR.SubscribeAsync(userId);
        
