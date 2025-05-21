@@ -62,16 +62,7 @@ namespace SchoolMagazine.Infrastructure.Data.Service
         }
 
 
-        //public async Task<bool> DeleteAdvertAsync(Guid advertId)
-        //{
-        //    var advert = await _db.Adverts.FindAsync(advertId);
-        //    if (advert == null)
-        //        return false;
-
-        //    _db.Adverts.Remove(advert);
-        //    await _db.SaveChangesAsync();
-        //    return true;
-        //}
+       
 
         public async Task<bool> DeleteAdvertAsync(Guid advertId)
         {
