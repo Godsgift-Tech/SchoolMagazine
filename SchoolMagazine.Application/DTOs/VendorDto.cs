@@ -50,4 +50,5 @@ namespace SchoolMagazine.Application.DTOs
 
        // public ICollection<SchoolProduct> Products { get; set; }
     }
+
 }

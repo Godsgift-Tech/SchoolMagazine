@@ -102,8 +102,21 @@ namespace SchoolMagazine.Application.AppService
             await _vR.DeleteVendorAsync(vendor);
         }
 
-        public async Task<PagedResult<SchoolVendor>> GetAllApprovedVendorsAsync(int pageNumber, int pageSize)
-            => await _vR.GetAllApprovedVendorsAsync(pageNumber, pageSize);
+   
+        public async Task<PagedResult<ApprovedVendorDto>> GetAllApprovedVendorsAsync(int pageNumber, int pageSize)
+        {
+            var result = await _vR.GetAllApprovedVendorsAsync(pageNumber, pageSize);
+
+            var vendorDtos = _mapper.Map<List<ApprovedVendorDto>>(result.Items);
+
+            return new PagedResult<ApprovedVendorDto>
+            {
+                TotalCount = result.TotalCount,
+                PageSize = result.PageSize,
+                PageNumber = result.PageNumber,
+                Items = vendorDtos
+            };
+        }
 
         public async Task<SchoolVendor> GetVendorByIdAsync(Guid vendorId)
         {
@@ -151,64 +164,6 @@ namespace SchoolMagazine.Application.AppService
             return new ServiceResponse<string>($"Subscription successful for {months} month(s).", true);
         }
 
-        //public async Task<ServiceResponse<UpdateProductDto>> UpdateProductAsync(Guid vendorId, UpdateProductDto productDto)
-        //{
-        //    var vendor = await _vR.GetVendorByIdAsync(vendorId);
-        //    if (vendor == null)
-                
-        //        return new ServiceResponse<UpdateProductDto>(null!, success: false, message: "Vendor not found");
-
-        //    if (!vendor.IsApproved)
-        //        return new ServiceResponse<UpdateProductDto>(null!, success: false, message: "Vendor is not approved");
-
-        //    if (!await _vR.HasActiveSubscriptionAsync(vendorId))
-        //        return new ServiceResponse<UpdateProductDto>(null!, success: false, message: "Vendor does not have an active subscription");
-
-        //    var product = await _vR.GetProductByIdAsync(productDto.Id);
-        //    if (product == null)
-        //        return new ServiceResponse<UpdateProductDto>(null!, success: false, message: "Product not found");
-
-        //    if (product.VendorId != vendorId)
-        //        return new ServiceResponse<UpdateProductDto>(null!, success: false, message: "You can only update your own products");
-
-        //    // Map the update fields to the existing product entity
-        //    _mapper.Map(productDto, product);
-
-        //    await _vR.UpdateProductAsync(product); // Update in repository
-
-        //    var updatedProductDto = _mapper.Map<UpdateProductDto>(product);
-
-        //    return new ServiceResponse<UpdateProductDto>(updatedProductDto, true, "Product updated successfully");
-        //}
-
-
-       
-
-        public async Task<ServiceResponse<VendorDto>> UpdateVendorAsync(VendorDto vendor)
-        {
-            var vendorUpdate = await _vR.GetVendorByIdAsync(vendor.Id);
-            if (vendorUpdate == null)
-                throw new Exception("Vendor not found");
-
-            if (!vendorUpdate.IsApproved)
-                throw new Exception("Only approved vendors can create products!");
-
-            if (!await _vR.HasActiveSubscriptionAsync(vendor.Id))
-                throw new Exception("Vendor does not have active subscription");
-
-            // Map the updated values from DTO to entity
-            _mapper.Map(vendor, vendorUpdate);
-
-            // Update in the database
-            await _vR.UpdateVendorAsync(vendorUpdate);
-
-            // Map back to DTO and return success
-            var updatedVendor = _mapper.Map<VendorDto>(vendorUpdate);
-            return new ServiceResponse<VendorDto>(updatedVendor, success: true, message: "Vendor details updated successfully!");
-        }
-
-
-      
 
         public async Task<ServiceResponse<SchoolProduct>> UpdateProductAsync(Guid vendorId, Guid productId, UpdateProductDto productDto)
         {
@@ -244,6 +199,30 @@ namespace SchoolMagazine.Application.AppService
             // Return updated entity
             return new ServiceResponse<SchoolProduct>(product, true, message: "Product updated successfully");
 
+        }
+
+        public async Task<ServiceResponse<VendorDto>> UpdateVendorByIdAsync(Guid vendorId, VendorDto vendor)
+        {
+            var vendorUpdate = await _vR.GetVendorByIdAsync(vendorId);
+            if (vendorUpdate == null)
+                throw new Exception("Vendor not found");
+
+            if (!vendorUpdate.IsApproved)
+                throw new Exception("Only approved vendors can create products!");
+
+            if (!await _vR.HasActiveSubscriptionAsync(vendor.Id))
+                throw new Exception("Vendor does not have active subscription");
+
+            // Map the updated values from DTO to entity
+            _mapper.Map(vendor, vendorUpdate);
+
+            // Update in the database
+           await _vR.UpdateVendorAsync(vendorUpdate);
+
+
+            // Map back to DTO and return success
+            var updatedVendor = _mapper.Map<VendorDto>(vendorUpdate);
+            return new ServiceResponse<VendorDto>(updatedVendor, success: true, message: "Vendor details updated successfully!");
         }
     }
 }

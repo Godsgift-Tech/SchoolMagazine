@@ -65,15 +65,16 @@ namespace SchoolMagazine.API.Controllers
 
             return Ok(result);
         }
-        [HttpPut("update")]
-        public async Task<IActionResult> UpdateVendor([FromBody] VendorDto vendor)
+
+        [HttpPut("update/id")]
+        public async Task<IActionResult> UpdateVendor( Guid vendorId, [FromBody] VendorDto vendor)
         {
-            if (vendor == null || vendor.Id == Guid.Empty)
+            if (vendorId == null || vendorId == Guid.Empty)
                 return BadRequest(new { success = false, message = "Invalid vendor data." });
 
             try
             {
-                var result = await _vendorService.UpdateVendorAsync(vendor);
+                var result = await _vendorService.UpdateVendorByIdAsync(vendorId, vendor);
 
                 if (!result.success)
                     return BadRequest(new { success = false, message = result.message });
@@ -91,24 +92,7 @@ namespace SchoolMagazine.API.Controllers
             }
         }
 
-        //[HttpPut("{vendorId}/products/{productId}")]
-        //public async Task<IActionResult> UpdateProduct(Guid vendorId, Guid productId, [FromBody] UpdateProductDto productDto)
-        //{
-        //    if (productDto == null || productId != productDto.Id)
-        //        return BadRequest(new { success = false, message = "Product ID mismatch or invalid request." });
-
-        //    var response = await _vendorService.UpdateProductAsync(vendorId, productDto);
-
-        //    if (!response.success)
-        //        return BadRequest(new { success = false, message = response.message });
-
-        //    return Ok(new
-        //    {
-        //        success = true,
-        //        message = response.message,
-        //        data = response.Data
-        //    });
-        //}
+       
 
         [HttpPut("{vendorId}/update-product/{productId}")]
         public async Task<IActionResult> UpdateProduct(Guid vendorId, Guid productId, [FromBody] UpdateProductDto productDto)
@@ -128,6 +112,7 @@ namespace SchoolMagazine.API.Controllers
             return Ok("Product deleted.");
         }
 
+        
         [HttpGet("approved")]
         public async Task<IActionResult> GetAllApprovedVendors([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
@@ -135,7 +120,6 @@ namespace SchoolMagazine.API.Controllers
             return Ok(result);
         }
 
-        
 
     }
 }
