@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SchoolMagazine.Application.DTOs;
 using SchoolMagazine.Domain.Entities.VendorEntities;
+using SchoolMagazine.Domain.Interface;
 using SchoolMagazine.Domain.Paging;
 using SchoolMagazine.Domain.Service_Response;
 
@@ -13,17 +14,18 @@ namespace SchoolMagazine.Application.AppInterface
     public interface IVendorService
     {
         Task<ServiceResponse<VendorDto>> AddVendorAsync(VendorDto vendor);
-        Task<ServiceResponse<VendorDto>> UpdateVendorAsync(VendorDto vendor);
+        Task<ServiceResponse<VendorDto>> UpdateVendorByIdAsync(Guid vendorId, VendorDto vendor);
         Task<ServiceResponse<SchoolVendor>> ApproveVendorAsync(Guid vendorId);
         Task CreateProductAsync(Guid vendorId, SchoolProduct product);
         Task <ServiceResponse<CreateProductDto>>CreateProductAsync(Guid vendorId, CreateProductDto product);
-       // Task <ServiceResponse<UpdateProductDto>>UpdateProductAsync(Guid vendorId, UpdateProductDto product);
         Task<ServiceResponse<SchoolProduct>> UpdateProductAsync(Guid vendorId,Guid productId, UpdateProductDto productDto);
 
-
         Task DeleteProductAsync(Guid productId);
-        Task<PagedResult<SchoolVendor>> GetAllApprovedVendorsAsync(int pageNumber, int pageSize);
-      
+        //Task<PagedResult<SchoolVendor>> GetAllApprovedVendorsAsync(int pageNumber, int pageSize);
+        Task<PagedResult<ApprovedVendorDto>> GetAllApprovedVendorsAsync(int pageNumber, int pageSize);
+       
+
+
         Task<bool> HasActiveSubscriptionAsync(Guid vendorId);
         Task<ServiceResponse<string>> SubscribeVendorAsync(SubscriptionRequestDto request);
 

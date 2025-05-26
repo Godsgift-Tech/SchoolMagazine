@@ -20,6 +20,7 @@ namespace SchoolMagazine.Application.Mappings
             CreateMap<School, SchoolDto>().ReverseMap();
             CreateMap<School, CreateSchoolDto>().ReverseMap();
             CreateMap<SchoolEvent, SchoolEventDto>().ReverseMap();
+            CreateMap<ApprovedVendorDto, SchoolVendor>().ReverseMap();
            // CreateMap<SchoolAdvert, SchoolAdvertDto>().ReverseMap();
 
             CreateMap<SchoolAdvert, SchoolAdvertDto>().ReverseMap();

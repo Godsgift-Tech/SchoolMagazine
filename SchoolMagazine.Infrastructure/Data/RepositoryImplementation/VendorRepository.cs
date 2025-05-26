@@ -42,8 +42,9 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
         {
             var query = _db.SchoolVendors
                            .Where(v => v.IsApproved)
-                           .Include(v => v.Products) // Include all related products
+                           //.Include(v => v.Products) // Include all related products
                            .AsQueryable();
+
 
             int totalCount = await query.CountAsync();
 
@@ -53,10 +54,11 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
                 .ToListAsync();
 
             // If you only want to return vendors with only their approved products (optional)
-            foreach (var vendor in vendors)
-            {
-                vendor.Products = vendor.Products.Where(p => p.Vendor.IsApproved).ToList();
-            }
+            //foreach (var vendor in vendors)
+            //{
+            //    vendor.Products = vendor.Products.Where(p => p.Vendor.IsApproved).ToList();
+            //}
+
 
             return new PagedResult<SchoolVendor>
             {
@@ -78,6 +80,7 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
 
         public async Task UpdateVendorAsync(SchoolVendor vendor)
         {
+
             _db.SchoolVendors.Update(vendor);
             await _db.SaveChangesAsync();
 
@@ -134,6 +137,7 @@ namespace SchoolMagazine.Infrastructure.Data.RepositoryImplementation
 
         public async Task UpdateProductAsync(SchoolProduct product)
         {
+
             _db.SchoolProducts.Update(product);
             await _db.SaveChangesAsync();
         }

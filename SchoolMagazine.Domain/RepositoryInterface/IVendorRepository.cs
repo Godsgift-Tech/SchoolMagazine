@@ -23,9 +23,7 @@ namespace SchoolMagazine.Domain.Interface
         Task<bool> HasActiveSubscriptionAsync(Guid vendorId);
         Task SubscribeVendorAsync(Guid vendorId);
         Task<bool> SaveChangesAsync();
-        //Task<IEnumerable<Vendor>> GetAllVendorsAsync();
-        //Task<PagedResult<Vendor>> GetAllVendorsAsync(int pageNumber, int pageSize);
-
+      
 
 
 
