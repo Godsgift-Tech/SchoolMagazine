@@ -98,8 +98,16 @@ namespace SchoolMagazine.Application.AppService
                 throw new InvalidOperationException("An error occurred while sending job alert email.", ex);
             }
         }
-        public async Task<string> GetJobAlertTemplate(string templateFileName, string jobTitle,
-      string location, string qualification, string description, string postedAt)
+        public async Task<string> GetJobAlertTemplate(
+      string templateFileName,
+      string jobTitle,
+      string location,
+      string qualification,
+      string categories,
+      string minSalary,
+      string maxSalary,
+      string? description,
+      string postedAt)
         {
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Helpers", templateFileName);
 
@@ -111,7 +119,10 @@ namespace SchoolMagazine.Application.AppService
             return template.Replace("{JobTitle}", jobTitle)
                            .Replace("{Location}", location)
                            .Replace("{Qualification}", qualification)
-                           .Replace("{Description}", description)
+                           .Replace("{Categories}", categories)
+                           .Replace("{MinSalary}", minSalary)
+                           .Replace("{MaxSalary}", maxSalary)
+                           .Replace("{Description}", description ?? "No description provided")
                            .Replace("{PostedAt}", postedAt);
         }
 

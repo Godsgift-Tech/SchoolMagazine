@@ -21,7 +21,23 @@ namespace SchoolMagazine.Domain.Entities.JobEntities
         public string Qualification { get; set; }
 
         public string Location { get; set; }
+        // newly added
+        [Required]
+        public string JobType { get; set; } // Remote, Onsite, Hybrid
 
+        [Range(0, double.MaxValue)]
+        public decimal MinSalary { get; set; }
+
+        [Range(0, double.MaxValue)]
+        public decimal MaxSalary { get; set; }
+
+        [Required]
+        public string ExperienceLevel { get; set; } // Entry, Mid, Senior
+
+        [Required]
+        public string Category { get; set; } // E.g., Teaching, Admin, Finance
+
+        //  old properties
         public bool IsAvailable { get; set; } = true;
 
         public DateTime PostedAt { get; set; } = DateTime.UtcNow;

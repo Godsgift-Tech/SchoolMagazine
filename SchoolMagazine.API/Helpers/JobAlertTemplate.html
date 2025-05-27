@@ -1,17 +1,106 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>New Job Alert</title>
+    <title>Job Alert</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fffaf5;
+            margin: 0;
+            padding: 0;
+            color: #3e3e3e;
+        }
+
+        .container {
+            background-color: #ffffff;
+            width: 90%;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(255, 171, 64, 0.3);
+            border: 2px solid #ffe0b2;
+        }
+
+        .header {
+            background-color: #ff9800;
+            color: white;
+            padding: 20px;
+            border-radius: 14px 14px 0 0;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .section {
+            margin: 25px 0;
+        }
+
+            .section h3 {
+                color: #ff7043;
+                margin-bottom: 10px;
+                font-size: 18px;
+            }
+
+        .highlight {
+            color: #d84315;
+            font-weight: bold;
+        }
+
+        .salary {
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        .footer {
+            font-size: 13px;
+            color: #999;
+            text-align: center;
+            margin-top: 30px;
+        }
+    </style>
 </head>
-<body style="font-family: Arial, sans-serif; color: #333;">
-    <h2 style="color: #2a9df4;">📢 New Job Opportunity: {JobTitle}</h2>
-    <p><strong>Location:</strong> {Location}</p>
-    <p><strong>Qualification:</strong> {Qualification}</p>
-    <p><strong>Description:</strong></p>
-    <p>{Description}</p>
-    <p><strong>Posted On:</strong> {PostedAt}</p>
-    <hr>
-    <p style="font-size: 0.9em;">This is an automated job alert from <strong>School Magazine</strong>.</p>
+<body>
+    <div class="container">
+        <div class="header">
+             Hot Job Alert: {JobTitle}
+        </div>
+
+        <div class="section">
+            <h3> Location</h3>
+            <p><span class="highlight">{Location}</span></p>
+        </div>
+
+        <div class="section">
+            <h3> Qualification Required</h3>
+            <p>{Qualification}</p>
+        </div>
+
+        <div class="section">
+            <h3> Job Categories</h3>
+            <p>{Categories}</p>
+        </div>
+
+        <div class="section">
+            <h3>Salary Range</h3>
+            <p class="salary">₦{MinSalary} - ₦{MaxSalary}</p>
+        </div>
+
+        <div class="section">
+            <h3> Job Description</h3>
+            <p>{Description}</p>
+        </div>
+
+        <div class="section">
+            <h3> Date Posted</h3>
+            <p>{PostedAt}</p>
+        </div>
+
+        <div class="footer">
+            You're receiving this email because you subscribed to job notifications from School Magazine. <br />
+            Stay inspired and keep growing! 🌱
+        </div>
+    </div>
 </body>
 </html>

@@ -9,6 +9,7 @@ namespace SchoolMagazine.API.Controllers
     [ApiController]
     public class JobNotificationsController : ControllerBase
     {
+
         private readonly IJobNotificationService _jobNotificationService;
 
         public JobNotificationsController(IJobNotificationService jobNotificationService)
@@ -16,40 +17,69 @@ namespace SchoolMagazine.API.Controllers
             _jobNotificationService = jobNotificationService;
         }
 
-        // Subscribe current user to job notifications
-        [HttpPost("subscribe/{userId}")]
-        public async Task<IActionResult> Subscribe(Guid userId)
+        // POST: api/JobNotification/subscribe
+        [HttpPost("subscribe")]
+        public async Task<IActionResult> Subscribe([FromBody] JobNotificationSubscriptionDto dto)
         {
-            var result = await _jobNotificationService.SubscribeAsync(userId);
-            if (!result) return BadRequest("Subscription failed or user already subscribed.");
-            return Ok("Subscribed successfully.");
+            var result = await _jobNotificationService.SubscribeAsync(dto);
+            if (result)
+                return Ok(new { message = "Subscription successful." });
+            return BadRequest(new { message = "Subscription failed." });
         }
 
-        // Unsubscribe current user
-        [HttpPost("unsubscribe/{userId}")]
+        // PUT: api/JobNotification/update
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateSubscription([FromBody] JobNotificationSubscriptionDto dto)
+        {
+            var result = await _jobNotificationService.UpdateSubscriptionAsync(dto);
+            if (result)
+                return Ok(new { message = "Subscription updated successfully." });
+            return BadRequest(new { message = "Update failed." });
+        }
+
+        // DELETE: api/JobNotification/unsubscribe/{userId}
+        [HttpDelete("unsubscribe/{userId:guid}")]
         public async Task<IActionResult> Unsubscribe(Guid userId)
         {
             var result = await _jobNotificationService.UnsubscribeAsync(userId);
-            if (!result) return BadRequest("Unsubscription failed or user was not subscribed.");
-            return Ok("Unsubscribed successfully.");
+            if (result)
+                return Ok(new { message = "Unsubscribed successfully." });
+            return NotFound(new { message = "Subscription not found." });
         }
 
-        // Check if user is subscribed
-        [HttpGet("issubscribed/{userId}")]
+        // GET: api/JobNotification/isSubscribed/{userId}
+        [HttpGet("isSubscribed/{userId:guid}")]
         public async Task<IActionResult> IsSubscribed(Guid userId)
         {
-            var subscribed = await _jobNotificationService.IsSubscribedAsync(userId);
-            return Ok(new { UserId = userId, IsSubscribed = subscribed });
+            var isSubscribed = await _jobNotificationService.IsSubscribedAsync(userId);
+            return Ok(new { userId, isSubscribed });
         }
 
-        // Endpoint to notify subscribers about a new job (for admins or job posters)
-        [HttpPost("notify")]
-        public async Task<IActionResult> NotifySubscribers([FromBody] JobPostNotificationDto jobPost)
+        // GET: api/JobNotification/preferences/{userId}
+        [HttpGet("preferences/{userId:guid}")]
+        public async Task<IActionResult> GetUserPreferences(Guid userId)
         {
-            if (jobPost == null) return BadRequest("Job post data is required.");
+            var preferences = await _jobNotificationService.GetUserPreferenceAsync(userId);
+            if (preferences == null)
+                return NotFound(new { message = "User preferences not found." });
 
-            await _jobNotificationService.NotifySubscribersAsync(jobPost);
-            return Ok("Notifications sent to all subscribers.");
+            return Ok(preferences);
+        }
+
+        // GET: api/JobNotification/subscribers
+        [HttpGet("subscribers")]
+        public async Task<IActionResult> GetAllSubscribers()
+        {
+            var subscribers = await _jobNotificationService.GetAllSubscribedUsersAsync();
+            return Ok(subscribers);
+        }
+
+        // POST: api/JobNotification/notify
+        [HttpPost("notify")]
+        public async Task<IActionResult> NotifySubscribers([FromBody] JobPostNotificationDto jobPostDto)
+        {
+            await _jobNotificationService.NotifySubscribersAsync(jobPostDto);
+            return Ok(new { message = "Notifications sent to matched subscribers." });
         }
     }
 }

@@ -10,13 +10,12 @@ namespace SchoolMagazine.Application.AppInterface
 {
     public interface IJobNotificationService
     {
-        Task<bool> SubscribeAsync(Guid userId);
+        Task<bool> SubscribeAsync(JobNotificationSubscriptionDto subscriptionDto);
+        Task<bool> UpdateSubscriptionAsync(JobNotificationSubscriptionDto subscriptionDto);
         Task<bool> UnsubscribeAsync(Guid userId);
         Task<bool> IsSubscribedAsync(Guid userId);
-       // Task<List<Guid>> GetAllSubscribedUserIdsAsync();
         Task<List<JobNotificationSubscriptionDto>> GetAllSubscribedUsersAsync();
-        // Task NotifySubscribersAsync(JobPost jobPost);
-      //  Task NotifySubscribersAsync(JobPost jobDto);
+        Task<JobNotificationSubscriptionDto?> GetUserPreferenceAsync(Guid userId);
         Task NotifySubscribersAsync(JobPostNotificationDto jobPostDto);
 
     }

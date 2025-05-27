@@ -33,12 +33,23 @@ namespace SchoolMagazine.Application.Mappings
             // Job Notifications
             CreateMap<JobPost, JobPostNotificationDto>().ReverseMap();
 
+      //      CreateMap<JobNotificationSubscription, JobNotificationSubscriptionDto>()
+      //.ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Users.Email))
+      //.ReverseMap()
+      //.ForMember(dest => dest.Users, opt => opt.Ignore());
+
+            //
+            CreateMap<JobNotificationSubscriptionDto, JobNotificationSubscription>()
+           .ForMember(dest => dest.Categories, opt => opt.MapFrom(src =>
+               src.Categories.Select(c => new JobCategoryPreference { CategoryName = c }).ToList()));
+
             CreateMap<JobNotificationSubscription, JobNotificationSubscriptionDto>()
-      .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Users.Email))
-      .ReverseMap()
-      .ForMember(dest => dest.Users, opt => opt.Ignore());
+                .ForMember(dest => dest.Categories, opt => opt.MapFrom(src =>
+                    src.Categories.Select(c => c.CategoryName).ToList()));
 
 
+
+            //
 
             CreateMap<VendorDto, SchoolVendor>().ReverseMap();
             CreateMap<CreateEventDto, SchoolAdvert>().ReverseMap();
