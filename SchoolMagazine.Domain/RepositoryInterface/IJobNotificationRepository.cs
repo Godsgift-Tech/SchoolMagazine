@@ -9,10 +9,24 @@ namespace SchoolMagazine.Domain.RepositoryInterface
 {
     public interface IJobNotificationRepository
     {
-        Task<bool> SubscribeAsync(Guid userId);
+       // Task<bool> SubscribeAsync(Guid userId);
         Task<bool> UnsubscribeAsync(Guid userId);
         Task<bool> IsSubscribedAsync(Guid userId);
         Task<List<Guid>> GetAllSubscribedUserIdsAsync();
         Task<List<JobNotificationSubscription>> GetAllSubscribedUsersAsync();
+
+
+
+        //
+
+
+
+
+        Task<bool> SubscribeAsync(JobNotificationSubscription subscription);
+
+        Task<bool> UpdateSubscriptionAsync(JobNotificationSubscription updatedSubscription);
+
+
+        Task<JobNotificationSubscription?> GetUserPreferenceAsync(Guid userId);
     }
 }

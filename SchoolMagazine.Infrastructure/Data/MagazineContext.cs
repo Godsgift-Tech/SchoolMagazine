@@ -22,6 +22,8 @@ namespace SchoolMagazine.Infrastructure.Data
         public DbSet<JobApplication> JobApplications { get; set; }
         public DbSet<JobMessage> JobMessages { get; set; }
         public DbSet<JobNotificationSubscription> JobAlerts { get; set; }
+        // newly added
+        public DbSet<JobCategoryPreference> JobCategoryPreferences { get; set; }
         public DbSet<SchoolEvent> Events { get; set; }
         public DbSet<SchoolAdvert> Adverts { get; set; }
         public DbSet<SchoolAdvertMedia> SchoolAdvertMedias { get; set; }
@@ -174,7 +176,12 @@ namespace SchoolMagazine.Infrastructure.Data
        .WithMany(u => u.JobAlertSubscriptions)
        .HasForeignKey(n => n.UserId);
 
-
+            // newly added
+            modelBuilder.Entity<JobCategoryPreference>()
+        .HasOne(j => j.Subscription)
+        .WithMany(s => s.Categories)
+        .HasForeignKey(j => j.SubscriptionId)
+        .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
