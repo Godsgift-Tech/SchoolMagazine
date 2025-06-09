@@ -20,19 +20,19 @@ namespace SchoolMagazine.Application.AppService
         }
 
 
-        public async Task<ServiceResponse<PagedResult<SchoolDto>>> GetPagedSchoolsAsync(int pageNumber, int pageSize)
+        public async Task<ServiceResponse<PagedResult<PagedSchoolDto>>> GetPagedSchoolsAsync(int pageNumber, int pageSize)
         {
             var pagedResult = await _sr.GetPagedResultAsync(pageNumber, pageSize);
 
-            var pagedResultDto = new PagedResult<SchoolDto>
+            var pagedResultDto = new PagedResult<PagedSchoolDto>
             {
                 TotalCount = pagedResult.TotalCount,
                 PageSize = pagedResult.PageSize,
                 PageNumber = pagedResult.PageNumber,
-                Items = _mapper.Map<List<SchoolDto>>(pagedResult.Items)
+                Items = _mapper.Map<List<PagedSchoolDto>>(pagedResult.Items)
             };
 
-            return new ServiceResponse<PagedResult<SchoolDto>>(pagedResultDto, success: true, message: "Schools with advert and event details retrieved successfully");
+            return new ServiceResponse<PagedResult<PagedSchoolDto>>(pagedResultDto, success: true, message: "Schools with advert and event details retrieved successfully");
         }
 
        
@@ -134,17 +134,17 @@ namespace SchoolMagazine.Application.AppService
             return new ServiceResponse<bool>(true, success: true, message: "School was removed successfully.");
         }
 
-        public async Task<ServiceResponse<PagedResult<SchoolDto>>> GetSchoolsAsync(
-    string? schoolName, string? location, decimal? feesRange, double? rating, int pageNumber, int pageSize)
+        public async Task<ServiceResponse<PagedResult<SchoolSummaryDto>>> GetSchoolsAsync(
+    string? schoolName, string? address, decimal? feesRange, double? rating, int pageNumber, int pageSize)
         {
-            var pagedSchools = await _sr.GetSchoolsAsync(schoolName, location, feesRange, rating, pageNumber, pageSize);
+            var pagedSchools = await _sr.GetSchoolsAsync(schoolName, address, feesRange, rating, pageNumber, pageSize);
 
             if (pagedSchools.Items.Count == 0)
-                return new ServiceResponse<PagedResult<SchoolDto>>(null!, false, "No schools found matching criteria.");
+                return new ServiceResponse<PagedResult<SchoolSummaryDto>>(null!, false, "No schools found matching criteria.");
 
-            var schoolDtos = _mapper.Map<List<SchoolDto>>(pagedSchools.Items);
+            var schoolDtos = _mapper.Map<List<SchoolSummaryDto>>(pagedSchools.Items);
 
-            var result = new PagedResult<SchoolDto>
+            var result = new PagedResult<SchoolSummaryDto>
             {
                 TotalCount = pagedSchools.TotalCount,
                 PageSize = pageSize,
@@ -152,7 +152,7 @@ namespace SchoolMagazine.Application.AppService
                 Items = schoolDtos
             };
 
-            return new ServiceResponse<PagedResult<SchoolDto>>(result, true, "Schools retrieved successfully.");
+            return new ServiceResponse<PagedResult<SchoolSummaryDto>>(result, true, "Schools retrieved successfully.");
         }
 
 
