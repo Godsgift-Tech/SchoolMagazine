@@ -91,13 +91,13 @@ namespace SchoolMagazine.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetSchools(
     [FromQuery] string? schoolName,
-    [FromQuery] string? location,
+    [FromQuery] string? address,
     [FromQuery] decimal? feesRange,
     [FromQuery] double? rating,
     [FromQuery] int pageNumber = 1,
     [FromQuery] int pageSize = 10)
         {
-            var result = await _ser.GetSchoolsAsync(schoolName, location, feesRange, rating, pageNumber, pageSize);
+            var result = await _ser.GetSchoolsAsync(schoolName, address, feesRange, rating, pageNumber, pageSize);
             return result.success ? Ok(result) : NotFound(result);
         }
 

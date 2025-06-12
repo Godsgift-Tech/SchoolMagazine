@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolMagazine.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using SchoolMagazine.Infrastructure.Data;
 namespace SchoolMagazine.Infrastructure.Migrations
 {
     [DbContext(typeof(MagazineContext))]
-    partial class MagazineContextModelSnapshot : ModelSnapshot
+    [Migration("20250603232356_schMagnzDb")]
+    partial class schMagnzDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -542,29 +545,6 @@ namespace SchoolMagazine.Infrastructure.Migrations
                     b.ToTable("SchoolEventMedias");
                 });
 
-            modelBuilder.Entity("SchoolMagazine.Domain.Entities.SchoolImage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("SchoolId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("UploadedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SchoolId");
-
-                    b.ToTable("SchoolImages");
-                });
-
             modelBuilder.Entity("SchoolMagazine.Domain.Entities.VendorEntities.PurchaseProduct", b =>
                 {
                     b.Property<Guid>("SchoolPurchaseId")
@@ -1012,17 +992,6 @@ namespace SchoolMagazine.Infrastructure.Migrations
                     b.Navigation("SchoolEvent");
                 });
 
-            modelBuilder.Entity("SchoolMagazine.Domain.Entities.SchoolImage", b =>
-                {
-                    b.HasOne("SchoolMagazine.Domain.Entities.School", "School")
-                        .WithMany("Images")
-                        .HasForeignKey("SchoolId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("School");
-                });
-
             modelBuilder.Entity("SchoolMagazine.Domain.Entities.VendorEntities.PurchaseProduct", b =>
                 {
                     b.HasOne("SchoolMagazine.Domain.Entities.VendorEntities.SchoolProduct", "Product")
@@ -1085,8 +1054,6 @@ namespace SchoolMagazine.Infrastructure.Migrations
                     b.Navigation("Adverts");
 
                     b.Navigation("Events");
-
-                    b.Navigation("Images");
 
                     b.Navigation("JobPosts");
                 });

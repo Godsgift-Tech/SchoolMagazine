@@ -25,6 +25,8 @@ namespace SchoolMagazine.Infrastructure.Data
         // newly added
         public DbSet<JobCategoryPreference> JobCategoryPreferences { get; set; }
         public DbSet<SchoolEvent> Events { get; set; }
+        public DbSet<SchoolImage> SchoolImages { get; set; }
+
         public DbSet<SchoolAdvert> Adverts { get; set; }
         public DbSet<SchoolAdvertMedia> SchoolAdvertMedias { get; set; }
         public DbSet<SchoolEventMedia> SchoolEventMedias { get; set; }

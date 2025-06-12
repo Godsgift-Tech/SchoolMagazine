@@ -17,8 +17,22 @@ namespace SchoolMagazine.Application.Mappings
         public MappingProfile()
         {
 
-            CreateMap<School, SchoolDto>().ReverseMap();
-            CreateMap<School, CreateSchoolDto>().ReverseMap();
+            CreateMap<School, PagedSchoolDto>().ReverseMap();
+           // CreateMap<School, CreateSchoolDto>().ReverseMap();
+
+            CreateMap<CreateSchoolDto, School>()
+           .ForMember(dest => dest.Images, opt => opt.MapFrom(src =>
+               src.ImageUrls != null
+               ? src.ImageUrls.Select(url => new SchoolImage { ImageUrl = url }).ToList()
+               : new List<SchoolImage>()
+           ));
+
+            //
+            CreateMap<School, SchoolDto>()
+            .ForMember(dest => dest.ImageUrls,
+                opt => opt.MapFrom(src => src.Images.Select(img => img.ImageUrl).ToList()));
+
+            CreateMap<School, SchoolSummaryDto>().ReverseMap();
             CreateMap<SchoolEvent, SchoolEventDto>().ReverseMap();
             CreateMap<ApprovedVendorDto, SchoolVendor>().ReverseMap();
            // CreateMap<SchoolAdvert, SchoolAdvertDto>().ReverseMap();
