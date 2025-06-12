@@ -65,6 +65,9 @@ namespace SchoolMagazine.Domain.Entities
 
         // Navigation
         public ICollection<JobPost> JobPosts { get; set; } = new List<JobPost>();
+        // Navigation
+
+        public ICollection<SchoolImage> Images { get; set; } = new List<SchoolImage>();
         // public ICollection<Advert> Adverts { get; set; } = new List<Advert>();
     }
 }

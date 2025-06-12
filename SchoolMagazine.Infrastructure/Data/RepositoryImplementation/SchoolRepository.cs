@@ -91,6 +91,7 @@ namespace SchoolMagazine.Infrastructure.Data.Service
             {
                 await _db.Entry(school).Collection(s => s.Adverts).LoadAsync();
                 await _db.Entry(school).Collection(s => s.Events).LoadAsync();
+                await _db.Entry(school).Collection(s => s.Images).LoadAsync(); 
             }
 
             return new PagedResult<School>
@@ -107,7 +108,13 @@ namespace SchoolMagazine.Infrastructure.Data.Service
 
         public async Task<PagedResult<School>> GetSchoolsAsync(string? schoolName, string? location, decimal? feesRange, double? rating, int pageNumber, int pageSize)
         {
-            var query = _db.Schools.Include(s => s.Adverts).AsQueryable();
+            //var query = _db.Schools.Include(s => s.Adverts).AsQueryable();
+            var query = _db.Schools
+    .Include(s => s.Adverts)
+    // we can include Events later
+    .Include(s => s.Images) // Add this line to load Images
+    .AsQueryable();
+
 
             if (!string.IsNullOrWhiteSpace(schoolName))
                 query = query.Where(s => s.SchoolName.Contains(schoolName));

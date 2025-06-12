@@ -11,5 +11,7 @@ namespace SchoolMagazine.Application.DTOs
         public Guid Id { get; set; }
         public string SchoolName { get; set; }
         public string WebsiteUrl { get; set; }
+        public List<string> ImageUrls { get; set; } = new();
+
     }
 }

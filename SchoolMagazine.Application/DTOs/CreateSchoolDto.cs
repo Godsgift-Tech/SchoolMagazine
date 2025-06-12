@@ -40,6 +40,7 @@ namespace SchoolMagazine.Application.DTOs
         [Required]
         public string EmailAddress { get; set; } // email address [Required]
 
+        public List<string> ImageUrls { get; set; } = new();
 
         [Required]
         public string PhoneNumber { get; set; } // phone number
