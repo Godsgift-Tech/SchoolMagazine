@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
-using SchoolMagazine.Application.AppInterface;
+﻿using MailKit.Net.Smtp;
+using MailKit.Security;
+using Microsoft.Extensions.Configuration;
 using MimeKit;
-using MailKit.Net.Smtp;
+using SchoolMagazine.Application.AppInterface;
 using System;
 using System.Threading.Tasks;
 
@@ -21,10 +22,8 @@ namespace SchoolMagazine.Application.AppService
             try
             {
                 var emailMessage = new MimeMessage();
-
-                emailMessage.From.Add(new MailboxAddress("Your Name or Display Name", _configuration
-                    ["EmailSettings:FromEmail"]));
-                emailMessage.To.Add(new MailboxAddress("Recipient Name or Display Name", to));
+                emailMessage.From.Add(new MailboxAddress("School Magazine", _configuration["EmailSettings:FromEmail"]));
+                emailMessage.To.Add(new MailboxAddress("User", to));
                 emailMessage.Subject = subject;
 
                 var bodyBuilder = new BodyBuilder { HtmlBody = body };
@@ -32,26 +31,30 @@ namespace SchoolMagazine.Application.AppService
 
                 using (var smtpClient = new SmtpClient())
                 {
-                    await smtpClient.ConnectAsync(_configuration["EmailSettings:Host"],
-                        int.Parse(_configuration["EmailSettings:Port"]), true);
-                    await smtpClient.AuthenticateAsync(_configuration["EmailSettings:UserName"],
-                     _configuration["EmailSettings:Password"]);
+                    Console.WriteLine("Connecting to SMTP...");
+                    await smtpClient.ConnectAsync(
+                        _configuration["EmailSettings:Host"],
+                        int.Parse(_configuration["EmailSettings:Port"]),
+                        SecureSocketOptions.StartTls);
+
+                    Console.WriteLine("Authenticating...");
+                    await smtpClient.AuthenticateAsync(
+                        _configuration["EmailSettings:UserName"],
+                        _configuration["EmailSettings:Password"]);
+
                     await smtpClient.SendAsync(emailMessage);
-                    Console.WriteLine("Email sent successfully!");
                     await smtpClient.DisconnectAsync(true);
+                    Console.WriteLine("Email sent successfully!");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"General Error: {ex.Message}");
-                throw new InvalidOperationException("An unexpected error " +
-                    "occurred while sending the email.", ex);
+                Console.WriteLine($"EMAIL SEND ERROR: {ex.Message}");
+                throw new InvalidOperationException("An error occurred while sending email.", ex);
             }
         }
 
-        // Initiating Email Template 
-        public async Task<string> GetEmailTemplate(string templateFileName, string confirmationLink,
-            string userName)
+        public async Task<string> GetEmailTemplate(string templateFileName, string confirmationLink, string userName)
         {
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Helpers", templateFileName);
 
@@ -69,7 +72,6 @@ namespace SchoolMagazine.Application.AppService
             try
             {
                 var emailMessage = new MimeMessage();
-
                 emailMessage.From.Add(new MailboxAddress("School Magazine Alerts", _configuration["EmailSettings:FromEmail"]));
                 emailMessage.To.Add(new MailboxAddress("Subscriber", toEmail));
                 emailMessage.Subject = subject;
@@ -79,35 +81,38 @@ namespace SchoolMagazine.Application.AppService
 
                 using (var smtpClient = new SmtpClient())
                 {
-                    await smtpClient.ConnectAsync(_configuration["EmailSettings:Host"],
-                        int.Parse(_configuration["EmailSettings:Port"]), true);
+                    Console.WriteLine("Connecting to SMTP for job alert...");
+                    await smtpClient.ConnectAsync(
+                        _configuration["EmailSettings:Host"],
+                        int.Parse(_configuration["EmailSettings:Port"]),
+                        SecureSocketOptions.StartTls);
 
                     await smtpClient.AuthenticateAsync(
                         _configuration["EmailSettings:UserName"],
-                        _configuration["EmailSettings:Password"]
-                    );
+                        _configuration["EmailSettings:Password"]);
 
                     await smtpClient.SendAsync(emailMessage);
-                    Console.WriteLine("Job alert email sent successfully!");
                     await smtpClient.DisconnectAsync(true);
+                    Console.WriteLine("Job alert email sent successfully!");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Email Sending Error: {ex.Message}");
+                Console.WriteLine($"JOB ALERT EMAIL ERROR: {ex.Message}");
                 throw new InvalidOperationException("An error occurred while sending job alert email.", ex);
             }
         }
+
         public async Task<string> GetJobAlertTemplate(
-      string templateFileName,
-      string jobTitle,
-      string location,
-      string qualification,
-      string categories,
-      string minSalary,
-      string maxSalary,
-      string? description,
-      string postedAt)
+            string templateFileName,
+            string jobTitle,
+            string location,
+            string qualification,
+            string categories,
+            string minSalary,
+            string maxSalary,
+            string? description,
+            string postedAt)
         {
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Helpers", templateFileName);
 
@@ -125,9 +130,5 @@ namespace SchoolMagazine.Application.AppService
                            .Replace("{Description}", description ?? "No description provided")
                            .Replace("{PostedAt}", postedAt);
         }
-
-
-
     }
-
 }
