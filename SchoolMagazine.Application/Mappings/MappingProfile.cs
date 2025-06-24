@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SchoolMagazine.Application.DTOs;
+using SchoolMagazine.Application.DTOs.Dashboard;
 using SchoolMagazine.Domain.Entities;
 using SchoolMagazine.Domain.Entities.JobEntities;
 using SchoolMagazine.Domain.Entities.VendorEntities;
@@ -69,6 +70,25 @@ namespace SchoolMagazine.Application.Mappings
             CreateMap<CreateEventDto, SchoolAdvert>().ReverseMap();
             CreateMap<UserDto, User>().ReverseMap();
 
+            //
+
+            CreateMap<JobApplication, JobApplicationDto>()
+    .ForMember(dest => dest.ApplicantFullName,
+        opt => opt.MapFrom(src => src.Users.FirstName + " " + src.Users.LastName))
+    .ForMember(dest => dest.ApplicantEmail,
+        opt => opt.MapFrom(src => src.Users.Email))
+    .ForMember(dest => dest.JobTitle,
+        opt => opt.MapFrom(src => src.JobPosting.Title));
+
+            //
+
+            CreateMap<JobPost, JobPostDto>()
+    .ForMember(dest => dest.PostedByFullName,
+        opt => opt.MapFrom(src => src.PostedBy.FirstName + " " + src.PostedBy.LastName))
+    .ForMember(dest => dest.SchoolName,
+        opt => opt.MapFrom(src => src.School.SchoolName))
+    .ForMember(dest => dest.NumberOfApplications,
+        opt => opt.MapFrom(src => src.Applications.Count));
 
 
         }
