@@ -71,6 +71,10 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IPurchaseService, PurchaseService>();
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 
+builder.Services.AddScoped<ISchoolDashboardRepository, SchoolDashboardRepository>();
+builder.Services.AddScoped<ISchoolDashboardService, SchoolDashboardService>();
+
+
 builder.Services.AddScoped<IAppUserRepository, AppUserRepository>();
 builder.Services.AddScoped<IJobNotificationRepository, JobNotificationRepository>();
 builder.Services.AddScoped<IJobNotificationService, JobNotificationService>();
