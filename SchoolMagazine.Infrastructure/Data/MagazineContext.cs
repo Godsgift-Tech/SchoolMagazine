@@ -27,6 +27,9 @@ namespace SchoolMagazine.Infrastructure.Data
         public DbSet<SchoolEvent> Events { get; set; }
         public DbSet<SchoolImage> SchoolImages { get; set; }
 
+        // modified SchoolRatings
+        public DbSet<SchoolRating> SchoolRatings { get; set; }
+
         public DbSet<SchoolAdvert> Adverts { get; set; }
         public DbSet<SchoolAdvertMedia> SchoolAdvertMedias { get; set; }
         public DbSet<SchoolEventMedia> SchoolEventMedias { get; set; }
@@ -127,10 +130,8 @@ namespace SchoolMagazine.Infrastructure.Data
                 .Property(v => v.SubscriptionStartDate)
                 .HasColumnName("SubscriptionStartDate");
 
-            // modelBuilder.Entity<SchoolPurchases>().ToTable("SchoolPurchases");
 
             modelBuilder.Entity<Purchases>().ToTable("NewSchoolPurchases");
-            // modelBuilder.Entity<Vendor>().ToTable("AppVendors");
 
             // SCHOOL JOBS
 
@@ -184,6 +185,28 @@ namespace SchoolMagazine.Infrastructure.Data
         .WithMany(s => s.Categories)
         .HasForeignKey(j => j.SubscriptionId)
         .OnDelete(DeleteBehavior.Cascade);
+
+            // SchoolRating Config
+            modelBuilder.Entity<SchoolRating>()
+                .HasOne(sr => sr.School)
+                .WithMany()
+                .HasForeignKey(sr => sr.SchoolId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<SchoolRating>()
+                .HasOne(sr => sr.User)
+                .WithMany()
+                .HasForeignKey(sr => sr.UserId)
+                .OnDelete(DeleteBehavior.Restrict); // Optional relationship
+
+            modelBuilder.Entity<SchoolRating>()
+                .HasOne(sr => sr.SchoolAdmin)
+                .WithMany()
+                .HasForeignKey(sr => sr.SchoolAdminId)
+                .OnDelete(DeleteBehavior.Restrict); // Optional relationship
+
+
+
         }
     }
 }

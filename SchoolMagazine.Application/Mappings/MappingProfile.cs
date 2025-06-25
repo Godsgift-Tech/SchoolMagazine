@@ -5,11 +5,6 @@ using SchoolMagazine.Domain.Entities;
 using SchoolMagazine.Domain.Entities.JobEntities;
 using SchoolMagazine.Domain.Entities.VendorEntities;
 using SchoolMagazine.Domain.UserRoleInfo;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolMagazine.Application.Mappings
 {
@@ -19,7 +14,7 @@ namespace SchoolMagazine.Application.Mappings
         {
 
             CreateMap<School, PagedSchoolDto>().ReverseMap();
-           // CreateMap<School, CreateSchoolDto>().ReverseMap();
+            CreateMap<School, CreateSchoolDto>().ReverseMap();
 
             CreateMap<CreateSchoolDto, School>()
            .ForMember(dest => dest.Images, opt => opt.MapFrom(src =>
@@ -36,7 +31,23 @@ namespace SchoolMagazine.Application.Mappings
             CreateMap<School, SchoolSummaryDto>().ReverseMap();
             CreateMap<SchoolEvent, SchoolEventDto>().ReverseMap();
             CreateMap<ApprovedVendorDto, SchoolVendor>().ReverseMap();
-           // CreateMap<SchoolAdvert, SchoolAdvertDto>().ReverseMap();
+
+          
+
+            //
+            CreateMap<SchoolRating, SchoolRatingDto>()
+               .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+               .ForMember(dest => dest.RatingValue, opt => opt.MapFrom(src => src.RatingValue))
+               .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Comment))
+               .ForMember(dest => dest.RatedAt, opt => opt.MapFrom(src => src.RatedAt));
+
+            CreateMap<School, SchoolWithRatingDto>()
+                .ForMember(dest => dest.SchoolId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.SchoolName, opt => opt.MapFrom(src => src.SchoolName))
+                .ForMember(dest => dest.AverageRating, opt => opt.MapFrom(src => src.Ratings.Any() ? src.Ratings.Average(r => r.RatingValue) : 0));
+
+
+          
 
             CreateMap<SchoolAdvert, SchoolAdvertDto>().ReverseMap();
             // ForMember(dest => dest.SchoolName, opt => opt.MapFrom(src => src.School.SchoolName));

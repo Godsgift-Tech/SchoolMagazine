@@ -6,15 +6,10 @@ using System.Threading.Tasks;
 
 namespace SchoolMagazine.Application.DTOs
 {
-    public class SchoolSummaryDto
+    public class SchoolWithRatingDto
     {
-       
-
-    
-      //  public Guid Id { get; set; }
+        public Guid SchoolId { get; set; }
         public string SchoolName { get; set; }
-        public string WebsiteUrl { get; set; }
-        public List<string> ImageUrls { get; set; } = new();
-
+        public double AverageRating { get; set; }
     }
 }

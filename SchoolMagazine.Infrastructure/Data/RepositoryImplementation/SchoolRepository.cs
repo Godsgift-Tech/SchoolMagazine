@@ -125,8 +125,8 @@ namespace SchoolMagazine.Infrastructure.Data.Service
             if (feesRange.HasValue)
                 query = query.Where(s => s.FeesRange >= (feesRange - 50000) && s.FeesRange <= (feesRange + 50000));
 
-            if (rating.HasValue)
-                query = query.Where(s => s.Rating >= (rating - 0.5) && s.Rating <= (rating + 0.5));
+            //if (rating.HasValue)
+            //    query = query.Where(s => s.Rating >= (rating - 0.5) && s.Rating <= (rating + 0.5));
 
             int totalCount = await query.CountAsync();
 

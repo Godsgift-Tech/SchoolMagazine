@@ -70,6 +70,9 @@ builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IPurchaseService, PurchaseService>();
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
+builder.Services.AddScoped<ISchoolRatingRepository, SchoolRatingRepository>();
+builder.Services.AddScoped<ISchoolRatingService, SchoolRatingService>();
+
 
 builder.Services.AddScoped<ISchoolDashboardRepository, SchoolDashboardRepository>();
 builder.Services.AddScoped<ISchoolDashboardService, SchoolDashboardService>();

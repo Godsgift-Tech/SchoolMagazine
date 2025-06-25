@@ -51,8 +51,8 @@ namespace SchoolMagazine.Domain.Entities
         public string WebsiteUrl { get; set; }
         [Required]
         public decimal FeesRange { get; set; }
-        [Required]
-        public double Rating { get; set; }
+        //[Required]
+        //public double Rating { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
@@ -69,5 +69,6 @@ namespace SchoolMagazine.Domain.Entities
 
         public ICollection<SchoolImage> Images { get; set; } = new List<SchoolImage>();
         // public ICollection<Advert> Adverts { get; set; } = new List<Advert>();
+        public ICollection<SchoolRating> Ratings { get; set; } = new List<SchoolRating>();
     }
 }
