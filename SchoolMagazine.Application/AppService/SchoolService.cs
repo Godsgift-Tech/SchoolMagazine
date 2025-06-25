@@ -102,7 +102,7 @@ namespace SchoolMagazine.Application.AppService
             existingSchool.PhoneNumber = schoolDto.PhoneNumber;
             existingSchool.WebsiteUrl = schoolDto.WebsiteUrl;
             existingSchool.FeesRange = schoolDto.FeesRange;
-            existingSchool.Rating = schoolDto.Rating;
+           // existingSchool.Rating = schoolDto.Rating;
 
             // Get the string result from repository
             var updateResult = await _sr.UpdateSchoolAsync(existingSchool);

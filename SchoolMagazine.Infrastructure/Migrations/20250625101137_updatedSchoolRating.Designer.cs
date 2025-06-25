@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolMagazine.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using SchoolMagazine.Infrastructure.Data;
 namespace SchoolMagazine.Infrastructure.Migrations
 {
     [DbContext(typeof(MagazineContext))]
-    partial class MagazineContextModelSnapshot : ModelSnapshot
+    [Migration("20250625101137_updatedSchoolRating")]
+    partial class updatedSchoolRating
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -575,27 +578,19 @@ namespace SchoolMagazine.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("RatingValue")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("SchoolAdminId")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<Guid>("SchoolId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("SchoolId1")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UserId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SchoolAdminId");
-
                     b.HasIndex("SchoolId");
-
-                    b.HasIndex("SchoolId1");
 
                     b.HasIndex("UserId");
 
@@ -1062,31 +1057,21 @@ namespace SchoolMagazine.Infrastructure.Migrations
 
             modelBuilder.Entity("SchoolMagazine.Domain.Entities.SchoolRating", b =>
                 {
-                    b.HasOne("SchoolMagazine.Domain.UserRoleInfo.User", "SchoolAdmin")
-                        .WithMany()
-                        .HasForeignKey("SchoolAdminId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("SchoolMagazine.Domain.Entities.School", "School")
-                        .WithMany()
+                        .WithMany("Ratings")
                         .HasForeignKey("SchoolId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SchoolMagazine.Domain.Entities.School", null)
-                        .WithMany("Ratings")
-                        .HasForeignKey("SchoolId1");
-
-                    b.HasOne("SchoolMagazine.Domain.UserRoleInfo.User", "User")
+                    b.HasOne("SchoolMagazine.Domain.UserRoleInfo.User", "Users")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("School");
 
-                    b.Navigation("SchoolAdmin");
-
-                    b.Navigation("User");
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("SchoolMagazine.Domain.Entities.VendorEntities.PurchaseProduct", b =>

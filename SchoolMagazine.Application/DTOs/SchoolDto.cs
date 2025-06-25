@@ -50,8 +50,8 @@ namespace SchoolMagazine.Application.DTOs
         public string WebsiteUrl { get; set; }
         [Required]
         public decimal FeesRange { get; set; }
-        [Required]
-        public double Rating { get; set; }
+        //[Required]
+        //public double Rating { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
 
