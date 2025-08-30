@@ -3,8 +3,7 @@ using SchoolMagazine.Domain.Entities;
 using SchoolMagazine.Domain.Interface;
 using SchoolMagazine.Domain.Paging;
 using SchoolMagazine.Domain.Service_Response;
-//using System.Data.Entity;
-//using System.Data.Entity;
+
 
 //using System.Data.Entity;  =>   This using gives me Server error 500
 

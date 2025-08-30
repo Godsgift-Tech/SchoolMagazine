@@ -51,19 +51,19 @@ namespace SchoolMagazine.Application.AppService
 
 
 
-        public async Task<ServiceResponse<CreateSchoolDto>> GetSchoolByNameAsync(string schoolName)
+        public async Task<ServiceResponse<SearchedSchoolDto>> GetSchoolByNameAsync(string schoolName)
         {
             // Retrieve the school from the repository
             var school = await _sr.GetSchoolByNameAsync(schoolName);
 
             // Check if the school exists
             if (school == null)
-                return new ServiceResponse<CreateSchoolDto>(null!, false, "School not found.");
+                return new ServiceResponse<SearchedSchoolDto>(null!, false, "School not found.");
 
             // Map the entity to DTO
-            var schoolDto = _mapper.Map<CreateSchoolDto>(school);
+            var schoolDto = _mapper.Map<SearchedSchoolDto>(school);
 
-            return new ServiceResponse<CreateSchoolDto>(schoolDto, true, "School retrieved successfully.");
+            return new ServiceResponse<SearchedSchoolDto>(schoolDto, true, "School retrieved successfully.");
         }
 
 

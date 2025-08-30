@@ -15,6 +15,13 @@ namespace SchoolMagazine.Application.Mappings
 
             CreateMap<School, PagedSchoolDto>().ReverseMap();
             CreateMap<School, CreateSchoolDto>().ReverseMap();
+            CreateMap<SearchedSchoolDto, School>()
+                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src =>
+               src.ImageUrls != null
+               ? src.ImageUrls.Select(url => new SchoolImage { ImageUrl = url }).ToList()
+               : new List<SchoolImage>()
+           ));
+
 
             CreateMap<CreateSchoolDto, School>()
            .ForMember(dest => dest.Images, opt => opt.MapFrom(src =>
